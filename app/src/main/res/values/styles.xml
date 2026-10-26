@@ -1,0 +1,21 @@
+<resources>
+    <style name="Theme.Veyra" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#B8F673</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#10130F</item>
+        <item name="android:statusBarColor">#10130F</item>
+        <item name="android:navigationBarColor">#10130F</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="Theme.Veyra.Light" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#347B45</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">#F5F6F2</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>
