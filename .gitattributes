@@ -1,0 +1,5 @@
+app/src/main/assets/* linguist-vendored
+app/src/main/assets/adblock-hosts.txt linguist-generated
+gradle/wrapper/* linguist-vendored
+gradlew linguist-generated
+gradlew.bat linguist-generated
