@@ -1,0 +1,119 @@
+name: Publish Android release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and verify release APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '16111833'
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+
+      - name: Install Android SDK components
+        run: sdkmanager 'platforms;android-37.2' 'build-tools;37.0.0'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build, unit tests and Lint
+        run: ./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+
+      - name: Test browser protection
+        run: node --test tools/protection_test.cjs
+
+      - name: Prepare signed APKs and checksums
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >-
+          python3 .github/scripts/prepare_release.py
+          --tag "$RELEASE_TAG"
+          --output release-assets
+          --apksigner "$ANDROID_HOME/build-tools/37.0.0/apksigner"
+
+      - name: Upload verified release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-release-assets
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-release-reports
+          path: |
+            app/build/reports/
+            app/build/test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  publish:
+    name: Publish GitHub alpha release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@v4
+
+      - name: Download verified APKs
+        uses: actions/download-artifact@v4
+        with:
+          name: veyra-release-assets
+          path: release-assets
+
+      - name: Check asset integrity
+        working-directory: release-assets
+        run: sha256sum --check SHA256SUMS.txt
+
+      - name: Create and publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          notes="docs/releases/$RELEASE_TAG.md"
+          test -f "$notes"
+          title="Veyra ${RELEASE_TAG#v} — Alpha release"
+          if [ "$RELEASE_TAG" = 'v0.3.0' ]; then
+            title="Veyra 0.3.0 — First alpha release"
+          fi
+          gh release create "$RELEASE_TAG" \
+            release-assets/*.apk release-assets/SHA256SUMS.txt \
+            --verify-tag --draft --prerelease --title "$title" --notes-file "$notes"
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease
