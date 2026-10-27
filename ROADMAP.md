@@ -19,7 +19,7 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | Privacy | Gecko-privétabs, afzonderlijk wissen, hostreset en normale cookietellingen geïmplementeerd | Websitecookie-isolatie bij procesbeëindiging en wisgedrag op hardware |
 | Synchronisatie | Handmatige versleutelde HTTPS-bestandssync, driewegsamenvoeging en conflictkeuze geïmplementeerd | Twee echte clients met een beheerde server; geen gehoste accountdienst |
 | Vormgeving/lokalisatie | Tabletinstellingen, volledig NL/EN, RTL en groottekst-renderingen | TalkBack, controller en echte schermen |
-| Vaste sleutel | Nieuwe sleutel gegenereerd en lokale APK-certificaten gepind | GitHub Secrets geblokkeerd door ongeldige API-aanmelding (401); onafhankelijke sleutelbackup en echte updatecontrole |
+| Vaste sleutel | Nieuwe sleutel gegenereerd en lokale APK-certificaten gepind | GitHub-authenticatie en push hersteld; Secrets API weigert toegang (403); onafhankelijke sleutelbackup en echte updatecontrole |
 | Automatische controles | 104 JVM-tests, 8 beschermingstests, 5 migratietests; APK/test-APK bouwt | Deze controles vervangen geen engine-/hardwareacceptatie |
 
 ## Wat deze ontwikkelronde wel en niet afsluit

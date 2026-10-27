@@ -47,7 +47,7 @@ The Android 37 signing tool emits `V2 Signer: ...`; the parser also supports the
 
 The new private key is outside the repository, and no key/password is included in release assets. **Durable owner-controlled backup and repository-secret provisioning remain open.** Public release CI requires those secrets and fails closed; normal push builds can still create development-key artifacts.
 
-The API root was reachable on the last actual check, but `gh api user --silent` returned **HTTP 401 Bad credentials** with the configured credential. A public Git read succeeds, but native push has no usable credential; push through the configured `gh auth git-credential` helper also returns invalid username/token. The candidate is committed locally and **has not been pushed**. This is an authentication blocker, not evidence that GitHub synchronization or API publication succeeded. A saved cloud configuration draft also adds GitHub API/upload hosts, but saving a draft does not apply it. Valid API authentication with repository Contents:write and Secrets:write rights is needed before running `tools/upload_signing_secrets.py`, tagging and publishing.
+GitHub authentication and source push were restored on 27 October 2026. The earlier HTTP 401 blocker is resolved. Reading the repository public key/listing Secrets still returns **HTTP 403 Resource not accessible by integration**; no signing secrets were stored. The 0.5 alpha is prepared for direct upload from the locally verified fixed-key APKs, rather than a successful automated release build. Each actual delivery APK was rechecked for package ID, version name/code, ABI, pinned certificate and SHA-256. Automated fixed-key release CI remains blocked until repository Secrets access is granted.
 
 ## Not completed
 
@@ -56,6 +56,6 @@ The API root was reachable on the last actual check, but `gh api user --silent` 
 - No three-extension behavioral/update acceptance. Official packages and a compiled test runner are not compatibility evidence; see [extensions](extensions.md).
 - No real two-client synchronization against an owner-managed server and no independent cryptographic audit.
 - No TalkBack, controller/handheld acceptance, real-site/Autofill matrix or startup/page/memory/battery measurements.
-- No new GitHub release or public 0.5 download link at the time of this record.
+- Public 0.5 upload/publication is in progress; a successful workflow or stable release is not implied.
 
 Follow [device-validation.md](device-validation.md). All 1.0 release gates stay open until their actual evidence exists. Keep [migration instructions](signing-and-migration.md) with every first fixed-key APK handoff.
