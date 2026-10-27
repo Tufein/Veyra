@@ -23,7 +23,7 @@ jobs:
       VEYRA_SIGNING_KEY_ALIAS: ${{ secrets.VEYRA_SIGNING_KEY_ALIAS }}
     steps:
       - name: Check out tagged source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Java 21
         uses: actions/setup-java@v4
@@ -105,7 +105,7 @@ jobs:
       contents: write
     steps:
       - name: Check out release notes
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download verified APKs
         uses: actions/download-artifact@v4
