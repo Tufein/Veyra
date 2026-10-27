@@ -47,7 +47,7 @@ The Android 37 signing tool emits `V2 Signer: ...`; the parser also supports the
 
 The new private key is outside the repository, and no key/password is included in release assets. **Durable owner-controlled backup and repository-secret provisioning remain open.** Public release CI requires those secrets and fails closed; normal push builds can still create development-key artifacts.
 
-The API root was reachable on the last actual check, but `gh api user --silent` returned **HTTP 401 Bad credentials** with the configured credential. This is an authentication blocker, not evidence that API publication succeeded. A saved cloud configuration draft also adds GitHub API/upload hosts, but saving a draft does not apply it. Valid API authentication with repository-secret-management rights is needed before running `tools/upload_signing_secrets.py`, tagging and publishing.
+The API root was reachable on the last actual check, but `gh api user --silent` returned **HTTP 401 Bad credentials** with the configured credential. A public Git read succeeds, but native push has no usable credential; push through the configured `gh auth git-credential` helper also returns invalid username/token. The candidate is committed locally and **has not been pushed**. This is an authentication blocker, not evidence that GitHub synchronization or API publication succeeded. A saved cloud configuration draft also adds GitHub API/upload hosts, but saving a draft does not apply it. Valid API authentication with repository Contents:write and Secrets:write rights is needed before running `tools/upload_signing_secrets.py`, tagging and publishing.
 
 ## Not completed
 
