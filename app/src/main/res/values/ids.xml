@@ -1,1 +1,20 @@
-<resources><item name="settings_scroll" type="id" /></resources>
+<resources>
+    <item name="settings_scroll" type="id" />
+    <item name="settings_toolbar" type="id" />
+    <item name="settings_search" type="id" />
+    <item name="settings_categories" type="id" />
+    <item name="settings_empty" type="id" />
+    <item name="settings_preview" type="id" />
+    <item name="settings_theme_group" type="id" />
+    <item name="settings_dynamic_switch" type="id" />
+    <item name="settings_zoom_slider" type="id" />
+    <item name="settings_name_field" type="id" />
+    <item name="settings_shortcut_name" type="id" />
+    <item name="settings_shortcut_url" type="id" />
+    <item name="settings_name_save" type="id" />
+    <item name="settings_shortcut_save" type="id" />
+    <item name="settings_compact_switch" type="id" />
+    <item name="settings_theme_light" type="id" />
+    <item name="settings_theme_dark" type="id" />
+    <item name="settings_theme_system" type="id" />
+</resources>

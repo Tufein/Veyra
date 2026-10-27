@@ -279,7 +279,7 @@ public final class BrowserActivity extends Activity {
         brand.setLetterSpacing(-0.065f);
         brand.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         heading.addView(brand, new LinearLayout.LayoutParams(0, -2, 1));
-        heading.addView(icon("tune", "Veyra aanpassen", v -> showSettings()),
+        heading.addView(icon("tune", "Instellingen", v -> showSettings()),
                 new LinearLayout.LayoutParams(dp(48), dp(48)));
         content.addView(heading);
 
@@ -292,7 +292,7 @@ public final class BrowserActivity extends Activity {
         LinearLayout hero = column();
         hero.setPadding(dp(22), dp(24), dp(22), dp(24));
         GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-                new int[] { light ? 0xFFE2EDE5 : 0xFF243C33, SURFACE });
+                new int[] { ThemeSupport.color(this, com.google.android.material.R.attr.colorPrimaryContainer), SURFACE });
         gradient.setCornerRadius(dp(28));
         gradient.setStroke(dp(1), BORDER);
         hero.setBackground(gradient);
@@ -330,6 +330,7 @@ public final class BrowserActivity extends Activity {
         JSONArray links = shortcuts();
         for (int startIndex = 0; startIndex < links.length(); startIndex += 4) {
             LinearLayout shortcutsRow = row();
+            shortcutsRow.setGravity(Gravity.TOP); shortcutsRow.setMinimumHeight(dp(96));
             for (int i = startIndex; i < Math.min(startIndex + 4, links.length()); i++) {
                 JSONObject item = links.optJSONObject(i);
                 if (item == null) continue;
@@ -339,7 +340,7 @@ public final class BrowserActivity extends Activity {
             }
             for (int i = Math.min(4, links.length() - startIndex); i < 4; i++)
                 shortcutsRow.addView(new View(this), new LinearLayout.LayoutParams(0, dp(1), 1));
-            content.addView(shortcutsRow, new LinearLayout.LayoutParams(-1, dp(96)));
+            content.addView(shortcutsRow, new LinearLayout.LayoutParams(-1, -2));
         }
 
         LinearLayout protection = row();
@@ -376,6 +377,7 @@ public final class BrowserActivity extends Activity {
         tile.setBackground(shape(SURFACE, 18, BORDER));
         shortcut.addView(tile, new LinearLayout.LayoutParams(dp(56), dp(56)));
         TextView caption = text(label, 11, MUTED);
+        caption.setMaxLines(2); caption.setEllipsize(android.text.TextUtils.TruncateAt.END);
         caption.setGravity(Gravity.CENTER);
         addSpaced(shortcut, caption, 9);
         shortcut.setOnClickListener(v -> navigate(url));
@@ -643,7 +645,7 @@ public final class BrowserActivity extends Activity {
     private void showMenu() {
         String[] items = { "Nieuw tabblad", "Bladwijzer toevoegen", "Bladwijzers", "Pagina delen",
                 "Zoeken op pagina", "Adblocker voor deze website", "HTTPS en verbinding",
-                "Veyra aanpassen", "Wachtwoorden en passkeys", "Extensies", "Over Veyra" };
+                "Instellingen", "Wachtwoorden en passkeys", "Extensies", "Over Veyra" };
         dialogBuilder().setTitle("Jouw Veyra").setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0: newTab(); break;
@@ -657,7 +659,7 @@ public final class BrowserActivity extends Activity {
                 case 8: showCredentials(); break;
                 case 9: startActivity(new Intent(this, ExtensionsActivity.class)); break;
                 case 10:
-                    dialogBuilder().setTitle("Veyra · 0.3.0")
+                    dialogBuilder().setTitle("Over Veyra")
                             .setMessage("Het web. Op jouw tempo.\n\nMet een eigen thema, lokale advertentieblokkering en Android Autofill. "
                                     + "Tabadressen, instellingen en bladwijzers blijven op je telefoon. Je zoekopdrachten gaan naar de gekozen zoekmachine. "
                                     + "Websites en de Gecko-engine verwerken hun eigen verkeer.\n\n"
@@ -723,9 +725,11 @@ public final class BrowserActivity extends Activity {
                 }).setNegativeButton("Sluiten", null).show();
     }
 
-    private void showSettings() {
+    private void showSettings() { showSettings(SettingsSection.OVERVIEW); }
+
+    private void showSettings(SettingsSection section) {
         hideKeyboard();
-        startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_PAGE);
+        startActivityForResult(SettingsActivity.intent(this, section), SETTINGS_PAGE);
     }
 
     private void setting(LinearLayout parent, String label, String detail, View.OnClickListener listener) {
@@ -741,57 +745,9 @@ public final class BrowserActivity extends Activity {
         addSpaced(parent, item, 8);
     }
 
-    private JSONArray shortcuts() {
-        try {
-            return new JSONArray(preferences.getString("shortcuts", "["
-                    + "{\"title\":\"Wikipedia\",\"url\":\"https://nl.wikipedia.org/\"},"
-                    + "{\"title\":\"NOS\",\"url\":\"https://nos.nl/\"},"
-                    + "{\"title\":\"YouTube\",\"url\":\"https://m.youtube.com/\"},"
-                    + "{\"title\":\"Zoeken\",\"url\":\"https://duckduckgo.com/\"}]"));
-        } catch (Exception invalid) { return new JSONArray(); }
-    }
+    private JSONArray shortcuts() { return new ShortcutStore(preferences).toJson(); }
 
-    private void showShortcuts() {
-        JSONArray saved = shortcuts();
-        String[] titles = new String[saved.length()];
-        for (int i = 0; i < titles.length; i++) titles[i] = saved.optJSONObject(i).optString("title");
-        dialogBuilder().setTitle("Jouw snelkoppelingen").setItems(titles, (d, which) ->
-                dialogBuilder().setTitle(titles[which]).setItems(new String[] { "Bewerken", "Verwijderen" }, (action, item) -> {
-                    if (item == 0) editShortcut(which);
-                    else { saved.remove(which); preferences.edit().putString("shortcuts", saved.toString()).apply();
-                        home = null; renderPage(); showShortcuts(); }
-                }).show())
-                .setPositiveButton("Toevoegen", (d, which) -> {
-                    if (saved.length() >= 8) toast("Maximaal acht snelkoppelingen."); else editShortcut(-1);
-                }).setNegativeButton("Gereed", null).show();
-    }
-
-    private void editShortcut(int position) {
-        JSONArray saved = shortcuts();
-        LinearLayout fields = column(); fields.setPadding(dp(24), dp(8), dp(24), 0);
-        EditText title = new EditText(this); title.setHint("Naam"); title.setSingleLine(true);
-        title.setFilters(new android.text.InputFilter[] { new android.text.InputFilter.LengthFilter(18) });
-        EditText url = new EditText(this); url.setHint("https://voorbeeld.nl"); url.setSingleLine(true);
-        url.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        if (position >= 0) { title.setText(saved.optJSONObject(position).optString("title")); url.setText(saved.optJSONObject(position).optString("url")); }
-        fields.addView(title); fields.addView(url);
-        AlertDialog editor = dialogBuilder().setTitle(position < 0 ? "Snelkoppeling toevoegen" : "Snelkoppeling bewerken")
-                .setView(fields).setPositiveButton("Bewaren", null).setNegativeButton("Annuleren", null).create();
-        editor.setOnShowListener(d -> editor.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String label = title.getText().toString().trim();
-            String typed = url.getText().toString().trim();
-            String valid = UrlPolicy.normalizeWebUrl(typed.contains("://") ? typed : "https://" + typed);
-            if (label.isEmpty()) { title.setError("Geef een naam op"); return; }
-            if (valid == null) { url.setError("Voer een geldig HTTP- of HTTPS-adres in"); return; }
-            try {
-                JSONObject item = new JSONObject(); item.put("title", label); item.put("url", valid);
-                if (position < 0) saved.put(item); else saved.put(position, item);
-                preferences.edit().putString("shortcuts", saved.toString()).apply();
-                home = null; renderPage(); editor.dismiss(); showShortcuts();
-            } catch (Exception failure) { toast("Bewaren is niet gelukt."); }
-        }));
-        editor.show();
-    }
+    private void showShortcuts() { showSettings(SettingsSection.SHORTCUTS); }
 
     private void showCredentials() {
         LinearLayout list = column(); list.setPadding(dp(20), dp(4), dp(20), dp(12));
@@ -964,11 +920,6 @@ public final class BrowserActivity extends Activity {
         super.onActivityResult(request, result, data);
         if (request == SETTINGS_PAGE) {
             settingsChanged();
-            if (data != null) {
-                String action = data.getStringExtra(SettingsActivity.ACTION);
-                if ("shortcuts".equals(action)) showShortcuts();
-                else if ("credentials".equals(action)) showCredentials();
-            }
         }
         if (request == FILE_PICKER && fileCallback != null) {
             ValueCallback<Uri[]> callback = fileCallback;
@@ -1134,7 +1085,7 @@ public final class BrowserActivity extends Activity {
     private TextView action(String label, View.OnClickListener listener) {
         TextView button = text(label, 15, ACCENT_INK); button.setGravity(Gravity.CENTER);
         button.setPadding(dp(20), dp(16), dp(20), dp(16));
-        button.setBackground(shape(ACCENT, 18, Color.TRANSPARENT)); button.setOnClickListener(listener); return button;
+        button.setBackground(shape(ACCENT, 28, Color.TRANSPARENT)); button.setOnClickListener(listener); return button;
     }
     private void toast(String message) { Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
     private IconButton icon(String kind, String description, View.OnClickListener listener) {

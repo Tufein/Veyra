@@ -27,7 +27,7 @@ node --test tools/protection_test.cjs
 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-Add meaningful tests when changing URL parsing, HTTPS policy, blocking, or other behavior with a concrete regression risk. For UI work, check the affected flow on a device or emulator, including both appearance modes and a small phone screen. Record checks you could not complete.
+Add meaningful tests when changing URL parsing, HTTPS policy, blocking, or other behavior with a concrete regression risk. For UI work, run the Robolectric settings regression tests and inspect their native-widget renderings, then check the affected flow on a device or emulator, including both appearance modes and a small phone screen. Record checks you could not complete.
 
 The optional `tools/smoke_test.py` requires Python 3, `adb`, one connected test device, the adblocker enabled, and **Prefer HTTPS** mode. It creates test tabs and a bookmark. Use a test device or account for login and Autofill work.
 
@@ -44,3 +44,12 @@ For suspected credential or privacy vulnerabilities, avoid publishing sensitive 
 Describe the problem, resulting behavior, checks performed, and remaining limitations. Include real screenshots for visual changes when available; do not present mockups as verified app output.
 
 Veyra's original code does not yet have a selected license. Do not add a root license or change third-party licensing terms as an incidental part of another change.
+
+
+## Product direction and UI evidence
+
+[ROADMAP.md](ROADMAP.md) records priorities, dependencies, and release gates. Mark implementation, automated checks, and device verification separately. A development version bump does not authorize or establish a published release.
+
+The settings hub is a separate activity with internal detail navigation. Keep edits inside this activity, retain the existing preference keys, and preserve current section, back stack, and unsaved form input during recreation. Home and shortcut management share `ShortcutStore`.
+
+`SettingsActivityTest` renders real Material widgets with Robolectric native graphics. Generated images live in `app/build/reports/settings-ui/` and may be used for UI review when labeled as test renderings. Do not describe them as screenshots captured on a phone. Keep the connected-device test scenarios aligned with the hub and detail pages.

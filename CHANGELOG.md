@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 — In development
+
+- Turn settings into an independent searchable hub with dedicated detail screens and predictable Back navigation.
+- Move shortcut management into a full settings editor with input validation and shared legacy preference storage.
+- Retain navigation, scroll position, and unsaved name/shortcut input across recreation and theme changes.
+- Refine Material typography, tonal surfaces, palette previews, accent selection, and the start page's use of the selected colors.
+- Stack theme choices on small screens with large text, preserve reduced-motion preferences, and improve accessible labels and tap targets.
+- Add Android 9/15 Robolectric regression tests and rendered UI previews; update connected-device settings tests.
+- Document the larger product roadmap, release gates, and priorities for signing, stability, daily browsing, extensions, handhelds, and privacy.
+
+
 ## 0.3.0
 
 - Replace the settings dialog with a full-screen Material 3 interface, wallpaper colors on Android 12+, light/dark/system selection, accent swatches, switches, and reading-size preview.

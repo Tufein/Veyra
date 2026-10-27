@@ -7,7 +7,7 @@
         <item name="colorSecondaryContainer">#354B3E</item>
         <item name="colorOnSecondaryContainer">#D0E8D6</item>
         <item name="colorSurface">#101510</item>
-        <item name="colorSurfaceContainer">#1C211B</item>
+        <item name="colorSurfaceContainer">#1A211B</item>
         <item name="colorOnSurface">#E0E4DA</item>
         <item name="colorOnSurfaceVariant">#BFC9BD</item>
         <item name="colorOutline">#899386</item>
@@ -20,6 +20,15 @@
         <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="colorSurfaceContainerLowest">#0B100C</item>
+        <item name="colorSurfaceContainerLow">#151B16</item>
+        <item name="colorSurfaceContainerHigh">#252C25</item>
+        <item name="colorSurfaceContainerHighest">#303730</item>
+        <item name="colorOutlineVariant">#414A41</item>
+        <item name="colorSecondary">#B4CCBA</item>
+        <item name="colorOnSecondary">#203527</item>
+        <item name="colorSurfaceBright">#343B34</item>
+        <item name="colorSurfaceDim">#101510</item>
     </style>
     <style name="Theme.Veyra.Light" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">#286A48</item>
@@ -39,41 +48,116 @@
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:windowBackground">?attr/colorSurface</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#F0F5EC</item>
+        <item name="colorSurfaceContainerHigh">#E4EADF</item>
+        <item name="colorSurfaceContainerHighest">#DEE4D9</item>
+        <item name="colorOutlineVariant">#C1CABD</item>
+        <item name="colorSecondary">#4D6354</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSurfaceBright">#F7FBF2</item>
+        <item name="colorSurfaceDim">#D7DDD3</item>
     </style>
     <style name="ThemeOverlay.Veyra.Violet" parent="">
         <item name="colorPrimary">#CCB6FF</item>
         <item name="colorOnPrimary">#371E63</item>
         <item name="colorPrimaryContainer">#50367C</item>
         <item name="colorOnPrimaryContainer">#EBDDFF</item>
+        <item name="colorSurface">#15121A</item>
+        <item name="colorSurfaceContainerLowest">#100D15</item>
+        <item name="colorSurfaceContainerLow">#1D1923</item>
+        <item name="colorSurfaceContainer">#211D27</item>
+        <item name="colorSurfaceContainerHigh">#2C2732</item>
+        <item name="colorSurfaceContainerHighest">#37323D</item>
+        <item name="colorOnSurface">#E8DFED</item>
+        <item name="colorOnSurfaceVariant">#CDC2D4</item>
+        <item name="colorOutlineVariant">#4B4354</item>
+        <item name="colorSecondaryContainer">#4D405B</item>
+        <item name="colorOnSecondaryContainer">#EEDDFE</item>
     </style>
     <style name="ThemeOverlay.Veyra.Violet.Light" parent="">
         <item name="colorPrimary">#6C46BC</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">#EBDDFF</item>
         <item name="colorOnPrimaryContainer">#250E47</item>
+        <item name="colorSurface">#FEF7FF</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#F7F0FC</item>
+        <item name="colorSurfaceContainer">#F1EAF6</item>
+        <item name="colorSurfaceContainerHigh">#EBE4F0</item>
+        <item name="colorSurfaceContainerHighest">#E5DEEB</item>
+        <item name="colorOnSurface">#1E1925</item>
+        <item name="colorOnSurfaceVariant">#4C4357</item>
+        <item name="colorOutlineVariant">#CFC3D8</item>
+        <item name="colorSecondaryContainer">#EEDDFE</item>
+        <item name="colorOnSecondaryContainer">#271A36</item>
     </style>
     <style name="ThemeOverlay.Veyra.Blue" parent="">
         <item name="colorPrimary">#A3CCFF</item>
         <item name="colorOnPrimary">#00315C</item>
         <item name="colorPrimaryContainer">#164976</item>
         <item name="colorOnPrimaryContainer">#D3E4FF</item>
+        <item name="colorSurface">#10141A</item>
+        <item name="colorSurfaceContainerLowest">#0B0F15</item>
+        <item name="colorSurfaceContainerLow">#181C23</item>
+        <item name="colorSurfaceContainer">#1C2028</item>
+        <item name="colorSurfaceContainerHigh">#272B33</item>
+        <item name="colorSurfaceContainerHighest">#32363F</item>
+        <item name="colorOnSurface">#E0E3EB</item>
+        <item name="colorOnSurfaceVariant">#C1C7D2</item>
+        <item name="colorOutlineVariant">#424854</item>
+        <item name="colorSecondaryContainer">#374B64</item>
+        <item name="colorOnSecondaryContainer">#D3E4FF</item>
     </style>
     <style name="ThemeOverlay.Veyra.Blue.Light" parent="">
         <item name="colorPrimary">#245FA7</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">#D3E4FF</item>
         <item name="colorOnPrimaryContainer">#001C38</item>
+        <item name="colorSurface">#F8F9FF</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#F1F3FC</item>
+        <item name="colorSurfaceContainer">#EBEDF6</item>
+        <item name="colorSurfaceContainerHigh">#E5E7F0</item>
+        <item name="colorSurfaceContainerHighest">#DFE1EA</item>
+        <item name="colorOnSurface">#181C24</item>
+        <item name="colorOnSurfaceVariant">#424854</item>
+        <item name="colorOutlineVariant">#C2C7D3</item>
+        <item name="colorSecondaryContainer">#D3E4FF</item>
+        <item name="colorOnSecondaryContainer">#102237</item>
     </style>
     <style name="ThemeOverlay.Veyra.Peach" parent="">
         <item name="colorPrimary">#FFBC9E</item>
         <item name="colorOnPrimary">#561F08</item>
         <item name="colorPrimaryContainer">#75351D</item>
         <item name="colorOnPrimaryContainer">#FFDBCC</item>
+        <item name="colorSurface">#1B120E</item>
+        <item name="colorSurfaceContainerLowest">#150D09</item>
+        <item name="colorSurfaceContainerLow">#241A16</item>
+        <item name="colorSurfaceContainer">#281E1A</item>
+        <item name="colorSurfaceContainerHigh">#332823</item>
+        <item name="colorSurfaceContainerHighest">#3E332E</item>
+        <item name="colorOnSurface">#F2DFD5</item>
+        <item name="colorOnSurfaceVariant">#DBC0B3</item>
+        <item name="colorOutlineVariant">#584238</item>
+        <item name="colorSecondaryContainer">#604639</item>
+        <item name="colorOnSecondaryContainer">#FFDBCC</item>
     </style>
     <style name="ThemeOverlay.Veyra.Peach.Light" parent="">
         <item name="colorPrimary">#A74426</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">#FFDBCC</item>
         <item name="colorOnPrimaryContainer">#3A0B00</item>
+        <item name="colorSurface">#FFF8F5</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#FFF0E8</item>
+        <item name="colorSurfaceContainer">#FAE9E1</item>
+        <item name="colorSurfaceContainerHigh">#F4E3DB</item>
+        <item name="colorSurfaceContainerHighest">#EEDDDA</item>
+        <item name="colorOnSurface">#271913</item>
+        <item name="colorOnSurfaceVariant">#584238</item>
+        <item name="colorOutlineVariant">#DDC1B3</item>
+        <item name="colorSecondaryContainer">#FFDBCC</item>
+        <item name="colorOnSecondaryContainer">#2E190E</item>
     </style>
 </resources>

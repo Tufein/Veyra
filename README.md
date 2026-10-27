@@ -4,7 +4,9 @@
 
 A customizable Android browser with a calm start page, bottom navigation, local ad blocking, and practical HTTPS controls. Built with Java, Material 3 components, and Mozilla GeckoView.
 
-**Version:** 0.3.0 · **Stage:** early alpha · **Android:** 9+ (API 28)
+**Development version:** 0.4.0 · **Stage:** early alpha · **Android:** 9+ (API 28)
+
+[Latest published alpha: 0.3.0](https://github.com/Tufein/Veyra/releases/tag/v0.3.0) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
 
 [Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.3.md)
 
@@ -21,7 +23,9 @@ A customizable Android browser with a calm start page, bottom navigation, local 
 
 ### Make it yours
 
-- A full-screen Material You settings page with rounded tonal cards, segmented theme selection, Material switches, and a text-size slider.
+- An independent Material You settings hub with search and separate appearance, home, reading, privacy, shortcut, password-provider, and about pages.
+- Rounded tonal cards, a live palette preview, adaptive theme selection, Material switches, and a reading-size preview.
+- Edit shortcuts and your greeting inside settings without returning to the browser. Navigation and unsaved forms survive activity recreation.
 - Wallpaper-derived colors on Android 12+, with manual accents available on every supported version.
 - Dark, light, or system theme.
 - Mint, lavender, sky blue, and peach accent colors.
@@ -69,8 +73,9 @@ The previously shared 0.2.0 test APK uses the same signing certificate as the pr
 
 In the app:
 
-- **Menu → Veyra aanpassen** opens the Material You settings page.
-- **Menu → Extensies**, or **Settings → Firefox-extensies**, opens the catalog and installed extension manager.
+- **Menu → Instellingen**, or the settings icon on the start page, opens the independent settings hub.
+- **Instellingen → Uitstraling** controls the theme and palette; **Startpagina** and **Snelkoppelingen** manage your personal start page.
+- **Menu → Extensies**, or **Instellingen → Extensies**, opens the catalog and installed extension manager.
 - **Menu → Adblocker voor deze website** controls a website exception.
 - **Menu → HTTPS en verbinding** opens connection and protocol choices.
 - **Menu → Wachtwoorden en passkeys** opens the external credential options.
@@ -116,6 +121,7 @@ On Windows, use `gradlew.bat` and configure the Android SDK path through your en
 # Test the bundled Gecko extension's blocking, exceptions, and HTTPS policy (Node 22+)
 node --test tools/protection_test.cjs
 
+# The JVM suite also renders real Material widgets with Robolectric on Android 9/15.
 # Device checks for settings, theme recreation, protection startup, and unsigned-package rejection
 ./gradlew :app:connectedDebugAndroidTest
 
@@ -125,9 +131,9 @@ python3 tools/smoke_test.py
 
 The smoke test starts a local HTTP fixture through `adb reverse`, then checks typed navigation, JavaScript, links, back navigation, bookmarks, tabs, and request blocking. Enable the adblocker and select **Prefer HTTPS** before running it. It creates test tabs and a bookmark without clearing existing app data. Set `ADB` if `adb` is not on your PATH. Screenshots are written to `app/build/smoke/`.
 
-The Android CI workflow runs the build, unit tests, bundled-protection tests, and Lint on pushes and pull requests. It saves the debug APK and available reports as workflow artifacts. Device tests, Autofill, and passkey sign-in are outside this workflow.
+The Android CI workflow runs the build, unit tests, bundled-protection tests, and Lint on pushes and pull requests. It saves the debug APK and available reports as workflow artifacts. Device tests, Autofill, and passkey sign-in are outside this workflow. Robolectric settings renderings are saved under `app/build/reports/settings-ui/` and included in the CI reports artifact; these are Android-widget test renderings, not phone screenshots.
 
-See [0.3.0 verification](docs/verification-0.3.md) for this change’s checks and device-test limits.
+See [0.4.0 development verification](docs/verification-0.4.md) for the settings UI checks and [0.3.0 verification](docs/verification-0.3.md) for the engine migration’s remaining device-test limits. The 0.4.0 source is a development candidate, not a published APK release.
 
 For the earlier 0.2.0 snapshot, the local build, seven unit tests, and Android Lint passed with no Lint findings. **The 0.2.0 update has not been run on a working emulator or physical phone in the development environment.** See the [verification record](docs/verification-0.2.md) for the exact checks and remaining device tests.
 

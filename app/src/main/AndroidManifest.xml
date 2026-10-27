@@ -19,7 +19,7 @@
         android:theme="@style/Theme.Veyra"
         android:usesCleartextTraffic="true">
         <activity android:name=".ExtensionsActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".SettingsActivity" android:exported="false"
+        <activity android:name=".SettingsActivity" android:exported="false" android:enableOnBackInvokedCallback="true" tools:targetApi="33"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".BrowserActivity"

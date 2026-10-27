@@ -8,8 +8,8 @@ android {
         applicationId 'nl.veyra.browser'
         minSdk 28
         targetSdk 35
-        versionCode 3
-        versionName '0.3.0'
+        versionCode 4
+        versionName '0.4.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     splits {
@@ -32,6 +32,7 @@ android {
         }
     }
     lint { abortOnError true }
+    testOptions { unitTests.includeAndroidResources = true }
 }
 
 dependencies {
@@ -39,6 +40,7 @@ dependencies {
     implementation 'org.mozilla.geckoview:geckoview:158.0.20261021001945'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20240303'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test:core:1.6.1'
@@ -62,4 +64,9 @@ def protectionAssets = tasks.register('prepareProtectionAssets', PrepareProtecti
 }
 androidComponents.onVariants(androidComponents.selector().all()) { variant ->
     variant.sources.assets.addGeneratedSourceDirectory(protectionAssets, { it.outputDirectory })
+}
+
+// Robolectric's Android framework artifacts use the same verified Maven Central route.
+tasks.withType(Test).configureEach {
+    systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
 }
