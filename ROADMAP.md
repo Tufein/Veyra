@@ -1,6 +1,6 @@
 # Veyra — productroadmap
 
-Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De 0.4.0-alpha is een testrelease met openstaande apparaat- en updatecontroles; zie de [releasebeperkingen](docs/releases/v0.4.0.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
+Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De 0.4.1-alpha is een testrelease met openstaande apparaat- en updatecontroles; zie de [releasebeperkingen](docs/releases/v0.4.1.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
 
 Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handhelds. De prioriteit is betrouwbare dagelijkse navigatie met een verzorgde Material You-interface, bruikbare Firefox-extensies en duidelijke privacykeuzes. Meer functies mogen de browser niet onoverzichtelijk of onnodig zwaar maken.
 
@@ -13,7 +13,7 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | Lokale advertentieblokkering | Gebundelde regels, cosmetische filtering, uitzonderingen en HTTPS-beleid; regressietests aanwezig | Betrouwbaarheid op echte websites en wisselwerking met extensies |
 | Firefox-extensies | Catalogus, ondertekende installatie, toestemmingsvensters en beheer aanwezig | Installatie, popups en ondersteunde API’s per extensie op een apparaat |
 | Material You-instellingen 0.4.0 | Nieuwe instellingenhub, detailpagina’s, zoeken, eigen editor en uitgebreidere kleurrollen beschikbaar als testalpha | Visuele en functionele controle op een telefoon naast de UI-tests |
-| Bibliotheek op main na 0.4.0 | Bladwijzers en startpagina samen beheren, vastzetten/losmaken, gekoppeld bewerken en bevestigd verwijderen | Gebruik op hardware; import/export en bredere dagelijkse browserfuncties |
+| Bibliotheek in 0.4.1 | Bladwijzers en startpagina samen beheren, vastzetten/losmaken, gekoppeld bewerken en bevestigd verwijderen | Gebruik op hardware; import/export en bredere dagelijkse browserfuncties |
 | Startpagina | Begroeting, compact beeld, maximaal acht eigen snelkoppelingen | Groot lettertype, kleine schermen, toetsenbord en controller op hardware |
 | Downloads, browsegeschiedenis, privétabs, synchronisatie | Niet geïmplementeerd | Volledige onderstaande oplevercriteria |
 
@@ -22,7 +22,7 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | Mijlpaal | Doel | Prioriteit | Afhankelijk van |
 | --- | --- | --- | --- |
 | 0.4.0 — Een eigen Veyra | Afzonderlijke instellingen en een samenhangende Material You-interface | P0, huidige ontwikkelronde | UI-tests en apparaatcontrole |
-| 0.4.1 — Een betrouwbare basis | Reproduceerbare updates, apparaatvalidatie en crashherstel | P0 | Ondertekeningssleutel en testtoestellen |
+| Volgende 0.4.x — Een betrouwbare basis | Reproduceerbare updates, apparaatvalidatie en crashherstel | P0 | Ondertekeningssleutel en testtoestellen |
 | 0.5 — Dagelijks bruikbaar | Downloads, geschiedenis, bladwijzerbeheer en websitevoorkeuren | P1 | Basisvalidatie en veilige gegevensopslag |
 | 0.6 — Extensies die je kunt vertrouwen | Compatibiliteitsmatrix, betere toestemmingen en herstelbare updates | P1 | Gecko-API-validatie op hardware |
 | 0.7 — Snel en prettig op handhelds | Metingen, tabgeheugen, adaptieve bediening en controllerfocus | P1 | Herhaalbare benchmarks en stabiele sessies |
@@ -49,16 +49,16 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 
 ### Daarna binnen dezelfde ontwerprichting
 
-- [x] Een rustig Material 3-bodemmenu met de belangrijkste browseracties binnen duimbereik (doorontwikkeling op main na 0.4.0; apparaatcontrole open).
-- [x] Een tabbladenpaneel met duidelijke selectie en aparte sluitknoppen (doorontwikkeling op main na 0.4.0; apparaatcontrole open).
+- [x] Een rustig Material 3-bodemmenu met de belangrijkste browseracties binnen duimbereik (beschikbaar in 0.4.1; apparaatcontrole open).
+- [x] Een tabbladenpaneel met duidelijke selectie en aparte sluitknoppen (beschikbaar in 0.4.1; apparaatcontrole open).
 - Consistente pictogrammen en benoeming van alle acties; geen instellingsdialogen die onverwacht naar een ander onderdeel terugsturen.
 - Op tablets een bredere of tweedelige instellingenindeling, zonder uitgerekte telefoonkaarten.
 
 **Klaar wanneer:** alle instellingen via hun eigen pagina bereikbaar zijn, Terug de vorige pagina herstelt, opgeslagen voorkeuren na opnieuw openen blijven gelden en de UI leesbaar blijft op een scherm van 320 dp met groot lettertype. Een UI-rendering vervangt de controle op een echt toestel niet.
 
-## 0.4.1 — Eerst betrouwbaarheid en updates
+## Volgende 0.4.x — Eerst betrouwbaarheid en updates
 
-Dit werk heeft voorrang boven extra browserfuncties.
+De 0.4.1-alpha levert de vormgeving en bibliotheek. De onderstaande betrouwbaarheidstaken blijven open en hebben voorrang boven extra browserfuncties.
 
 1. **Vaste ondertekening.** Kies en beveilig de toekomstige ondertekeningssleutel, sla die uitsluitend in de daarvoor bestemde geheime opslag op en gebruik dezelfde sleutel voor volgende builds. Leg vast welke bestaande alpha-installaties in-place kunnen worden bijgewerkt. Geen geheime sleutels in Git of releasebestanden.
 2. **Apparaatmatrix.** Test minimaal Android 9, Android 12+ met Material You en een recente Android-versie; voeg minimaal één echte handheld toe. Test ARM64 en de ondersteunde oudere ARM-variant waar hardware beschikbaar is.

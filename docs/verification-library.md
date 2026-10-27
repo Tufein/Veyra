@@ -1,6 +1,6 @@
 # Verification: library and browser panels
 
-This development update follows the published 0.4.0 alpha. It does not replace the APKs attached to that release.
+The [0.4.1 alpha](releases/v0.4.1.md) packages this library and browser-panel update. The earlier 0.4.0 assets remain unchanged.
 
 ## Automated validation
 

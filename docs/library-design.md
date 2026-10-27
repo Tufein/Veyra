@@ -1,6 +1,6 @@
 # Bibliotheek, browserpanelen en instellingen
 
-Deze doorontwikkeling op `main` volgt op de 0.4.0-alpha. De bestaande 0.4.0-download wordt er niet door vervangen.
+Deze verbeteringen zijn beschikbaar in de [0.4.1-alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.1), als opvolger van 0.4.0.
 
 ## Eén herkenbare plek voor websites
 

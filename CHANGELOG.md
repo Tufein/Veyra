@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.1 — 2026-10-27 (alpha)
 
 - Replace the long browser menu and tab dialog with scrollable Material bottom panels, named icon actions, clear tab selection, and separate close targets.
 - Add one searchable library for bookmarks and start-page shortcuts, with pin/unpin, editing, confirmed deletion, and shared website rows.

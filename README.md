@@ -4,11 +4,11 @@
 
 A customizable Android browser with a calm start page, bottom navigation, local ad blocking, and practical HTTPS controls. Built with Java, Material 3 components, and Mozilla GeckoView.
 
-**Version:** 0.4.0 · **Stage:** early alpha · **Android:** 9+ (API 28)
+**Version:** 0.4.1 · **Stage:** early alpha · **Android:** 9+ (API 28)
 
-[Download 0.4.0 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.0) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
+[Download 0.4.1 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.1) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
 
-**On main, after the release:** a shared bookmark/start-page library and redesigned browser panels. [Preview and behavior](docs/library-design.md). These changes are not included in the published 0.4.0 APKs.
+**New in 0.4.1:** a shared bookmark/start-page library and redesigned browser panels. [Preview and behavior](docs/library-design.md).
 
 [Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.4.md)
 
@@ -71,11 +71,11 @@ Compatibility depends on the extension and the WebExtensions APIs supported by G
 
 ## Try Veyra
 
-Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. [Download the ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.0/Veyra-0.4.0-arm64-v8a-debug.apk) for most modern phones, or choose another architecture on the [0.4.0 release page](https://github.com/Tufein/Veyra/releases/tag/v0.4.0). These are debug-signed testing builds; live-device validation remains outstanding.
+Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. [Download the ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.1/Veyra-0.4.1-arm64-v8a-debug.apk) for most modern phones, or choose another architecture on the [0.4.1 release page](https://github.com/Tufein/Veyra/releases/tag/v0.4.1). These are debug-signed testing builds; live-device validation remains outstanding.
 
 The previously shared 0.2.0 test APK uses the same signing certificate as the previously shared 0.1.0 APK, allowing an update that preserves local app data. An APK built on another machine or a CI runner normally has a different debug signing key. Keeping the same application ID, a compatible version code, and the same signing key is necessary to update an existing installation.
 
-In-place update compatibility between the published 0.3.0 and 0.4.0 alpha builds has not been established. Uninstalling the app deletes its local data; do not uninstall to resolve a signature conflict if you need to keep that data. See the [release notes](docs/releases/v0.4.0.md).
+In-place update compatibility between the published alpha builds has not been established. Uninstalling the app deletes its local data; do not uninstall to resolve a signature conflict if you need to keep that data. See the [release notes](docs/releases/v0.4.1.md).
 
 In the app:
 
@@ -139,7 +139,7 @@ The smoke test starts a local HTTP fixture through `adb reverse`, then checks ty
 
 The Android CI workflow runs the build, unit tests, bundled-protection tests, and Lint on pushes and pull requests. It saves the debug APK and available reports as workflow artifacts. Device tests, Autofill, and passkey sign-in are outside this workflow. Robolectric settings renderings are saved under `app/build/reports/settings-ui/` and included in the CI reports artifact; these are Android-widget test renderings, not phone screenshots.
 
-See [0.4.0 development verification](docs/verification-0.4.md) for the settings UI checks and [0.3.0 verification](docs/verification-0.3.md) for the engine migration’s remaining device-test limits. The 0.4.0 source is a development candidate, not a published APK release.
+See [library and browser-panel verification](docs/verification-library.md), [settings verification](docs/verification-0.4.md), and [engine verification](docs/verification-0.3.md). Physical-device and signed-update validation remain outstanding for this alpha.
 
 For the earlier 0.2.0 snapshot, the local build, seven unit tests, and Android Lint passed with no Lint findings. **The 0.2.0 update has not been run on a working emulator or physical phone in the development environment.** See the [verification record](docs/verification-0.2.md) for the exact checks and remaining device tests.
 
