@@ -2,15 +2,23 @@ plugins { id 'com.android.application' }
 
 android {
     namespace 'nl.veyra.browser'
-    compileSdk 35
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
         applicationId 'nl.veyra.browser'
         minSdk 28
         targetSdk 35
-        versionCode 2
-        versionName '0.2.0'
-        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+        versionCode 3
+        versionName '0.3.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+            universalApk false
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -26,4 +34,32 @@ android {
     lint { abortOnError true }
 }
 
-dependencies { testImplementation 'junit:junit:4.13.2' }
+dependencies {
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'org.mozilla.geckoview:geckoview:158.0.20261021001945'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20240303'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
+}
+
+// Keep the existing attributed snapshot as the single source for both blockers.
+abstract class PrepareProtectionAssets extends DefaultTask {
+    @InputFile abstract RegularFileProperty getHostsFile()
+    @OutputDirectory abstract DirectoryProperty getOutputDirectory()
+    @TaskAction void prepare() {
+        def target = outputDirectory.file('veyra-protection/hosts.txt').get().asFile.toPath()
+        java.nio.file.Files.createDirectories(target.parent)
+        java.nio.file.Files.copy(hostsFile.get().asFile.toPath(), target,
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+}
+def protectionAssets = tasks.register('prepareProtectionAssets', PrepareProtectionAssets) {
+    hostsFile.set(layout.projectDirectory.file('src/main/assets/adblock-hosts.txt'))
+    outputDirectory.set(layout.buildDirectory.dir('generated/protectionAssets'))
+}
+androidComponents.onVariants(androidComponents.selector().all()) { variant ->
+    variant.sources.assets.addGeneratedSourceDirectory(protectionAssets, { it.outputDirectory })
+}

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Veyra</string>
+    <string name="settings_text_size">Tekstgrootte · %1$d%%</string>
+    <string name="settings_navigation_label">%1$s\n%2$s</string>
+    <string name="extension_enabled">Ingeschakeld</string>
+    <string name="extension_catalog_loading">Mozilla Add-ons laden…</string>
+    <string name="extension_busy">Bezig…</string>
+    <string name="extension_catalog_empty">Geen compatibele Android-extensies gevonden. Probeer een andere zoekterm.</string>
+    <string name="extension_catalog_source">Van Mozilla Add-ons · Firefox voor Android</string>
+    <string name="extension_catalog_failed">Mozilla Add-ons is niet bereikbaar. Controleer je verbinding en tik op Zoeken om opnieuw te proberen.</string>
 </resources>

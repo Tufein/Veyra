@@ -4,7 +4,7 @@ Veyra is an early Android browser project. Keep changes focused and distinguish 
 
 ## Set up
 
-Use Android Studio or JDK 17/21 with Android SDK 35 and Build Tools 35.0.0. Open the repository root and let Gradle sync. The [README](README.md#quick-start) contains command-line instructions.
+Use Android Studio or JDK 21 with Android SDK Platform 37.2 and Build Tools 37.0.0. Open the repository root and let Gradle sync. The [README](README.md#quick-start) contains command-line instructions.
 
 Create a branch for your change. Keep local SDK paths, build output, signing keys, credentials, and device data out of commits. The supplied `.gitignore` covers standard generated files and keystores.
 
@@ -14,6 +14,7 @@ Create a branch for your change. Keep local SDK paths, build output, signing key
 - Preserve tab restoration, keyboard behavior, bottom navigation, and Android 9 compatibility.
 - Validate URLs before navigating. Preserve certificate checks and the selected HTTPS policy.
 - Delegate credentials to Android and the user's chosen provider. Do not add a generic JavaScript bridge for arbitrary websites to request credentials.
+- Keep extension signature/TLS verification and permission prompts enabled. Do not expose native messaging to websites or downloaded extensions.
 - Keep blocklist attribution and license notices with any list changes.
 - Update the English README, Dutch guide where applicable, and changelog when behavior changes.
 
@@ -21,6 +22,9 @@ Create a branch for your change. Keep local SDK paths, build output, signing key
 
 ```sh
 ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+node --test tools/protection_test.cjs
+# With a connected isolated test device:
+./gradlew :app:connectedDebugAndroidTest
 ```
 
 Add meaningful tests when changing URL parsing, HTTPS policy, blocking, or other behavior with a concrete regression risk. For UI work, check the affected flow on a device or emulator, including both appearance modes and a small phone screen. Record checks you could not complete.

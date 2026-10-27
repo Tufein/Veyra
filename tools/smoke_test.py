@@ -106,7 +106,7 @@ def main():
         print("PASS bookmark creation and listing", flush=True)
         menu("Nieuw tabblad")
         find("Het web.", partial=True)
-        summary = find("geblokkeerd in open tabs", partial=True)
+        summary = find("geblokkeerd in deze sessie", partial=True)
         assert int(summary.attrib["text"].split()[0]) > 0, "Tracking fixture was not blocked"
         print("PASS local tracker request blocked", flush=True)
         (OUTPUT / "home.png").write_bytes(adb("exec-out", "screencap", "-p", binary=True))

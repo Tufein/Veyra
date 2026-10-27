@@ -1,13 +1,12 @@
 package nl.veyra.browser;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,30 +17,21 @@ import android.graphics.drawable.RippleDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
-import android.view.ContextThemeWrapper;
 import android.view.autofill.AutofillManager;
 import android.provider.Settings;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.CookieManager;
-import android.webkit.GeolocationPermissions;
-import android.webkit.PermissionRequest;
-import android.webkit.RenderProcessGoneDetail;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.WebExtension;
+import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.GeckoResult;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -51,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -59,9 +48,8 @@ import java.util.HashSet;
 import java.util.Collections;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.AtomicInteger;
 
-/** Native browser chrome; the installed Android System WebView supplies the engine. */
+/** Native Material browser chrome backed by GeckoView and signed WebExtensions. */
 public final class BrowserActivity extends Activity {
     private int BG, SURFACE, BORDER, TEXT, MUTED, ACCENT, ACCENT_INK;
     private boolean light;
@@ -72,9 +60,9 @@ public final class BrowserActivity extends Activity {
     private static final int MAX_TABS = 12;
     private static final int MAX_RESIDENT = 3;
     private static final int FILE_PICKER = 41;
+    private static final int SETTINGS_PAGE = 42;
 
     private final List<Tab> tabs = new ArrayList<>();
-    private final List<WebView> pendingPopups = new ArrayList<>();
     private int selected;
     private long clock;
     private SharedPreferences preferences;
@@ -91,7 +79,9 @@ public final class BrowserActivity extends Activity {
     private TextView blockedSummary;
     private ValueCallback<Uri[]> fileCallback;
     private boolean destroyed;
-    private boolean engineInitialized;
+    private VeyraRuntime engine;
+    private ExtensionUi extensionUi;
+    private final Runnable blockedListener = this::updateBlockedSummary;
 
     private static final class Tab {
         volatile String url = "";
@@ -99,16 +89,18 @@ public final class BrowserActivity extends Activity {
         String title = "Nieuw tabblad";
         boolean home = true;
         String error;
-        WebView web;
+        BrowserView web;
         Bundle savedWebState;
         long used;
-        final AtomicInteger blocked = new AtomicInteger();
     }
 
     @Override public void onCreate(Bundle state) {
         preferences = getSharedPreferences("veyra", MODE_PRIVATE);
         readSettings();
         super.onCreate(state);
+        engine = VeyraRuntime.get(this);
+        engine.addBlockedListener(blockedListener);
+        extensionUi = new ExtensionUi(this, this::createExtensionTab);
         buildChrome();
         restoreTabs();
         Thread lists = new Thread(() -> {
@@ -230,26 +222,12 @@ public final class BrowserActivity extends Activity {
         setContentView(root);
         int flags = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : 0;
         getWindow().getDecorView().setSystemUiVisibility(flags);
+        getWindow().setStatusBarColor(BG); getWindow().setNavigationBarColor(BG);
         root.requestFocus();
     }
 
     private void readSettings() {
-        String theme = preferences.getString("theme", "dark");
-        light = "light".equals(theme) || ("system".equals(theme)
-                && (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES);
-        BG = light ? 0xFFF5F6F2 : 0xFF0D1212;
-        SURFACE = light ? Color.WHITE : 0xFF192222;
-        BORDER = light ? 0xFFE1E6DE : 0xFF2A3836;
-        TEXT = light ? 0xFF182421 : 0xFFF0F6F1;
-        MUTED = light ? 0xFF5B6D65 : 0xFF9AAFA5;
-        String accent = preferences.getString("accent", "mint");
-        switch (accent) {
-            case "violet": ACCENT = light ? 0xFF6C46BC : 0xFFCCB6FF; break;
-            case "blue": ACCENT = light ? 0xFF245FA7 : 0xFFA3CCFF; break;
-            case "peach": ACCENT = light ? 0xFFA74426 : 0xFFFFBC9E; break;
-            default: ACCENT = light ? 0xFF28714E : 0xFFB4F5CC; break;
-        }
-        ACCENT_INK = light ? Color.WHITE : 0xFF10251B;
+        light = ThemeSupport.isLight(this, preferences);
         blocking = preferences.getBoolean("blocking", true);
         httpsOnly = preferences.getBoolean("https_only", false);
         adExceptions = Collections.unmodifiableSet(new HashSet<>(preferences.getStringSet("ad_exceptions", Collections.emptySet())));
@@ -259,23 +237,28 @@ public final class BrowserActivity extends Activity {
             case "ecosia": searchPrefix = "https://www.ecosia.org/search?q="; break;
             default: searchPrefix = "https://duckduckgo.com/?q="; break;
         }
-        setTheme(light ? R.style.Theme_Veyra_Light : R.style.Theme_Veyra);
+        ThemeSupport.apply(this, preferences);
+        BG = ThemeSupport.color(this, com.google.android.material.R.attr.colorSurface);
+        SURFACE = ThemeSupport.color(this, com.google.android.material.R.attr.colorSurfaceContainer);
+        BORDER = ThemeSupport.color(this, com.google.android.material.R.attr.colorOutlineVariant);
+        TEXT = ThemeSupport.color(this, com.google.android.material.R.attr.colorOnSurface);
+        MUTED = ThemeSupport.color(this, com.google.android.material.R.attr.colorOnSurfaceVariant);
+        ACCENT = ThemeSupport.color(this, com.google.android.material.R.attr.colorPrimary);
+        ACCENT_INK = ThemeSupport.color(this, com.google.android.material.R.attr.colorOnPrimary);
     }
 
     private AlertDialog.Builder dialogBuilder() {
-        return new AlertDialog.Builder(new ContextThemeWrapper(this, light
-                ? android.R.style.Theme_Material_Light_Dialog_Alert : android.R.style.Theme_Material_Dialog_Alert));
+        return new MaterialAlertDialogBuilder(this);
     }
 
     private void settingsChanged() {
         boolean previousPolicy = httpsOnly;
         readSettings();
+        engine.updatePreferences();
         for (Tab tab : tabs) {
             if (previousPolicy != httpsOnly) {
                 dispose(tab, false);
                 tab.savedWebState = null;
-            } else if (tab.web != null) {
-                tab.web.getSettings().setTextZoom(preferences.getInt("text_zoom", 100));
             }
         }
         buildChrome();
@@ -408,7 +391,6 @@ public final class BrowserActivity extends Activity {
         tab.error = null;
         tab.url = url;
         tab.pageHost = host(url);
-        tab.blocked.set(0);
         if (!UrlPolicy.allowed(url, httpsOnly)) {
             if (tab.web != null) tab.web.stopLoading();
             tab.error = HTTPS_ERROR;
@@ -423,192 +405,117 @@ public final class BrowserActivity extends Activity {
         persistTabs();
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private void ensureWeb(Tab tab) {
+    private void ensureWeb(Tab tab) { ensureWeb(tab, false); }
+
+    private void ensureWeb(Tab tab, boolean openedByEngine) {
+        if (tab.web != null && tab.web.isClosed()) { dispose(tab, false); }
         if (tab.web != null) return;
-        WebView web = new WebView(this);
-        engineInitialized = true;
-        tab.web = web;
-        WebSettings settings = web.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(false);
-        settings.setAllowContentAccess(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setSafeBrowsingEnabled(true);
-        settings.setGeolocationEnabled(false);
-        settings.setMediaPlaybackRequiresUserGesture(true);
-        settings.setSupportMultipleWindows(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(false);
-        settings.setBuiltInZoomControls(true);
-        settings.setDisplayZoomControls(false);
-        settings.setUseWideViewPort(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setTextZoom(preferences.getInt("text_zoom", 100));
-        web.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_YES);
-        CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(web, false);
-        web.setBackgroundColor(Color.WHITE);
-        web.setWebViewClient(new WebViewClient() {
-            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
+        BrowserView web = new BrowserView(this, new BrowserView.Listener() {
+            @Override public boolean allowNavigation(String url, boolean gesture) {
                 String valid = UrlPolicy.normalizeWebUrl(url);
-                if (valid != null) {
-                    if (request.isForMainFrame() && !UrlPolicy.allowed(valid, httpsOnly)) {
-                        tab.url = valid;
-                        tab.pageHost = host(valid);
-                        tab.error = HTTPS_ERROR;
-                        if (tab == current()) { renderPage(); updateChrome(); }
-                        return true;
-                    }
-                    if (request.isForMainFrame()) {
-                        tab.url = valid;
-                        tab.pageHost = host(valid);
-                        tab.error = null;
-                        if (tab == current()) updateChrome();
-                    }
+                if (valid == null) {
+                    if ("about:blank".equals(url) || url.startsWith("moz-extension://")) return true;
+                    if (gesture) openExternal(Uri.parse(url));
                     return false;
                 }
-                if (request.isForMainFrame() && request.hasGesture()) openExternal(request.getUrl());
+                if (!UrlPolicy.allowed(valid, httpsOnly)) {
+                    tab.url = valid; tab.pageHost = host(valid); tab.error = HTTPS_ERROR;
+                    if (tab == current()) { renderPage(); updateChrome(); }
+                    return false;
+                }
                 return true;
             }
-
-            @Override public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
-                if (UrlPolicy.normalizeWebUrl(url) != null && !UrlPolicy.allowed(url, httpsOnly)) {
-                    view.stopLoading(); tab.url = url; tab.error = HTTPS_ERROR;
-                    if (tab == current()) { renderPage(); updateChrome(); }
-                    return;
-                }
-                if (UrlPolicy.normalizeWebUrl(url) != null) {
-                    tab.url = url;
-                    tab.pageHost = host(url);
-                }
-                tab.error = null;
+            @Override public void locationChanged(String url) {
+                if (UrlPolicy.normalizeWebUrl(url) == null && !url.startsWith("moz-extension://")) return;
+                tab.url = url; tab.pageHost = host(url); tab.error = null;
                 if (tab == current() && !tab.home) { renderPage(); updateChrome(); }
             }
-
-            @Override public void onPageFinished(WebView view, String url) {
-                if (blockingFor(tab) && tab.error == null) hideAdContainers(view);
-                if (tab == current()) { updateChrome(); updateBlockedSummary(); }
-                persistTabs();
-            }
-
-            @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                if (httpsOnly && "http".equalsIgnoreCase(request.getUrl().getScheme())) {
-                    return new WebResourceResponse("text/plain", "UTF-8", 403, "HTTPS Required",
-                            Collections.emptyMap(), new ByteArrayInputStream(new byte[0]));
-                }
-                if (blockingFor(tab) && !request.isForMainFrame()
-                        && TrackerBlocker.blocks(request.getUrl().getHost(), tab.pageHost)) {
-                    tab.blocked.incrementAndGet();
-                    return new WebResourceResponse("text/plain", "UTF-8", 200, "OK",
-                            java.util.Collections.emptyMap(), new ByteArrayInputStream(new byte[0]));
-                }
-                return null;
-            }
-
-            @Override public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse response) {
-                if (request.isForMainFrame() && httpsOnly && "http".equalsIgnoreCase(request.getUrl().getScheme())) {
-                    tab.error = HTTPS_ERROR;
-                    if (tab == current()) { renderPage(); updateChrome(); }
-                }
-            }
-
-            @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError issue) {
-                if (!request.isForMainFrame()) return;
-                tab.error = httpsOnly && "http".equalsIgnoreCase(request.getUrl().getScheme())
-                        ? HTTPS_ERROR : "Controleer je verbinding of probeer het webadres opnieuw.";
-                if (tab == current()) { renderPage(); updateChrome(); }
-            }
-
-            @Override public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
-                // A renderer can be shared by several tabs; Android calls each affected view.
-                if (view.getParent() instanceof ViewGroup) ((ViewGroup) view.getParent()).removeView(view);
-                view.destroy();
-                tab.web = null;
-                tab.savedWebState = null;
-                tab.error = "Android heeft deze pagina gesloten. Tik op opnieuw proberen.";
-                if (!destroyed && tab == current()) { renderPage(); updateChrome(); }
-                return true;
-            }
-        });
-        web.setWebChromeClient(new WebChromeClient() {
-            @Override public void onProgressChanged(WebView view, int value) {
-                if (tab == current() && !tab.home) {
+            @Override public void progressChanged(int value) {
+                if (tab != current() || tab.home) return;
+                if (value >= 0) {
                     progress.setProgress(value);
                     progress.setVisibility(value < 100 && tab.error == null ? View.VISIBLE : View.INVISIBLE);
                 }
+                updateChrome();
             }
-            @Override public void onReceivedTitle(WebView view, String title) {
-                if (title != null && !title.isEmpty()) tab.title = title;
+            @Override public void titleChanged(String title) { if (!title.isEmpty()) tab.title = title; }
+            @Override public void finished() {
+                if (tab == current()) { updateChrome(); updateBlockedSummary(); }
+                persistTabs();
             }
-            @Override public void onPermissionRequest(PermissionRequest request) { request.deny(); }
-            @Override public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-                callback.invoke(origin, false, false);
+            @Override public void failed(String message) {
+                tab.error = message;
+                if (tab == current()) { renderPage(); updateChrome(); }
             }
-            @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
-                if (tab != current()) return false;
-                cancelFilePicker();
-                fileCallback = callback;
-                try {
-                    startActivityForResult(params.createIntent(), FILE_PICKER);
-                    return true;
-                } catch (ActivityNotFoundException unavailable) {
-                    cancelFilePicker();
-                    toast("Geen bestandskiezer beschikbaar.");
-                    return true;
-                }
+            @Override public GeckoSession newSession(String url) { return createExtensionTab(url); }
+            @Override public void chooseFile(String[] types, boolean multiple, ValueCallback<Uri[]> callback) {
+                cancelFilePicker(); fileCallback = callback;
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
+                if (types != null && types.length > 0) intent.putExtra(Intent.EXTRA_MIME_TYPES, types);
+                try { startActivityForResult(intent, FILE_PICKER); }
+                catch (ActivityNotFoundException unavailable) { cancelFilePicker(); toast("Geen bestandskiezer beschikbaar."); }
             }
-            @Override public boolean onCreateWindow(WebView view, boolean dialog, boolean gesture, Message message) {
-                if (!gesture || tabs.size() >= MAX_TABS) return false;
-                // A temporary view receives target=_blank, then hands its URL to a normal tab.
-                WebView popup = new WebView(BrowserActivity.this);
-                pendingPopups.add(popup);
-                popup.getSettings().setAllowFileAccess(false);
-                popup.getSettings().setAllowContentAccess(false);
-                popup.setWebViewClient(new WebViewClient() {
-                    private boolean handled;
-                    private boolean capture(String url) {
-                        if (handled) return true;
-                        handled = true;
-                        String valid = UrlPolicy.normalizeWebUrl(url);
-                        popup.stopLoading();
-                        new android.os.Handler(getMainLooper()).post(() -> {
-                            if (!pendingPopups.remove(popup)) return;
-                            popup.destroy();
-                            if (valid != null && !destroyed && tabs.size() < MAX_TABS) { newTab(); navigate(valid); }
-                        });
-                        return true;
-                    }
-                    @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                        return capture(request.getUrl().toString());
-                    }
-                    @Override public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
-                        if (!"about:blank".equals(url)) capture(url);
-                    }
-                });
-                ((WebView.WebViewTransport) message.obj).setWebView(popup);
-                message.sendToTarget();
-                new android.os.Handler(getMainLooper()).postDelayed(() -> {
-                    if (pendingPopups.remove(popup)) { popup.stopLoading(); popup.destroy(); }
-                }, 15000);
-                return true;
-            }
-        });
-        web.setDownloadListener((url, agent, disposition, mime, length) -> toast(
-                "Bestanden downloaden komt in een volgende versie."));
+        }, openedByEngine);
+        tab.web = web;
+        attachExtensions(web);
         if (tab.savedWebState != null) {
-            if (web.restoreState(tab.savedWebState) == null && !tab.url.isEmpty()) web.loadUrl(tab.url);
+            if (!web.restoreState(tab.savedWebState) && !tab.url.isEmpty()) web.loadUrl(tab.url);
             tab.savedWebState = null;
         }
     }
 
+    private GeckoSession createExtensionTab(String uri) {
+        if (tabs.size() >= MAX_TABS) return null;
+        if (uri != null && !uri.startsWith("moz-extension://") && !UrlPolicy.allowed(uri, httpsOnly)) return null;
+        Tab added = new Tab(); added.home = false; added.url = uri == null ? "" : uri;
+        for (Tab tab : tabs) if (tab.web != null) {
+            tab.web.onPause(); engine.runtime.getWebExtensionController().setTabActive(tab.web.session, false);
+        }
+        tabs.add(added); selected = tabs.size() - 1; ensureWeb(added, true);
+        added.web.onResume(); trimResidentTabs(); renderPage(); updateChrome(); persistTabs();
+        return added.web.session;
+    }
+
+    private void attachExtensions(BrowserView web) {
+        engine.runtime.getWebExtensionController().list().accept(extensions -> {
+            if (destroyed || web.isClosed()) return;
+            for (WebExtension extension : extensions) {
+                if (extension.isBuiltIn) continue;
+                extensionUi.bind(extension);
+                web.session.getWebExtensionController().setActionDelegate(extension, extensionUi.actions);
+                web.session.getWebExtensionController().setTabDelegate(extension, new WebExtension.SessionTabDelegate() {
+                    @Override public GeckoResult<AllowOrDeny> onCloseTab(WebExtension source, GeckoSession session) {
+                        for (int i = 0; i < tabs.size(); i++) if (tabs.get(i).web == web) {
+                            closeTab(i); return GeckoResult.fromValue(AllowOrDeny.ALLOW);
+                        }
+                        return GeckoResult.fromValue(AllowOrDeny.DENY);
+                    }
+                    @Override public GeckoResult<AllowOrDeny> onUpdateTab(WebExtension source, GeckoSession session,
+                            WebExtension.UpdateTabDetails details) {
+                        if (Boolean.TRUE.equals(details.active)) {
+                            for (int i = 0; i < tabs.size(); i++) if (tabs.get(i).web == web) { selected = i; showSelected(); break; }
+                        }
+                        return GeckoResult.fromValue(AllowOrDeny.ALLOW);
+                    }
+                });
+            }
+        }, failure -> toast("Extensies konden niet worden gekoppeld."));
+    }
+
     private void showSelected() {
-        for (Tab tab : tabs) if (tab.web != null && tab != current()) tab.web.onPause();
+        for (Tab tab : tabs) if (tab.web != null && tab != current()) {
+            tab.web.onPause();
+            engine.runtime.getWebExtensionController().setTabActive(tab.web.session, false);
+        }
         Tab tab = current();
         tab.used = ++clock;
+        if (tab.home) {
+            if (tab.web != null) { tab.web.onPause(); engine.runtime.getWebExtensionController().setTabActive(tab.web.session, false); }
+            engine.activeSession = null;
+        }
         if (!tab.home) {
-            if (!UrlPolicy.allowed(tab.url, httpsOnly)) {
+            if (!tab.url.startsWith("moz-extension://") && !UrlPolicy.allowed(tab.url, httpsOnly)) {
                 tab.error = HTTPS_ERROR;
                 renderPage(); updateChrome(); persistTabs(); return;
             }
@@ -676,9 +583,8 @@ public final class BrowserActivity extends Activity {
 
     private void updateBlockedSummary() {
         if (blockedSummary == null || tabs.isEmpty()) return;
-        int total = 0;
-        for (Tab tab : tabs) total += tab.blocked.get();
-        blockedSummary.setText(blocking ? total + (total == 1 ? " verzoek geblokkeerd in open tabs" : " verzoeken geblokkeerd in open tabs")
+        int total = engine == null ? 0 : engine.blockedCount();
+        blockedSummary.setText(blocking ? total + (total == 1 ? " verzoek geblokkeerd in deze sessie" : " verzoeken geblokkeerd in deze sessie")
                 : "Via het menu kun je blokkering aanzetten");
     }
 
@@ -737,7 +643,7 @@ public final class BrowserActivity extends Activity {
     private void showMenu() {
         String[] items = { "Nieuw tabblad", "Bladwijzer toevoegen", "Bladwijzers", "Pagina delen",
                 "Zoeken op pagina", "Adblocker voor deze website", "HTTPS en verbinding",
-                "Veyra aanpassen", "Wachtwoorden en passkeys", "Over Veyra" };
+                "Veyra aanpassen", "Wachtwoorden en passkeys", "Extensies", "Over Veyra" };
         dialogBuilder().setTitle("Jouw Veyra").setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0: newTab(); break;
@@ -749,11 +655,12 @@ public final class BrowserActivity extends Activity {
                 case 6: showConnection(); break;
                 case 7: showSettings(); break;
                 case 8: showCredentials(); break;
-                case 9:
-                    dialogBuilder().setTitle("Veyra · 0.2.0")
+                case 9: startActivity(new Intent(this, ExtensionsActivity.class)); break;
+                case 10:
+                    dialogBuilder().setTitle("Veyra · 0.3.0")
                             .setMessage("Het web. Op jouw tempo.\n\nMet een eigen thema, lokale advertentieblokkering en Android Autofill. "
                                     + "Tabadressen, instellingen en bladwijzers blijven op je telefoon. Je zoekopdrachten gaan naar de gekozen zoekmachine. "
-                                    + "Websites en de WebView-provider verwerken hun eigen verkeer.\n\n"
+                                    + "Websites en de Gecko-engine verwerken hun eigen verkeer.\n\n"
                                     + "Veyra heeft geen eigen wachtwoordkluis. Externe passkey-logins openen in een andere browser. "
                                     + "Een snelheidsvoordeel tegenover Samsung Internet is nog niet gemeten.")
                             .setPositiveButton("Gereed", null).show();
@@ -761,17 +668,6 @@ public final class BrowserActivity extends Activity {
                 default: break;
             }
         }).show();
-    }
-
-    private boolean blockingFor(Tab tab) {
-        return blocking && !adExceptions.contains(tab.pageHost.toLowerCase(java.util.Locale.ROOT));
-    }
-
-    private void hideAdContainers(WebView web) {
-        web.evaluateJavascript("(function(){if(document.getElementById('veyra-adblock-style'))return;"
-                + "var s=document.createElement('style');s.id='veyra-adblock-style';"
-                + "s.textContent='.adsbygoogle,.ad-slot,.advertisement,.advertentie,[data-ad-slot],iframe[id^=google_ads_iframe]"
-                + "{display:none!important}';(document.head||document.documentElement).appendChild(s);})()", null);
     }
 
     private void showBlockingInfo() {
@@ -782,7 +678,7 @@ public final class BrowserActivity extends Activity {
                         + TrackerBlocker.size() + " lokale domeinregels en het verbergen van bekende advertentievakken. "
                         + "De hoofdpagina zelf wordt niet geblokkeerd. Dit blokkeert niet elke advertentie, zoals veel videoadvertenties.\n\n"
                         + (tab.home ? "Open een website om een uitzondering toe te voegen."
-                        : site + "\n" + tab.blocked.get() + " verzoeken geblokkeerd in dit tabblad.\n"
+                        : site + "\n" + engine.blockedCount() + " verzoeken geblokkeerd in deze sessie.\n"
                         + (adExceptions.contains(site) ? "Blokkering staat uit voor deze website." : "Blokkering volgt je algemene instelling.")))
                 .setNegativeButton("Sluiten", null)
                 .setNeutralButton("Instellingen", (d, which) -> showSettings());
@@ -791,9 +687,9 @@ public final class BrowserActivity extends Activity {
                 Set<String> exceptions = new HashSet<>(adExceptions);
                 if (!exceptions.remove(site)) exceptions.add(site);
                 preferences.edit().putStringSet("ad_exceptions", exceptions).apply();
-                readSettings();
+                readSettings(); engine.updatePreferences();
                 if (!blocking && !exceptions.contains(site)) toast("De algemene adblocker staat nog uit.");
-                if (tab.web != null) { tab.error = null; tab.blocked.set(0); tab.web.reload(); }
+                if (tab.web != null) { tab.error = null; tab.web.reload(); }
             });
         }
         builder.show();
@@ -828,71 +724,8 @@ public final class BrowserActivity extends Activity {
     }
 
     private void showSettings() {
-        LinearLayout list = column();
-        list.setPadding(dp(20), dp(4), dp(20), dp(12));
-        AlertDialog settings = dialogBuilder().setTitle("Maak Veyra van jou")
-                .setView(wrapScroll(list)).setPositiveButton("Gereed", null).create();
-        section(list, "UITSTRALING");
-        setting(list, "Kleurthema", themeLabel(), v -> {
-            settings.dismiss(); choose("Kleurthema", "theme", new String[] { "Donker", "Licht", "Volg Android" }, new String[] { "dark", "light", "system" }, "dark");
-        });
-        setting(list, "Accentkleur", accentLabel(), v -> {
-            settings.dismiss(); choose("Accentkleur", "accent", new String[] { "Mint", "Lavendel", "Hemelsblauw", "Perzik" }, new String[] { "mint", "violet", "blue", "peach" }, "mint");
-        });
-        setting(list, "Startpagina", preferences.getBoolean("compact_home", false) ? "Compact" : "Ruimtelijk", v -> {
-            preferences.edit().putBoolean("compact_home", !preferences.getBoolean("compact_home", false)).apply();
-            settings.dismiss(); settingsChanged(); showSettings();
-        });
-        setting(list, "Jouw naam", preferences.getString("nickname", "").isEmpty() ? "Voeg een persoonlijke begroeting toe" : preferences.getString("nickname", ""), v -> {
-            settings.dismiss(); EditText field = new EditText(this);
-            field.setSingleLine(true); field.setText(preferences.getString("nickname", ""));
-            field.setFilters(new android.text.InputFilter[] { new android.text.InputFilter.LengthFilter(24) });
-            field.setHint("Hoe mogen we je noemen?");
-            dialogBuilder().setTitle("Jouw naam").setView(field).setPositiveButton("Bewaren", (d, w) -> {
-                preferences.edit().putString("nickname", field.getText().toString().trim()).apply(); settingsChanged(); showSettings();
-            }).setNegativeButton("Annuleren", (d, w) -> showSettings()).show();
-        });
-        setting(list, "Snelkoppelingen", "Voeg je eigen websites toe", v -> { settings.dismiss(); showShortcuts(); });
-        section(list, "LEZEN EN ZOEKEN");
-        setting(list, "Tekstgrootte op websites", preferences.getInt("text_zoom", 100) + "%", v -> {
-            settings.dismiss(); String[] sizes = { "85%", "100%", "115%", "130%", "150%" };
-            int[] values = { 85, 100, 115, 130, 150 };
-            int selectedSize = 1;
-            for (int i = 0; i < values.length; i++) if (values[i] == preferences.getInt("text_zoom", 100)) selectedSize = i;
-            dialogBuilder().setTitle("Tekstgrootte").setSingleChoiceItems(sizes, selectedSize, (d, which) -> {
-                preferences.edit().putInt("text_zoom", values[which]).apply(); d.dismiss(); settingsChanged(); showSettings();
-            }).setNegativeButton("Sluiten", null).show();
-        });
-        setting(list, "Zoekmachine", searchLabel(), v -> {
-            settings.dismiss(); choose("Zoekmachine", "search", new String[] { "DuckDuckGo", "Google", "Brave Search", "Ecosia" },
-                    new String[] { "duckduckgo", "google", "brave", "ecosia" }, "duckduckgo");
-        });
-        section(list, "BESCHERMING");
-        setting(list, "Advertenties en trackers", blocking ? "Aan · " + TrackerBlocker.size() + " lokale domeinregels" : "Uit", v -> {
-            preferences.edit().putBoolean("blocking", !blocking).apply();
-            settings.dismiss();
-            for (Tab open : tabs) { dispose(open, false); open.savedWebState = null; }
-            settingsChanged(); showSettings();
-        });
-        setting(list, "Uitzonderingen voor websites", adExceptions.size() + " websites", v -> {
-            settings.dismiss(); showAdExceptions();
-        });
-        setting(list, "HTTPS", httpsOnly ? "Alleen HTTPS" : "Voorkeur HTTPS", v -> { settings.dismiss(); showHttpsChoice(); });
-        setting(list, "Wachtwoorden en passkeys", "Invullen via je eigen wachtwoordmanager", v -> { settings.dismiss(); showCredentials(); });
-        settings.show();
-    }
-
-    private void choose(String title, String key, String[] labels, String[] values, String fallback) {
-        int checked = 0;
-        for (int i = 0; i < values.length; i++) if (values[i].equals(preferences.getString(key, fallback))) checked = i;
-        dialogBuilder().setTitle(title).setSingleChoiceItems(labels, checked, (d, which) -> {
-            preferences.edit().putString(key, values[which]).apply(); d.dismiss(); settingsChanged(); showSettings();
-        }).setNegativeButton("Sluiten", null).show();
-    }
-
-    private void section(LinearLayout parent, String label) {
-        TextView view = text(label, 10, ACCENT); view.setLetterSpacing(0.14f);
-        addSpaced(parent, view, 24);
+        hideKeyboard();
+        startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_PAGE);
     }
 
     private void setting(LinearLayout parent, String label, String detail, View.OnClickListener listener) {
@@ -906,30 +739,6 @@ public final class BrowserActivity extends Activity {
         item.addView(arrow, new LinearLayout.LayoutParams(dp(28), dp(32)));
         item.setOnClickListener(listener); item.setFocusable(true);
         addSpaced(parent, item, 8);
-    }
-
-    private String themeLabel() {
-        switch (preferences.getString("theme", "dark")) { case "light": return "Licht"; case "system": return "Volg Android"; default: return "Donker"; }
-    }
-    private String accentLabel() {
-        switch (preferences.getString("accent", "mint")) { case "violet": return "Lavendel"; case "blue": return "Hemelsblauw"; case "peach": return "Perzik"; default: return "Mint"; }
-    }
-    private String searchLabel() {
-        switch (preferences.getString("search", "duckduckgo")) { case "google": return "Google"; case "brave": return "Brave Search"; case "ecosia": return "Ecosia"; default: return "DuckDuckGo"; }
-    }
-
-    private void showAdExceptions() {
-        if (adExceptions.isEmpty()) { dialogBuilder().setTitle("Geen uitzonderingen")
-                .setMessage("Open een website en kies in het menu ‘Adblocker voor deze website’ om blokkering daar uit te zetten.")
-                .setPositiveButton("Gereed", null).show(); return; }
-        String[] sites = adExceptions.toArray(new String[0]); java.util.Arrays.sort(sites);
-        dialogBuilder().setTitle("Tik om een uitzondering te verwijderen").setItems(sites, (d, which) -> {
-            Set<String> updated = new HashSet<>(adExceptions); updated.remove(sites[which]);
-            preferences.edit().putStringSet("ad_exceptions", updated).apply();
-            readSettings();
-            for (Tab tab : tabs) if (tab.web != null && tab.pageHost.equalsIgnoreCase(sites[which])) tab.web.reload();
-            showAdExceptions();
-        }).setNegativeButton("Sluiten", null).show();
     }
 
     private JSONArray shortcuts() {
@@ -1104,25 +913,23 @@ public final class BrowserActivity extends Activity {
                 .setPositiveButton("Zoeken", (dialog, which) -> {
                     String term = query.getText().toString();
                     if (term.isEmpty() || tab.web == null) return;
-                    tab.web.setFindListener((index, count, done) -> {
-                        if (!done || destroyed || tab != current() || tab.web == null) return;
-                        tab.web.setFindListener(null);
-                        if (count == 0) { toast("Geen resultaten"); return; }
-                        AlertDialog results = dialogBuilder().setTitle(count + " resultaten")
+                    tab.web.session.getFinder().find(term, GeckoSession.FINDER_FIND_FORWARD).accept(found -> {
+                        if (destroyed || tab != current() || tab.web == null) return;
+                        if (!found.found) { toast("Geen resultaten"); return; }
+                        AlertDialog results = dialogBuilder().setTitle(found.total < 0 ? "Zoeken op pagina" : found.total + " resultaten")
                                 .setPositiveButton("Volgende", null).setNeutralButton("Vorige", null)
                                 .setNegativeButton("Gereed", null).create();
                         results.setOnShowListener(d -> {
                             results.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                                if (tab.web != null) tab.web.findNext(true);
+                                if (tab.web != null) tab.web.session.getFinder().find(null, GeckoSession.FINDER_FIND_FORWARD);
                             });
                             results.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-                                if (tab.web != null) tab.web.findNext(false);
+                                if (tab.web != null) tab.web.session.getFinder().find(null, GeckoSession.FINDER_FIND_BACKWARDS);
                             });
                         });
-                        results.setOnDismissListener(d -> { if (tab.web != null) tab.web.clearMatches(); });
+                        results.setOnDismissListener(d -> { if (tab.web != null) tab.web.session.getFinder().clear(); });
                         results.show();
-                    });
-                    tab.web.findAllAsync(term);
+                    }, failure -> toast("Zoeken is niet gelukt."));
                 }).setNegativeButton("Annuleren", null).show();
     }
 
@@ -1155,10 +962,25 @@ public final class BrowserActivity extends Activity {
 
     @Override protected void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
+        if (request == SETTINGS_PAGE) {
+            settingsChanged();
+            if (data != null) {
+                String action = data.getStringExtra(SettingsActivity.ACTION);
+                if ("shortcuts".equals(action)) showShortcuts();
+                else if ("credentials".equals(action)) showCredentials();
+            }
+        }
         if (request == FILE_PICKER && fileCallback != null) {
             ValueCallback<Uri[]> callback = fileCallback;
             fileCallback = null;
-            callback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(result, data));
+            List<Uri> selectedFiles = new ArrayList<>();
+            if (result == RESULT_OK && data != null) {
+                if (data.getData() != null) selectedFiles.add(data.getData());
+                else if (data.getClipData() != null) {
+                    for (int i = 0; i < data.getClipData().getItemCount(); i++) selectedFiles.add(data.getClipData().getItemAt(i).getUri());
+                }
+            }
+            callback.onReceiveValue(selectedFiles.isEmpty() ? null : selectedFiles.toArray(new Uri[0]));
         }
     }
 
@@ -1187,11 +1009,16 @@ public final class BrowserActivity extends Activity {
         super.onPause();
         if (!tabs.isEmpty() && current().web != null) current().web.onPause();
         persistTabs();
-        if (engineInitialized) CookieManager.getInstance().flush();
+        if (engine != null) engine.clearPromptActivity(this);
+        if (extensionUi != null) extensionUi.suspend();
     }
 
     @Override protected void onResume() {
         super.onResume();
+        if (engine != null) {
+            engine.setPromptActivity(this); extensionUi.attach();
+            for (Tab tab : tabs) if (tab.web != null) attachExtensions(tab.web);
+        }
         if (!tabs.isEmpty() && current().web != null && !current().home) current().web.onResume();
     }
 
@@ -1205,8 +1032,8 @@ public final class BrowserActivity extends Activity {
     @Override protected void onDestroy() {
         destroyed = true;
         cancelFilePicker();
-        for (WebView popup : pendingPopups) popup.destroy();
-        pendingPopups.clear();
+        if (engine != null) engine.removeBlockedListener(blockedListener);
+        if (extensionUi != null) extensionUi.destroy();
         for (Tab tab : tabs) dispose(tab, false);
         super.onDestroy();
     }
@@ -1231,7 +1058,7 @@ public final class BrowserActivity extends Activity {
             tab.web.saveState(tab.savedWebState);
         } else tab.savedWebState = null;
         if (tab.web.getParent() instanceof ViewGroup) ((ViewGroup) tab.web.getParent()).removeView(tab.web);
-        tab.web.stopLoading();
+        if (!tab.web.isClosed()) tab.web.stopLoading();
         tab.web.destroy();
         tab.web = null;
     }

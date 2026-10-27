@@ -1,0 +1,9 @@
+{
+  "manifest_version": 2,
+  "name": "Veyra bescherming",
+  "version": "1.0.0",
+  "browser_specific_settings": {"gecko": {"id": "protection@veyra.nl"}},
+  "permissions": ["webRequest", "webRequestBlocking", "<all_urls>", "storage", "nativeMessaging", "geckoViewAddons"],
+  "background": {"scripts": ["rules.js", "background.js"], "persistent": true},
+  "content_scripts": [{"matches": ["http://*/*", "https://*/*"], "js": ["cosmetic.js"], "run_at": "document_start"}]
+}

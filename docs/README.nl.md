@@ -70,3 +70,14 @@ Deze versie heeft geen privémodus, downloadbeheer, synchronisatie, eigen wachtw
 Instellingen, tabadressen, bladwijzers, cookies, websiteopslag en de normale WebView-cache blijven lokaal op de telefoon. Voor alles wissen gebruik je Android → Apps → Veyra → Opslag → Gegevens wissen. OS-back-ups en apparaatoverdracht zijn uitgeschakeld. Er is geen eigen backend of toegevoegde analytics. Zoekopdrachten gaan naar je gekozen zoekdienst; websites, zoekdienst en WebView-provider verwerken hun eigen verkeer, waaronder eventuele Safe Browsing-verzoeken.
 
 Een gemeten snelheidsvoordeel tegenover Samsung Internet is nog niet aangetoond. Zie [docs/benchmark.md](benchmark.md) voor een vergelijking op een echte telefoon.
+
+
+## Nieuw in 0.3.0: Material You en extensies
+
+**Menu → Veyra aanpassen** opent een volledige Material 3-instellingenpagina. Kies een licht of donker thema, volg Android, gebruik de kleuren van je achtergrond (Android 12+) of kies zelf een accentkleur. De tekstgrootteslider toont direct een leesvoorbeeld. De bestaande instellingen en bladwijzers blijven behouden.
+
+Via **Menu → Extensies** of **Instellingen → Firefox-extensies** zoek je in Mozilla Add-ons voor Firefox op Android. Voor installatie toont Veyra de gevraagde rechten, websites en opgegeven gegevensverzameling. Je kunt extensies aan- en uitzetten, handmatig bijwerken, verwijderen en hun bedieningspaneel of instellingen openen. Nieuwe rechten vragen opnieuw toestemming. Niet iedere Firefox-extensie ondersteunt Android of alle browserfuncties van Veyra.
+
+De browser gebruikt nu GeckoView. Websites vragen opnieuw om inloggen, omdat cookies en websitegegevens in een apart engineprofiel staan. De oude WebView-gegevens worden niet gewist of overgezet. De engine wordt samen met de app bijgewerkt.
+
+Bouwen: JDK 21, Android SDK Platform 37.2 en Build Tools 37.0.0. Gebruik voor een recente telefoon `app-arm64-v8a-debug.apk`, voor een 32-bits ARM-apparaat `app-armeabi-v7a-debug.apk` en voor een x86_64-emulator `app-x86_64-debug.apk`.

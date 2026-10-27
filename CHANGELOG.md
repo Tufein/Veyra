@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+- Replace the settings dialog with a full-screen Material 3 interface, wallpaper colors on Android 12+, light/dark/system selection, accent swatches, switches, and reading-size preview.
+- Apply shared Material colors and Material dialogs to the browser chrome; retain existing settings keys and user bookmarks/shortcuts.
+- Replace System WebView with GeckoView 158 to run signed Firefox WebExtensions. Website sessions use a separate profile and require signing in again.
+- Add a Mozilla Add-ons Android catalog, explicit permission/collection consent, extension toggles, manual updates, uninstall, browser-action popups, and options pages.
+- Port bundled ad blocking, cosmetic rules, exceptions, and HTTPS resource blocking into an app-owned built-in WebExtension.
+- Update Android build tooling for GeckoView's SDK requirements and generate separate ARM64, ARMv7, and x86_64 APKs.
+- Add catalog/protection regression tests and connected-device checks for Material settings and extension verification.
+
+
 ## 0.2.0 — 2026-10-26
 
 ### Added

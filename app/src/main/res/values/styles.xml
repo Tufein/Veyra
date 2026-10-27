@@ -1,21 +1,79 @@
 <resources>
-    <style name="Theme.Veyra" parent="android:style/Theme.Material.NoActionBar">
+    <style name="Theme.Veyra" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#B4F5CC</item>
+        <item name="colorOnPrimary">#003822</item>
+        <item name="colorPrimaryContainer">#145136</item>
+        <item name="colorOnPrimaryContainer">#B4F5CC</item>
+        <item name="colorSecondaryContainer">#354B3E</item>
+        <item name="colorOnSecondaryContainer">#D0E8D6</item>
+        <item name="colorSurface">#101510</item>
+        <item name="colorSurfaceContainer">#1C211B</item>
+        <item name="colorOnSurface">#E0E4DA</item>
+        <item name="colorOnSurfaceVariant">#BFC9BD</item>
+        <item name="colorOutline">#899386</item>
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#B8F673</item>
+        <item name="android:colorAccent">?attr/colorPrimary</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowBackground">#10130F</item>
-        <item name="android:statusBarColor">#10130F</item>
-        <item name="android:navigationBarColor">#10130F</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:windowNoTitle">true</item>
     </style>
-    <style name="Theme.Veyra.Light" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="Theme.Veyra.Light" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">#286A48</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#B4F5CC</item>
+        <item name="colorOnPrimaryContainer">#002112</item>
+        <item name="colorSecondaryContainer">#D0E8D6</item>
+        <item name="colorOnSecondaryContainer">#102017</item>
+        <item name="colorSurface">#F7FBF2</item>
+        <item name="colorSurfaceContainer">#EBEFE6</item>
+        <item name="colorOnSurface">#181D17</item>
+        <item name="colorOnSurfaceVariant">#41493F</item>
+        <item name="colorOutline">#71796E</item>
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#347B45</item>
+        <item name="android:colorAccent">?attr/colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:windowBackground">#F5F6F2</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="ThemeOverlay.Veyra.Violet" parent="">
+        <item name="colorPrimary">#CCB6FF</item>
+        <item name="colorOnPrimary">#371E63</item>
+        <item name="colorPrimaryContainer">#50367C</item>
+        <item name="colorOnPrimaryContainer">#EBDDFF</item>
+    </style>
+    <style name="ThemeOverlay.Veyra.Violet.Light" parent="">
+        <item name="colorPrimary">#6C46BC</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#EBDDFF</item>
+        <item name="colorOnPrimaryContainer">#250E47</item>
+    </style>
+    <style name="ThemeOverlay.Veyra.Blue" parent="">
+        <item name="colorPrimary">#A3CCFF</item>
+        <item name="colorOnPrimary">#00315C</item>
+        <item name="colorPrimaryContainer">#164976</item>
+        <item name="colorOnPrimaryContainer">#D3E4FF</item>
+    </style>
+    <style name="ThemeOverlay.Veyra.Blue.Light" parent="">
+        <item name="colorPrimary">#245FA7</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#D3E4FF</item>
+        <item name="colorOnPrimaryContainer">#001C38</item>
+    </style>
+    <style name="ThemeOverlay.Veyra.Peach" parent="">
+        <item name="colorPrimary">#FFBC9E</item>
+        <item name="colorOnPrimary">#561F08</item>
+        <item name="colorPrimaryContainer">#75351D</item>
+        <item name="colorOnPrimaryContainer">#FFDBCC</item>
+    </style>
+    <style name="ThemeOverlay.Veyra.Peach.Light" parent="">
+        <item name="colorPrimary">#A74426</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#FFDBCC</item>
+        <item name="colorOnPrimaryContainer">#3A0B00</item>
     </style>
 </resources>

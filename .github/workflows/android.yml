@@ -30,14 +30,23 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
+          cmdline-tools-version: '16111833'
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
 
       - name: Install Android SDK components
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+        run: sdkmanager 'platforms;android-37.2' 'build-tools;37.0.0'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up Node for protection tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test bundled browser protection
+        run: node --test tools/protection_test.cjs
 
       - name: Build, test and lint
         run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
@@ -46,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: veyra-debug-${{ github.sha }}
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 14
 
