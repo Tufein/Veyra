@@ -55,7 +55,7 @@ jobs:
         run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veyra-debug-${{ github.sha }}
           path: app/build/outputs/apk/debug/*.apk
@@ -64,7 +64,7 @@ jobs:
 
       - name: Upload test and Lint reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veyra-reports-${{ github.sha }}
           path: |
