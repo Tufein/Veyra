@@ -1,4 +1,4 @@
-# Veyra voor Android · 0.2.0
+# Veyra voor Android
 
 **Het web. Op jouw tempo.**
 
@@ -92,3 +92,10 @@ Snelkoppelingen voeg, wijzig en verwijder je binnen de instellingen. Ongeldige a
 Achtergrondkleuren zijn beschikbaar vanaf Android 12. De vier eigen accenten werken ook op Android 9. Op kleine schermen met groot lettertype staan de themakeuzes onder elkaar zodat geen labels worden afgekapt.
 
 De volledige ontwikkelvolgorde met oplevercriteria staat in [de productroadmap](../ROADMAP.md). Download de [0.4.0-alpha op GitHub](https://github.com/Tufein/Veyra/releases/tag/v0.4.0); kies voor de meeste moderne telefoons de ARM64-APK. De APK’s zijn debug-ondertekend en nog niet op een fysiek toestel gevalideerd. Een update over een bestaande installatie kan door een andere handtekening worden geweigerd. Verwijderen wist lokale appgegevens; verwijder de app dus niet om dit op te lossen als je die gegevens wilt behouden. Zie de [release-informatie](releases/v0.4.0.md).
+
+
+## Doorontwikkeling na 0.4.0: bibliotheek en browserpanelen
+
+Op `main` opent **Menu → Bibliotheek** één scherm voor bladwijzers en de snelkoppelingen op je startpagina. Kies een website en gebruik **Op startpagina zetten**, **Van startpagina halen**, **Website bewerken** of **Bladwijzer verwijderen**. Bewerken houdt gekoppelde namen en adressen gelijk. Van de startpagina halen bewaart de bladwijzer; een bladwijzer verwijderen neemt ook de gekoppelde snelkoppeling mee en vraagt bevestiging.
+
+Het browsermenu en de tabbladen gebruiken panelen onderaan het scherm. De instellingen hebben compactere categorieën en een gedeelde websiteweergave. Zie [de nieuwe schermvoorbeelden](library-design.md). Dit staat los van de al gepubliceerde 0.4.0-APK’s.

@@ -61,6 +61,7 @@ public final class BrowserActivity extends Activity {
     private static final int MAX_RESIDENT = 3;
     private static final int FILE_PICKER = 41;
     private static final int SETTINGS_PAGE = 42;
+    private static final int LIBRARY_PAGE = 43;
 
     private final List<Tab> tabs = new ArrayList<>();
     private int selected;
@@ -286,11 +287,11 @@ public final class BrowserActivity extends Activity {
         String nickname = preferences.getString("nickname", "").trim();
         TextView greeting = text(nickname.isEmpty() ? "EEN NIEUWE DAG. EEN NIEUWE ONTDEKKING." : "FIJN DAT JE ER BENT, " + nickname.toUpperCase(java.util.Locale.ROOT), 10, MUTED);
         greeting.setLetterSpacing(0.10f);
-        addSpaced(content, greeting, 28);
+        addSpaced(content, greeting, 12);
 
         boolean compact = preferences.getBoolean("compact_home", false);
         LinearLayout hero = column();
-        hero.setPadding(dp(22), dp(24), dp(22), dp(24));
+        hero.setPadding(dp(20), dp(18), dp(20), dp(20));
         GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
                 new int[] { ThemeSupport.color(this, com.google.android.material.R.attr.colorPrimaryContainer), SURFACE });
         gradient.setCornerRadius(dp(28));
@@ -300,32 +301,32 @@ public final class BrowserActivity extends Activity {
         TextView tag = text("RUIMTE VOOR JOU", 10, ACCENT);
         tag.setLetterSpacing(0.17f);
         heroTop.addView(tag, new LinearLayout.LayoutParams(0, -2, 1));
-        TextView spark = text("✳", 38, ACCENT);
+        TextView spark = text("✳", 28, ACCENT);
         heroTop.addView(spark);
         hero.addView(heroTop);
-        TextView title = text("Het web.\nOp jouw tempo.", compact ? 29 : 40, TEXT);
+        TextView title = text("Het web.\nOp jouw tempo.", compact ? 27 : 32, TEXT);
         title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         title.setLetterSpacing(-0.055f);
         title.setLineSpacing(0, 0.98f);
         addSpaced(hero, title, compact ? 2 : 12);
         if (!compact) {
-            TextView sub = text("Van een kleine vraag naar iets groots.\nWaar wil je vandaag naartoe?", 14, MUTED);
+            TextView sub = text("Waar wil je vandaag naartoe?", 14, MUTED);
             sub.setLineSpacing(dp(4), 1);
-            addSpaced(hero, sub, 17);
+            addSpaced(hero, sub, 10);
         }
         TextView start = action("Zoek iets nieuws   ↗", v -> focusAddress());
-        addSpaced(hero, start, compact ? 16 : 24);
+        addSpaced(hero, start, compact ? 12 : 16);
         addSpaced(content, hero, 17);
 
         LinearLayout linksHeading = row();
-        TextView quickLabel = text("FAVORIETE PLEKKEN", 10, MUTED);
-        quickLabel.setLetterSpacing(0.13f);
+        TextView quickLabel = text(getString(R.string.home_shortcuts), 15, TEXT);
+        quickLabel.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         linksHeading.addView(quickLabel, new LinearLayout.LayoutParams(0, -2, 1));
         TextView edit = text("Bewerken", 12, ACCENT);
         edit.setGravity(Gravity.CENTER);
         edit.setContentDescription("Snelkoppelingen bewerken");
-        edit.setOnClickListener(v -> showShortcuts());
-        linksHeading.addView(edit, new LinearLayout.LayoutParams(dp(88), dp(48)));
+        edit.setOnClickListener(v -> showLibrary(true));
+        linksHeading.addView(edit, new LinearLayout.LayoutParams(dp(80), dp(48)));
         addSpaced(content, linksHeading, 19);
         JSONArray links = shortcuts();
         for (int startIndex = 0; startIndex < links.length(); startIndex += 4) {
@@ -335,13 +336,16 @@ public final class BrowserActivity extends Activity {
                 JSONObject item = links.optJSONObject(i);
                 if (item == null) continue;
                 String label = item.optString("title", "Website");
-                addShortcut(shortcutsRow, label.isEmpty() ? "↗" : label.substring(0, label.offsetByCodePoints(0, 1)).toUpperCase(java.util.Locale.ROOT),
-                        label, item.optString("url"), ACCENT);
+                addShortcut(shortcutsRow, label, item.optString("url"));
             }
             for (int i = Math.min(4, links.length() - startIndex); i < 4; i++)
                 shortcutsRow.addView(new View(this), new LinearLayout.LayoutParams(0, dp(1), 1));
             content.addView(shortcutsRow, new LinearLayout.LayoutParams(-1, -2));
         }
+
+        SettingsViews siteUi = new SettingsViews(this);
+        siteUi.category(content, R.drawable.ic_library, getString(R.string.library_title),
+                getString(R.string.library_manage), v -> showBookmarks());
 
         LinearLayout protection = row();
         protection.setPadding(dp(13), dp(16), dp(16), dp(16));
@@ -367,20 +371,19 @@ public final class BrowserActivity extends Activity {
         return scroll;
     }
 
-    private void addShortcut(LinearLayout parent, String letter, String label, String url, int color) {
+    private void addShortcut(LinearLayout parent, String label, String url) {
         LinearLayout shortcut = column();
         shortcut.setGravity(Gravity.CENTER_HORIZONTAL);
         shortcut.setContentDescription(label + " openen");
-        TextView tile = text(letter, 23, color);
-        tile.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        tile.setGravity(Gravity.CENTER);
-        tile.setBackground(shape(SURFACE, 18, BORDER));
-        shortcut.addView(tile, new LinearLayout.LayoutParams(dp(56), dp(56)));
+        TextView tile = new SettingsViews(this).monogram(label, url);
+        shortcut.addView(tile, new LinearLayout.LayoutParams(dp(52), dp(52)));
         TextView caption = text(label, 11, MUTED);
         caption.setMaxLines(2); caption.setEllipsize(android.text.TextUtils.TruncateAt.END);
         caption.setGravity(Gravity.CENTER);
         addSpaced(shortcut, caption, 9);
+        shortcut.setFocusable(true);
         shortcut.setOnClickListener(v -> navigate(url));
+        shortcut.setOnLongClickListener(v -> { showLibrary(true); return true; });
         parent.addView(shortcut, new LinearLayout.LayoutParams(0, -2, 1));
     }
 
@@ -601,35 +604,11 @@ public final class BrowserActivity extends Activity {
 
     private void showTabs() {
         hideKeyboard();
-        LinearLayout list = column();
-        list.setPadding(dp(16), dp(4), dp(16), dp(8));
-        AlertDialog dialog = dialogBuilder().setTitle("Jouw tabbladen")
-                .setView(wrapScroll(list)).setPositiveButton("Nieuw tabblad", (d, which) -> newTab())
-                .setNegativeButton("Gereed", null).create();
-        for (int index = 0; index < tabs.size(); index++) {
-            final int position = index;
-            Tab tab = tabs.get(index);
-            LinearLayout item = row();
-            item.setPadding(dp(12), dp(6), 0, dp(6));
-            item.setBackground(shape(index == selected ? SURFACE : BG, 12, index == selected ? ACCENT : BORDER));
-            LinearLayout labels = column();
-            TextView title = text((index == selected ? "•  " : "") + (tab.home ? "Nieuw tabblad" : tab.title), 15, TEXT);
-            title.setSingleLine();
-            title.setEllipsize(android.text.TextUtils.TruncateAt.END);
-            labels.addView(title);
-            TextView subtitle = text(tab.home ? "Veyra startpagina" : host(tab.url), 12, MUTED);
-            addSpaced(labels, subtitle, 5);
-            item.addView(labels, new LinearLayout.LayoutParams(0, -2, 1));
-            labels.setPadding(0, dp(8), 0, dp(8));
-            labels.setOnClickListener(v -> {
-                cancelFilePicker(); selected = position; dialog.dismiss(); showSelected();
-            });
-            item.addView(icon("close", "Tabblad sluiten", v -> {
-                dialog.dismiss(); closeTab(position); showTabs();
-            }), new LinearLayout.LayoutParams(dp(48), dp(52)));
-            addSpaced(list, item, 8);
-        }
-        dialog.show();
+        List<BrowserSheets.TabItem> items = new ArrayList<>();
+        for (Tab tab : tabs) items.add(new BrowserSheets.TabItem(tab.title, tab.url, tab.home));
+        BrowserSheets.tabs(this, items, selected, MAX_TABS, position -> {
+            cancelFilePicker(); selected = position; showSelected();
+        }, position -> { closeTab(position); showTabs(); }, this::newTab).show();
     }
 
     private void closeTab(int position) {
@@ -643,10 +622,9 @@ public final class BrowserActivity extends Activity {
     }
 
     private void showMenu() {
-        String[] items = { "Nieuw tabblad", "Bladwijzer toevoegen", "Bladwijzers", "Pagina delen",
-                "Zoeken op pagina", "Adblocker voor deze website", "HTTPS en verbinding",
-                "Instellingen", "Wachtwoorden en passkeys", "Extensies", "Over Veyra" };
-        dialogBuilder().setTitle("Jouw Veyra").setItems(items, (dialog, which) -> {
+        hideKeyboard(); Tab tab = current();
+        boolean pageOpen = !tab.home && tab.error == null && UrlPolicy.normalizeWebUrl(tab.url) != null;
+        BrowserSheets.menu(this, pageOpen, new SavedSitesStore(preferences).isBookmarked(tab.url), host(tab.url), which -> {
             switch (which) {
                 case 0: newTab(); break;
                 case 1: addBookmark(); break;
@@ -658,15 +636,6 @@ public final class BrowserActivity extends Activity {
                 case 7: showSettings(); break;
                 case 8: showCredentials(); break;
                 case 9: startActivity(new Intent(this, ExtensionsActivity.class)); break;
-                case 10:
-                    dialogBuilder().setTitle("Over Veyra")
-                            .setMessage("Het web. Op jouw tempo.\n\nMet een eigen thema, lokale advertentieblokkering en Android Autofill. "
-                                    + "Tabadressen, instellingen en bladwijzers blijven op je telefoon. Je zoekopdrachten gaan naar de gekozen zoekmachine. "
-                                    + "Websites en de Gecko-engine verwerken hun eigen verkeer.\n\n"
-                                    + "Veyra heeft geen eigen wachtwoordkluis. Externe passkey-logins openen in een andere browser. "
-                                    + "Een snelheidsvoordeel tegenover Samsung Internet is nog niet gemeten.")
-                            .setPositiveButton("Gereed", null).show();
-                    break;
                 default: break;
             }
         }).show();
@@ -747,8 +716,6 @@ public final class BrowserActivity extends Activity {
 
     private JSONArray shortcuts() { return new ShortcutStore(preferences).toJson(); }
 
-    private void showShortcuts() { showSettings(SettingsSection.SHORTCUTS); }
-
     private void showCredentials() {
         LinearLayout list = column(); list.setPadding(dp(20), dp(4), dp(20), dp(12));
         TextView info = text("Gebruik de wachtwoordmanager die je in Android hebt ingesteld, bijvoorbeeld Google Password Manager, Bitwarden of 1Password. "
@@ -801,55 +768,21 @@ public final class BrowserActivity extends Activity {
         }).setNegativeButton("Annuleren", null).show();
     }
 
-    private JSONArray bookmarks() {
-        try { return new JSONArray(preferences.getString("bookmarks", "[]")); }
-        catch (Exception invalid) { return new JSONArray(); }
-    }
-
     private void addBookmark() {
         Tab tab = current();
         if (tab.home || UrlPolicy.normalizeWebUrl(tab.url) == null) { toast("Open eerst een website."); return; }
-        JSONArray saved = bookmarks();
-        for (int i = 0; i < saved.length(); i++) {
-            JSONObject item = saved.optJSONObject(i);
-            if (item != null && tab.url.equals(item.optString("url"))) { toast("Deze bladwijzer bestaat al."); return; }
-        }
-        try {
-            JSONObject item = new JSONObject();
-            item.put("title", tab.title);
-            item.put("url", tab.url);
-            saved.put(item);
-            preferences.edit().putString("bookmarks", saved.toString()).apply();
-            toast("Bladwijzer opgeslagen");
-        } catch (Exception failure) { toast("Opslaan is niet gelukt."); }
+        SavedSitesStore sites = new SavedSitesStore(preferences);
+        if (sites.isBookmarked(tab.url)) { toast("Deze bladwijzer bestaat al."); return; }
+        String title = tab.title == null || tab.title.trim().isEmpty() ? host(tab.url) : tab.title.trim();
+        if (title.length() > 40) title = title.substring(0, Character.isHighSurrogate(title.charAt(39)) ? 39 : 40);
+        try { sites.saveBookmark(-1, title, tab.url); toast("Bladwijzer opgeslagen"); home = null; }
+        catch (IllegalArgumentException failure) { toast("Opslaan is niet gelukt."); }
     }
 
-    private void showBookmarks() {
-        JSONArray saved = bookmarks();
-        if (saved.length() == 0) { toast("Je hebt nog geen bladwijzers."); return; }
-        LinearLayout list = column();
-        list.setPadding(dp(16), 0, dp(16), dp(8));
-        AlertDialog dialog = dialogBuilder().setTitle("Bladwijzers")
-                .setView(wrapScroll(list)).setNegativeButton("Sluiten", null).create();
-        for (int index = 0; index < saved.length(); index++) {
-            int position = index;
-            JSONObject item = saved.optJSONObject(index);
-            if (item == null) continue;
-            String url = item.optString("url");
-            LinearLayout line = row();
-            TextView link = text(item.optString("title", host(url)) + "\n" + host(url), 14, TEXT);
-            link.setPadding(dp(8), dp(16), dp(8), dp(16));
-            link.setMaxLines(3);
-            link.setOnClickListener(v -> { dialog.dismiss(); navigate(url); });
-            line.addView(link, new LinearLayout.LayoutParams(0, -2, 1));
-            line.addView(icon("close", "Bladwijzer verwijderen", v -> {
-                saved.remove(position);
-                preferences.edit().putString("bookmarks", saved.toString()).apply();
-                dialog.dismiss(); showBookmarks();
-            }), new LinearLayout.LayoutParams(dp(48), dp(48)));
-            list.addView(line);
-        }
-        dialog.show();
+    private void showBookmarks() { showLibrary(false); }
+    private void showLibrary(boolean startPage) {
+        startActivityForResult(new Intent(this, LibraryActivity.class)
+                .putExtra(LibraryActivity.EXTRA_START_PAGE, startPage).putExtra(LibraryActivity.EXTRA_RETURN_URL, true), LIBRARY_PAGE);
     }
 
     private void sharePage() {
@@ -918,6 +851,12 @@ public final class BrowserActivity extends Activity {
 
     @Override protected void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
+        if (request == LIBRARY_PAGE) {
+            home = null;
+            if (result == RESULT_OK && data != null && UrlPolicy.normalizeWebUrl(data.getStringExtra(LibraryActivity.EXTRA_URL)) != null)
+                navigate(data.getStringExtra(LibraryActivity.EXTRA_URL));
+            else showSelected();
+        }
         if (request == SETTINGS_PAGE) {
             settingsChanged();
         }

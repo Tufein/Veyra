@@ -17,4 +17,12 @@
     <item name="settings_theme_light" type="id" />
     <item name="settings_theme_dark" type="id" />
     <item name="settings_theme_system" type="id" />
+    <item name="library_tabs" type="id" />
+    <item name="library_search" type="id" />
+    <item name="library_list" type="id" />
+    <item name="library_add" type="id" />
+    <item name="library_scroll" type="id" />
+    <item name="library_name" type="id" />
+    <item name="library_url" type="id" />
+    <item name="library_save" type="id" />
 </resources>

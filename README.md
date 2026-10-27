@@ -8,6 +8,8 @@ A customizable Android browser with a calm start page, bottom navigation, local 
 
 [Download 0.4.0 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.0) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
 
+**On main, after the release:** a shared bookmark/start-page library and redesigned browser panels. [Preview and behavior](docs/library-design.md). These changes are not included in the published 0.4.0 APKs.
+
 [Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.4.md)
 
 ## Features
@@ -16,6 +18,8 @@ A customizable Android browser with a calm start page, bottom navigation, local 
 
 - Search or enter an address from the bottom address bar.
 - Back, forward, reload, bookmarks, page sharing, and find on page.
+- A searchable library with bookmarks and start-page shortcuts, explicit pin/unpin actions, linked editing, and confirmed deletion.
+- Scrollable Material browser and tab panels with clear selection and separate close controls.
 - Up to twelve tabs, with at most three live Gecko sessions to limit memory usage.
 - Restore tab addresses after reopening the app.
 - Select files for website uploads.
@@ -30,7 +34,7 @@ A customizable Android browser with a calm start page, bottom navigation, local 
 - Dark, light, or system theme.
 - Mint, lavender, sky blue, and peach accent colors.
 - Spacious or compact start page and an optional personal greeting.
-- Add, edit, or remove up to eight website shortcuts.
+- Add, edit, or remove up to eight website shortcuts; pin bookmarks to the start page and keep linked website names and addresses in sync.
 - Website text sizes from 85% to 150%.
 - DuckDuckGo, Google, Brave Search, or Ecosia as your search provider.
 

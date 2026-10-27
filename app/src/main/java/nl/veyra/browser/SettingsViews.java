@@ -50,9 +50,8 @@ final class SettingsViews {
         v.setLineSpacing(dp(3), 1); return v;
     }
     void heading(LinearLayout parent, int title, int summary) {
-        TextView label = text(title, 32, ink); label.setLetterSpacing(-.035f);
-        label.setAccessibilityHeading(true); add(parent, label, 8);
-        add(parent, text(summary, 15, muted), 10);
+        TextView description = text(summary, 15, muted);
+        add(parent, description, 8);
     }
     void section(LinearLayout parent, int resource) {
         TextView label = text(resource, 12, muted); label.setLetterSpacing(.09f);
@@ -64,26 +63,54 @@ final class SettingsViews {
     }
     LinearLayout card(LinearLayout parent, boolean prominent) {
         MaterialCardView card = new MaterialCardView(activity);
-        card.setRadius(dp(28)); card.setStrokeWidth(0); card.setCardElevation(0);
+        card.setRadius(dp(22)); card.setStrokeWidth(0); card.setCardElevation(0);
         card.setCardBackgroundColor(prominent ? accentSurface : low);
-        LinearLayout inside = column(); inside.setPadding(dp(20), dp(20), dp(20), dp(20));
-        card.addView(inside); add(parent, card, 14); return inside;
+        LinearLayout inside = column(); inside.setPadding(dp(18), dp(18), dp(18), dp(18));
+        card.addView(inside); add(parent, card, 12); return inside;
     }
     void category(LinearLayout parent, int icon, String title, String summary, View.OnClickListener listener) {
-        MaterialCardView card = new MaterialCardView(activity); card.setRadius(dp(24));
+        MaterialCardView card = new MaterialCardView(activity); card.setRadius(dp(18));
         card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(low);
-        LinearLayout row = row(); row.setPadding(dp(16), dp(16), dp(12), dp(16)); row.setMinimumHeight(dp(92));
-        ImageView badge = image(icon, primary); badge.setPadding(dp(13), dp(13), dp(13), dp(13));
-        badge.setBackground(shape(accentSurface, 18));
-        row.addView(badge, new LinearLayout.LayoutParams(dp(50), dp(50)));
-        LinearLayout copy = column(); copy.setPadding(dp(16), 0, dp(8), 0);
+        LinearLayout row = row(); row.setPadding(dp(14), dp(12), dp(12), dp(12)); row.setMinimumHeight(dp(76));
+        ImageView badge = image(icon, primary); badge.setPadding(dp(10), dp(10), dp(10), dp(10));
+        badge.setBackground(shape(high, 14));
+        row.addView(badge, new LinearLayout.LayoutParams(dp(42), dp(42)));
+        LinearLayout copy = column(); copy.setPadding(dp(12), 0, dp(8), 0);
         TextView label = text(title, 16, ink); label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         copy.addView(label); add(copy, text(summary, 13, muted), 4);
         row.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
         row.addView(image(R.drawable.ic_chevron_right, muted), new LinearLayout.LayoutParams(dp(24), dp(24)));
         row.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         card.addView(row); card.setContentDescription(title + ", " + summary);
-        buttonRole(card); card.setOnClickListener(listener); card.setFocusable(true); add(parent, card, 10);
+        buttonRole(card); card.setOnClickListener(listener); card.setFocusable(true); add(parent, card, 4);
+    }
+    View site(LinearLayout parent, String title, String url, String detail, View.OnClickListener listener) {
+        MaterialCardView card = new MaterialCardView(activity);
+        card.setRadius(dp(18)); card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(low);
+        LinearLayout row = row(); row.setMinimumHeight(dp(78)); row.setPadding(dp(14), dp(12), dp(12), dp(12));
+        row.addView(monogram(title, url), new LinearLayout.LayoutParams(dp(42), dp(42)));
+        LinearLayout copy = column(); copy.setPadding(dp(12), 0, dp(8), 0);
+        TextView label = text(title, 15, ink); label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        label.setMaxLines(2); label.setEllipsize(android.text.TextUtils.TruncateAt.END); copy.addView(label);
+        TextView address = text(host(url), 12, muted); address.setMaxLines(1); address.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        add(copy, address, 3);
+        if (detail != null && !detail.isEmpty()) add(copy, text(detail, 11, primary), 4);
+        row.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
+        row.addView(image(R.drawable.ic_chevron_right, muted), new LinearLayout.LayoutParams(dp(20), dp(20)));
+        row.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        card.addView(row); card.setContentDescription(title + ", " + url + (detail == null ? "" : ", " + detail));
+        card.setOnClickListener(listener); card.setFocusable(true); buttonRole(card); add(parent, card, 5); return card;
+    }
+    TextView monogram(String title, String url) {
+        String value = title.trim().isEmpty() ? host(url) : title.trim();
+        String letter = value.isEmpty() ? "V" : value.substring(0, value.offsetByCodePoints(0, 1)).toUpperCase(java.util.Locale.ROOT);
+        TextView badge = text(letter, 18, accentInk); badge.setGravity(Gravity.CENTER);
+        badge.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL)); badge.setBackground(shape(accentSurface, 14));
+        badge.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO); return badge;
+    }
+    static String host(String url) {
+        try { String host = java.net.URI.create(url).getHost(); return host == null ? url : host.replaceFirst("^www\\.", ""); }
+        catch (IllegalArgumentException invalid) { return url; }
     }
     void navigation(LinearLayout parent, int title, String summary, View.OnClickListener listener) {
         LinearLayout row = row(); row.setMinimumHeight(dp(76)); row.setPadding(0, dp(14), 0, dp(14));

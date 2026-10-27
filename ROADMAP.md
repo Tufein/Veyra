@@ -13,6 +13,7 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | Lokale advertentieblokkering | Gebundelde regels, cosmetische filtering, uitzonderingen en HTTPS-beleid; regressietests aanwezig | Betrouwbaarheid op echte websites en wisselwerking met extensies |
 | Firefox-extensies | Catalogus, ondertekende installatie, toestemmingsvensters en beheer aanwezig | Installatie, popups en ondersteunde API’s per extensie op een apparaat |
 | Material You-instellingen 0.4.0 | Nieuwe instellingenhub, detailpagina’s, zoeken, eigen editor en uitgebreidere kleurrollen beschikbaar als testalpha | Visuele en functionele controle op een telefoon naast de UI-tests |
+| Bibliotheek op main na 0.4.0 | Bladwijzers en startpagina samen beheren, vastzetten/losmaken, gekoppeld bewerken en bevestigd verwijderen | Gebruik op hardware; import/export en bredere dagelijkse browserfuncties |
 | Startpagina | Begroeting, compact beeld, maximaal acht eigen snelkoppelingen | Groot lettertype, kleine schermen, toetsenbord en controller op hardware |
 | Downloads, browsegeschiedenis, privétabs, synchronisatie | Niet geïmplementeerd | Volledige onderstaande oplevercriteria |
 
@@ -48,8 +49,8 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 
 ### Daarna binnen dezelfde ontwerprichting
 
-- Een rustig Material 3-bodemmenu met de belangrijkste browseracties binnen duimbereik.
-- Een tabbladenoverzicht met duidelijke selectie, sluiten en bruikbare lege toestanden.
+- [x] Een rustig Material 3-bodemmenu met de belangrijkste browseracties binnen duimbereik (doorontwikkeling op main na 0.4.0; apparaatcontrole open).
+- [x] Een tabbladenpaneel met duidelijke selectie en aparte sluitknoppen (doorontwikkeling op main na 0.4.0; apparaatcontrole open).
 - Consistente pictogrammen en benoeming van alle acties; geen instellingsdialogen die onverwacht naar een ander onderdeel terugsturen.
 - Op tablets een bredere of tweedelige instellingenindeling, zonder uitgerekte telefoonkaarten.
 

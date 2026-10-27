@@ -134,6 +134,7 @@ public final class SettingsActivityTest {
         assertEquals("Snelkoppelingen", title()); assertFalse(activity().isFinishing());
         ShortcutStore.Shortcut saved = new ShortcutStore(preferences).read().get(4);
         assertEquals("Mijn website", saved.title); assertEquals("https://example.org/", saved.url);
+        assertTrue(new SavedSitesStore(preferences).isBookmarked(saved.url));
         activity().navigateUp(); idle(); assertEquals("Startpagina", title());
         activity().navigateUp(); idle(); assertEquals("Instellingen", title());
     }
@@ -176,6 +177,13 @@ public final class SettingsActivityTest {
         activity().findViewById(R.id.settings_theme_light).performClick(); controller.recreate(); idle();
         assertEquals("light", preferences.getString("theme", ""));
         assertEquals("Uitstraling", title());
+    }
+    @Test public void shortcutListUsesCompactSiteRowsAndLinksTheLibrary() throws Exception {
+        launch(SettingsSection.SHORTCUTS); screenshot("shortcuts-dark");
+        open(R.string.library_from_bookmarks);
+        android.content.Intent intent = Shadows.shadowOf(activity()).getNextStartedActivity();
+        assertEquals(LibraryActivity.class.getName(), intent.getComponent().getClassName());
+        assertFalse(activity().isFinishing());
     }
     private android.content.res.Configuration activityConfiguration() {
         return RuntimeEnvironment.getApplication().getResources().getConfiguration();

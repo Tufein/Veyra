@@ -85,7 +85,7 @@ public final class SettingsActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         // Provider availability may change while Android's settings screen is open.
-        if (section == SettingsSection.PASSWORDS && scroll != null) { remember(); render(false); }
+        if ((section == SettingsSection.PASSWORDS || section == SettingsSection.SHORTCUTS) && scroll != null) { remember(); render(false); }
     }
 
     private void render(boolean animate) {
@@ -134,8 +134,10 @@ public final class SettingsActivity extends Activity {
             case ABOUT: about(); break;
             default: break;
         }
-        TextView footer = ui.text(R.string.settings_footer, 12, ui.muted); footer.setGravity(Gravity.CENTER);
-        ui.add(content, footer, 30);
+        if (section == SettingsSection.OVERVIEW || section == SettingsSection.ABOUT) {
+            TextView footer = ui.text(R.string.settings_footer, 12, ui.muted); footer.setGravity(Gravity.CENTER);
+            ui.add(content, footer, 24);
+        }
         setContentView(root);
         boolean light = ThemeSupport.isLight(this, preferences);
         getWindow().getDecorView().setSystemUiVisibility(light
@@ -149,18 +151,19 @@ public final class SettingsActivity extends Activity {
     }
 
     private void overview() {
-        TextView eyebrow = ui.text(R.string.settings_eyebrow, 10, ui.primary); eyebrow.setLetterSpacing(.13f);
-        ui.add(content, eyebrow, 14);
-        TextView headline = ui.text(R.string.settings_headline, 38, ui.ink);
-        headline.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        headline.setLetterSpacing(-.045f); headline.setLineSpacing(0, 1); headline.setAccessibilityHeading(true);
-        ui.add(content, headline, 10); ui.add(content, ui.text(R.string.settings_description, 14, ui.muted), 10);
+        LinearLayout welcome = ui.card(content, true);
+        LinearLayout intro = ui.row();
+        intro.addView(ui.image(R.drawable.ic_tune, ui.accentInk), new LinearLayout.LayoutParams(ui.dp(28), ui.dp(28)));
+        TextView headline = ui.text(R.string.settings_headline, 25, ui.accentInk);
+        headline.setPadding(ui.dp(14), 0, 0, 0); headline.setLetterSpacing(-.025f); headline.setAccessibilityHeading(true);
+        intro.addView(headline, new LinearLayout.LayoutParams(0, -2, 1)); welcome.addView(intro);
+        ui.add(welcome, ui.text(R.string.settings_description, 13, ui.accentInk), 10);
         TextInputLayout search = field(R.string.settings_search, 0);
         search.setStartIconDrawable(R.drawable.ic_search); search.setEndIconMode(TextInputLayout.END_ICON_CLEAR_TEXT);
         search.setEndIconContentDescription(R.string.settings_search_clear);
         TextInputEditText input = (TextInputEditText) search.getEditText(); input.setId(R.id.settings_search);
         input.setSingleLine(true); input.setText(query); input.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO);
-        ui.add(content, search, 24);
+        ui.add(content, search, 16);
         categories = ui.column(); categories.setId(R.id.settings_categories); ui.add(content, categories, 0);
         populateCategories();
         input.addTextChangedListener(new TextWatcher() {
@@ -360,8 +363,13 @@ public final class SettingsActivity extends Activity {
         }
         for (int i = 0; i < saved.size(); i++) {
             final int index = i; ShortcutStore.Shortcut shortcut = saved.get(i);
-            ui.category(content, R.drawable.ic_link, shortcut.title, shortcut.url, v -> editShortcut(index));
+            ui.site(content, shortcut.title, shortcut.url, null, v -> editShortcut(index));
         }
+        ui.add(content, ui.text(R.string.settings_shortcuts_tip, 13, ui.muted), 16);
+        MaterialButton library = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+        library.setText(R.string.library_from_bookmarks); library.setIconResource(R.drawable.ic_bookmark); library.setMinHeight(ui.dp(52));
+        library.setSingleLine(false); library.setOnClickListener(v -> startActivity(new Intent(this, LibraryActivity.class)));
+        ui.add(content, library, 12);
         MaterialButton add = ui.button(R.string.shortcut_add, R.drawable.ic_add, v -> editShortcut(-1));
         add.setEnabled(saved.size() < ShortcutStore.LIMIT); ui.add(content, add, 20);
         if (saved.size() >= ShortcutStore.LIMIT) ui.add(content, ui.text(R.string.shortcut_limit, 13, ui.muted), 10);
@@ -382,11 +390,12 @@ public final class SettingsActivity extends Activity {
         MaterialButton save = ui.button(R.string.shortcut_save, R.drawable.ic_check, v -> {
             name.setError(null); url.setError(null);
             try {
-                shortcuts.save(editing, value(shortcutName), value(shortcutUrl));
+                if (editing < 0) new SavedSitesStore(preferences).pin(SavedSitesStore.validate(value(shortcutName), value(shortcutUrl)));
+                else shortcuts.save(editing, value(shortcutName), value(shortcutUrl));
                 titleDraft = null; urlDraft = null; announce(R.string.shortcut_saved); navigateUp();
             } catch (IllegalArgumentException invalid) {
                 if ("title".equals(invalid.getMessage())) name.setError(getString(R.string.shortcut_invalid_name));
-                else if ("url".equals(invalid.getMessage())) url.setError(getString(R.string.shortcut_invalid_url));
+                else if ("url".equals(invalid.getMessage()) || "duplicate".equals(invalid.getMessage())) url.setError(getString("duplicate".equals(invalid.getMessage()) ? R.string.library_duplicate : R.string.shortcut_invalid_url));
                 else announce("limit".equals(invalid.getMessage()) ? R.string.shortcut_limit : R.string.shortcut_unavailable);
             }
         }); save.setId(R.id.settings_shortcut_save); ui.add(content, save, 20);

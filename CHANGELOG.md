@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Replace the long browser menu and tab dialog with scrollable Material bottom panels, named icon actions, clear tab selection, and separate close targets.
+- Add one searchable library for bookmarks and start-page shortcuts, with pin/unpin, editing, confirmed deletion, and shared website rows.
+- Keep linked names and addresses consistent using atomic writes to the existing JSON preferences; reject duplicates and unsafe addresses.
+- Refine the home layout, compact settings categories, remove duplicate detail headings, and use the same website monograms throughout.
+- Preserve library search, selected tab, and editor drafts across recreation; add storage and native-widget regression tests and UI renderings.
+
 ## 0.4.0 — 2026-10-27 (alpha)
 
 - Turn settings into an independent searchable hub with dedicated detail screens and predictable Back navigation.

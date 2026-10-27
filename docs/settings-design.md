@@ -1,6 +1,8 @@
-# Settings design: 0.4.0 development
+# Settings design
 
 The settings area is an independent Android activity. It starts with a searchable hub and opens focused detail pages; the browser's address bar and navigation controls do not appear on these screens.
+
+The settings layout has since been refined with more compact rows and shared website visuals. See [the library and browser-panel update](library-design.md) for the latest screen examples and behavior.
 
 ## Navigation
 
@@ -14,13 +16,15 @@ flowchart TD
     Hub --> Shortcuts[Shortcut list]
     Home --> Shortcuts
     Shortcuts --> Editor[Add or edit shortcut]
+    Shortcuts --> Library[Bookmark and start-page library]
+    Browser --> Library
     Hub --> Passwords[Password-provider information]
     Hub --> Extensions[Existing extension manager]
     Hub --> About[About and version]
     Passwords --> Android[Android system settings]
 ```
 
-Back and the toolbar arrow return to the previous settings destination; only Back from the hub closes the settings activity. Direct links from the start-page shortcut editor open the same settings area. Navigation, scroll position, and in-progress form fields survive recreation. Saved changes retain the existing preference keys and are applied to the browser on return.
+Back and the toolbar arrow return to the previous settings destination; only Back from the hub closes the settings activity. The start-page shortcut action now opens the library; settings also links to that shared library. Navigation, scroll position, and in-progress form fields survive recreation. Saved changes retain the existing preference keys and are applied to the browser on return.
 
 ## Visual direction
 
