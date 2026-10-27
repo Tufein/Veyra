@@ -56,6 +56,6 @@ GitHub authentication and source push were restored on 27 October 2026. The earl
 - No three-extension behavioral/update acceptance. Official packages and a compiled test runner are not compatibility evidence; see [extensions](extensions.md).
 - No real two-client synchronization against an owner-managed server and no independent cryptographic audit.
 - No TalkBack, controller/handheld acceptance, real-site/Autofill matrix or startup/page/memory/battery measurements.
-- Public 0.5 upload/publication is in progress; a successful workflow or stable release is not implied.
+- A v0.5.0 draft exists (release ID 425807114), but all asset uploads, including the small checksum file, fail with HTTP 401 on uploads.github.com. No assets are attached and it remains unpublished. API access and source push work; the active environment reports no configured secret bindings. A working secure GH_TOKEN binding covering the upload host is still needed.
 
 Follow [device-validation.md](device-validation.md). All 1.0 release gates stay open until their actual evidence exists. Keep [migration instructions](signing-and-migration.md) with every first fixed-key APK handoff.
