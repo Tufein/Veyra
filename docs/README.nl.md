@@ -21,7 +21,7 @@ Deze versie behoudt de adresbalk, terug/vooruit, vernieuwen, maximaal twaalf tab
 
 Open de test-APK op een telefoon met Android 9 (API 28) of hoger. Versie 0.2.0 heeft hetzelfde pakket (`nl.veyra.browser`), een hoger versienummer en dezelfde debughandtekening als de eerder geleverde 0.1.0. Installeer hem als update over de bestaande app om lokale tabs, cookies en bladwijzers te behouden.
 
-In de 0.4.0-ontwikkelversie open je **Menu → Instellingen** voor je voorkeuren. De knop rechtsboven op de startpagina opent dezelfde instellingen. Gebruik **Menu → Adblocker voor deze website** voor een website-uitzondering en **Menu → HTTPS en verbinding** voor de protocolkeuze.
+In de 0.4.0-alpha open je **Menu → Instellingen** voor je voorkeuren. De knop rechtsboven op de startpagina opent dezelfde instellingen. Gebruik **Menu → Adblocker voor deze website** voor een website-uitzondering en **Menu → HTTPS en verbinding** voor de protocolkeuze.
 
 ## Wachtwoorden en passkeys
 
@@ -83,7 +83,7 @@ De browser gebruikt nu GeckoView. Websites vragen opnieuw om inloggen, omdat coo
 Bouwen: JDK 21, Android SDK Platform 37.2 en Build Tools 37.0.0. Gebruik voor een recente telefoon `app-arm64-v8a-debug.apk`, voor een 32-bits ARM-apparaat `app-armeabi-v7a-debug.apk` en voor een x86_64-emulator `app-x86_64-debug.apk`.
 
 
-## Instellingen in de 0.4.0-ontwikkelversie
+## Instellingen in de 0.4.0-alpha
 
 De instellingen zijn een zelfstandig onderdeel met een eigen overzicht en terugnavigatie. Via het zoekveld vind je bijvoorbeeld ‘thema’, ‘Firefox’ of ‘wachtwoorden’. **Uitstraling**, **Startpagina**, **Lezen en zoeken**, **Privacy en bescherming**, **Snelkoppelingen**, **Wachtwoorden en passkeys** en **Over Veyra** hebben elk een eigen pagina. **Extensies** opent het bestaande extensiebeheer.
 
@@ -91,4 +91,4 @@ Snelkoppelingen voeg, wijzig en verwijder je binnen de instellingen. Ongeldige a
 
 Achtergrondkleuren zijn beschikbaar vanaf Android 12. De vier eigen accenten werken ook op Android 9. Op kleine schermen met groot lettertype staan de themakeuzes onder elkaar zodat geen labels worden afgekapt.
 
-De volledige ontwikkelvolgorde met oplevercriteria staat in [de productroadmap](../ROADMAP.md). Deze ontwikkelversie is nog geen nieuwe openbare APK-release; de laatst gepubliceerde alpha is 0.3.0.
+De volledige ontwikkelvolgorde met oplevercriteria staat in [de productroadmap](../ROADMAP.md). Download de [0.4.0-alpha op GitHub](https://github.com/Tufein/Veyra/releases/tag/v0.4.0); kies voor de meeste moderne telefoons de ARM64-APK. De APK’s zijn debug-ondertekend en nog niet op een fysiek toestel gevalideerd. Een update over een bestaande installatie kan door een andere handtekening worden geweigerd. Verwijderen wist lokale appgegevens; verwijder de app dus niet om dit op te lossen als je die gegevens wilt behouden. Zie de [release-informatie](releases/v0.4.0.md).

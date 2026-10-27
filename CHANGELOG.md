@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 — In development
+## 0.4.0 — 2026-10-27 (alpha)
 
 - Turn settings into an independent searchable hub with dedicated detail screens and predictable Back navigation.
 - Move shortcut management into a full settings editor with input validation and shared legacy preference storage.

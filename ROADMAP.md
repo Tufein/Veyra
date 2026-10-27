@@ -1,6 +1,6 @@
 # Veyra — productroadmap
 
-Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. Een versienummer wordt pas gepubliceerd wanneer de bijbehorende controles zijn afgerond. **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
+Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De 0.4.0-alpha is een testrelease met openstaande apparaat- en updatecontroles; zie de [releasebeperkingen](docs/releases/v0.4.0.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
 
 Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handhelds. De prioriteit is betrouwbare dagelijkse navigatie met een verzorgde Material You-interface, bruikbare Firefox-extensies en duidelijke privacykeuzes. Meer functies mogen de browser niet onoverzichtelijk of onnodig zwaar maken.
 
@@ -12,7 +12,7 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | Browsen met GeckoView | Geïmplementeerd: navigatie, tabbladen, herstel van adressen, zoeken op pagina | Websitecompatibiliteit, rendererherstel en langdurig dagelijks gebruik |
 | Lokale advertentieblokkering | Gebundelde regels, cosmetische filtering, uitzonderingen en HTTPS-beleid; regressietests aanwezig | Betrouwbaarheid op echte websites en wisselwerking met extensies |
 | Firefox-extensies | Catalogus, ondertekende installatie, toestemmingsvensters en beheer aanwezig | Installatie, popups en ondersteunde API’s per extensie op een apparaat |
-| Material You-instellingen 0.4.0 | Nieuwe instellingenhub, detailpagina’s, zoeken, eigen editor en uitgebreidere kleurrollen geïmplementeerd; nog geen gepubliceerde 0.4.0-release | Visuele en functionele controle op een telefoon naast de UI-tests |
+| Material You-instellingen 0.4.0 | Nieuwe instellingenhub, detailpagina’s, zoeken, eigen editor en uitgebreidere kleurrollen beschikbaar als testalpha | Visuele en functionele controle op een telefoon naast de UI-tests |
 | Startpagina | Begroeting, compact beeld, maximaal acht eigen snelkoppelingen | Groot lettertype, kleine schermen, toetsenbord en controller op hardware |
 | Downloads, browsegeschiedenis, privétabs, synchronisatie | Niet geïmplementeerd | Volledige onderstaande oplevercriteria |
 

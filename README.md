@@ -4,11 +4,11 @@
 
 A customizable Android browser with a calm start page, bottom navigation, local ad blocking, and practical HTTPS controls. Built with Java, Material 3 components, and Mozilla GeckoView.
 
-**Development version:** 0.4.0 · **Stage:** early alpha · **Android:** 9+ (API 28)
+**Version:** 0.4.0 · **Stage:** early alpha · **Android:** 9+ (API 28)
 
-[Latest published alpha: 0.3.0](https://github.com/Tufein/Veyra/releases/tag/v0.3.0) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
+[Download 0.4.0 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.0) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
 
-[Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.3.md)
+[Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.4.md)
 
 ## Features
 
@@ -67,9 +67,11 @@ Compatibility depends on the extension and the WebExtensions APIs supported by G
 
 ## Try Veyra
 
-Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. Build the debug APK using the instructions below, or download the debug APK artifact from a successful [Android CI run](https://github.com/Tufein/Veyra/actions/workflows/android.yml) once available.
+Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. [Download the ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.0/Veyra-0.4.0-arm64-v8a-debug.apk) for most modern phones, or choose another architecture on the [0.4.0 release page](https://github.com/Tufein/Veyra/releases/tag/v0.4.0). These are debug-signed testing builds; live-device validation remains outstanding.
 
 The previously shared 0.2.0 test APK uses the same signing certificate as the previously shared 0.1.0 APK, allowing an update that preserves local app data. An APK built on another machine or a CI runner normally has a different debug signing key. Keeping the same application ID, a compatible version code, and the same signing key is necessary to update an existing installation.
+
+In-place update compatibility between the published 0.3.0 and 0.4.0 alpha builds has not been established. Uninstalling the app deletes its local data; do not uninstall to resolve a signature conflict if you need to keep that data. See the [release notes](docs/releases/v0.4.0.md).
 
 In the app:
 

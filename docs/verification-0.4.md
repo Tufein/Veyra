@@ -1,6 +1,6 @@
-# Verification: independent settings and design (0.4.0 development)
+# Verification: independent settings and design (0.4.0 alpha)
 
-This is a development candidate. The published GitHub alpha remains 0.3.0; this change does not create a new release tag.
+The 0.4.0 alpha packages the independent settings and design changes for testing. See the [release notes](releases/v0.4.0.md) for downloads and signing limitations. Publishing this alpha does not establish device validation or in-place update compatibility.
 
 ## Build and automated checks
 
@@ -37,4 +37,4 @@ Native Robolectric renderings are generated under `app/build/reports/settings-ui
 
 ## Remaining device checks
 
-Run the connected settings tests and manually verify Android 9 and Android 12+ with real wallpaper colors; hardware/predictive Back; keyboard/insets; 200% font scale; RTL; controller/keyboard focus; and returning to a live browser tab without losing its URL or session. Test a signed update path before publishing another installable release.
+Run the connected settings tests and manually verify Android 9 and Android 12+ with real wallpaper colors; hardware/predictive Back; keyboard/insets; 200% font scale; RTL; controller/keyboard focus; and returning to a live browser tab without losing its URL or session. A signed update path retaining app data has not been validated for this alpha; fixed signing and update validation remain priorities for 0.4.1.
