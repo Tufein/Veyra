@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ui_import_and_export_2ae54" formatted="false">"Import and export"</string>
+  <string name="ui_take_your_bookmarks_and_start_page_with_you_in_a_local_aca50" formatted="false">"Take your bookmarks and start page with you in a local JSON file. Cookies, passwords, site permissions and history are excluded."</string>
+  <string name="ui_include_personal_preferences_4b857" formatted="false">"Include personal preferences"</string>
+  <string name="ui_export_backup_2bb69" formatted="false">"Export backup"</string>
+  <string name="ui_import_backup_6cf71" formatted="false">"Import backup"</string>
+  <string name="ui_import_merges_websites_and_preserves_existing_entries_33727" formatted="false">"Import merges websites and preserves existing entries. Check the file before importing. Imported preferences only apply when the option above is enabled."</string>
+  <string name="ui_no_file_picker_is_available_7a3e5" formatted="false">"No file picker is available."</string>
+  <string name="ui_backup_saved_5f54c" formatted="false">"Backup saved."</string>
+  <string name="ui_merge_backup_29005" formatted="false">"Merge backup?"</string>
+  <string name="ui_bookmarks_and_54838" formatted="false">" bookmarks and "</string>
+  <string name="ui_shortcuts_existing_websites_are_retained_1077f" formatted="false">" shortcuts. Existing websites are retained."</string>
+  <string name="ui_supported_preferences_will_be_applied_25c77" formatted="false">" Supported preferences will be applied."</string>
+  <string name="ui_preferences_will_not_change_45a4e" formatted="false">" Preferences will not change."</string>
+  <string name="ui_cancel_c6a8d" formatted="false">"Cancel"</string>
+  <string name="ui_import_1b9b2" formatted="false">"Import"</string>
+  <string name="ui_backup_imported_fc396" formatted="false">"Backup imported."</string>
+  <string name="ui_not_completed_9db37" formatted="false">"Not completed: "</string>
+  <string name="ui_file_unavailable_a3a8d" formatted="false">"file unavailable"</string>
+  <string name="ui_https_only_is_enabled_this_http_page_is_blocked_open_t_d00eb" formatted="false">"HTTPS only is enabled. This HTTP page is blocked. Open the connection menu to try HTTPS."</string>
+  <string name="ui_connection_information_d437e" formatted="false">"Connection information"</string>
+  <string name="ui_search_or_enter_a_web_address_6c60f" formatted="false">"Search or enter a web address"</string>
+  <string name="ui_search_or_web_address_45960" formatted="false">"Search or web address"</string>
+  <string name="ui_reload_page_3974b" formatted="false">"Reload page"</string>
+  <string name="ui_back_ebf6c" formatted="false">"Back"</string>
+  <string name="ui_forward_9df38" formatted="false">"Forward"</string>
+  <string name="ui_start_page_a582e" formatted="false">"Start page"</string>
+  <string name="ui_tabs_c36a5" formatted="false">"Tabs"</string>
+  <string name="ui_menu_99af6" formatted="false">"Menu"</string>
+  <string name="ui_settings_27018" formatted="false">"Settings"</string>
+  <string name="ui_a_new_day_a_new_discovery_f9c79" formatted="false">"A NEW DAY. A NEW DISCOVERY."</string>
+  <string name="ui_good_to_see_you_019a4" formatted="false">"GOOD TO SEE YOU, "</string>
+  <string name="ui_space_for_you_cdeb2" formatted="false">"SPACE FOR YOU"</string>
+  <string name="ui_the_web_at_your_pace_4dacc" formatted="false">"The web.\nAt your pace."</string>
+  <string name="ui_where_would_you_like_to_go_today_a3a25" formatted="false">"Where would you like to go today?"</string>
+  <string name="ui_discover_something_new_526c5" formatted="false">"Discover something new   ↗"</string>
+  <string name="ui_edit_ea89b" formatted="false">"Edit"</string>
+  <string name="ui_edit_shortcuts_d7fea" formatted="false">"Edit shortcuts"</string>
+  <string name="ui_fewer_ads_more_calm_19b86" formatted="false">"Fewer ads. More calm."</string>
+  <string name="ui_ad_blocker_is_off_a6c8c" formatted="false">"Ad blocker is off"</string>
+  <string name="ui_https_only_enabled_674fe" formatted="false">"●  HTTPS only enabled"</string>
+  <string name="ui_https_preferred_7eb8e" formatted="false">"●  HTTPS preferred"</string>
+  <string name="ui_open_8679f" formatted="false">" open"</string>
+  <string name="ui_enter_a_valid_web_address_or_a_search_query_b4f3d" formatted="false">"Enter a valid web address or a search query."</string>
+  <string name="ui_extensions_could_not_be_connected_e6821" formatted="false">"Extensions could not be connected."</string>
+  <string name="ui_this_page_uses_http_037f4" formatted="false">"This page uses HTTP."</string>
+  <string name="ui_unable_to_connect_6733b" formatted="false">"Unable to connect."</string>
+  <string name="ui_try_https_b3d5f" formatted="false">"Try HTTPS"</string>
+  <string name="ui_try_again_57643" formatted="false">"Try again"</string>
+  <string name="ui_you_can_enable_blocking_from_the_menu_ec645" formatted="false">"You can enable blocking from the menu"</string>
+  <string name="ui_maximum_of_12_tabs_close_a_tab_first_0c165" formatted="false">"Maximum of 12 tabs. Close a tab first."</string>
+  <string name="ui_a_calmer_web_f96df" formatted="false">"A calmer web"</string>
+  <string name="ui_the_ad_blocker_is_333d7" formatted="false">"The ad blocker is "</string>
+  <string name="ui_the_main_page_itself_is_not_blocked_this_does_not_bloc_8116e" formatted="false">"The main page itself is not blocked. This does not block every ad, including many video ads.\n\n"</string>
+  <string name="ui_open_a_website_to_add_an_exception_d3ae5" formatted="false">"Open a website to add an exception."</string>
+  <string name="ui_blocking_is_off_for_this_website_7e3b1" formatted="false">"Blocking is off for this website."</string>
+  <string name="ui_blocking_follows_your_general_preference_da263" formatted="false">"Blocking follows your general preference."</string>
+  <string name="ui_close_5a468" formatted="false">"Close"</string>
+  <string name="ui_remove_exception_231e4" formatted="false">"Remove exception"</string>
+  <string name="ui_turn_off_here_39996" formatted="false">"Turn off here"</string>
+  <string name="ui_the_general_ad_blocker_is_still_off_a1a9c" formatted="false">"The general ad blocker is still off."</string>
+  <string name="ui_this_page_could_not_be_loaded_893d2" formatted="false">"This page could not be loaded.\n\n"</string>
+  <string name="ui_https_encrypts_this_connection_it_does_not_guarantee_t_61f57" formatted="false">"HTTPS encrypts this connection. It does not guarantee that the website is trustworthy.\n\n"</string>
+  <string name="ui_http_is_not_encrypted_d2a0f" formatted="false">"HTTP is not encrypted.\n\n"</string>
+  <string name="ui_https_only_is_enabled_there_is_no_automatic_fallback_t_b6ef3" formatted="false">"HTTPS only is enabled. There is no automatic fallback to HTTP."</string>
+  <string name="ui_https_is_preferred_you_can_choose_http_yourself_when_a_cf412" formatted="false">"HTTPS is preferred. You can choose HTTP yourself when a website needs it."</string>
+  <string name="ui_try_https_b3496" formatted="false">"Try HTTPS"</string>
+  <string name="ui_choose_http_0bc1d" formatted="false">"Choose HTTP"</string>
+  <string name="ui_open_without_encryption_6d547" formatted="false">"Open without encryption?"</string>
+  <string name="ui_the_connection_will_use_http_use_this_only_when_this_w_a5b5c" formatted="false">"The connection will use HTTP. Use this only when this website requires it."</string>
+  <string name="ui_open_with_http_012bc" formatted="false">"Open with HTTP"</string>
+  <string name="ui_prefer_https_explicit_http_links_are_allowed_8e11d" formatted="false">"Prefer HTTPS · explicit HTTP links are allowed"</string>
+  <string name="ui_https_only_block_http_d8886" formatted="false">"HTTPS only · block HTTP"</string>
+  <string name="ui_use_the_password_manager_configured_in_android_such_as_3d431" formatted="false">"Use the password manager configured in Android, such as Google Password Manager, Bitwarden or 1Password. "</string>
+  <string name="ui_veyra_does_not_store_passwords_or_passkeys_itself_37b82" formatted="false">"Veyra does not store passwords or passkeys itself."</string>
+  <string name="ui_passwords_and_passkeys_17e09" formatted="false">"Passwords and passkeys"</string>
+  <string name="ui_fill_password_69897" formatted="false">"Fill password"</string>
+  <string name="ui_select_a_login_field_on_the_website_first_64f80" formatted="false">"Select a login field on the website first"</string>
+  <string name="ui_open_a_login_page_and_select_a_login_field_first_5299e" formatted="false">"Open a login page and select a login field first."</string>
+  <string name="ui_choose_your_password_manager_9a528" formatted="false">"Choose your password manager"</string>
+  <string name="ui_choose_your_password_manager_as_the_autofill_service_i_65497" formatted="false">"Choose your password manager as the Autofill service in Android."</string>
+  <string name="ui_autofill_settings_966d6" formatted="false">"Autofill settings"</string>
+  <string name="ui_set_up_your_password_manager_e6a54" formatted="false">"Set up your password manager"</string>
+  <string name="ui_choose_your_autofill_service_4bc39" formatted="false">"Choose your Autofill service"</string>
+  <string name="ui_sign_in_with_an_external_passkey_f9cea" formatted="false">"Sign in with an external passkey"</string>
+  <string name="ui_open_this_website_in_a_supported_browser_d5787" formatted="false">"Open this website in a supported browser"</string>
+  <string name="ui_passkeys_for_arbitrary_websites_require_additional_bro_a88fe" formatted="false">"Passkeys for arbitrary websites require additional browser approval. This version uses an external browser. "</string>
+  <string name="ui_the_login_stays_in_that_browser_its_session_is_not_tra_de285" formatted="false">"The login stays in that browser; its session is not transferred to Veyra. Autofill depends on your manager and the website."</string>
+  <string name="ui_open_an_https_login_page_first_44f56" formatted="false">"Open an HTTPS login page first."</string>
+  <string name="ui_no_other_browser_found_install_a_browser_with_passkey_b5182" formatted="false">"No other browser found. Install a browser with passkey support."</string>
+  <string name="ui_open_login_in_another_browser_01ef8" formatted="false">"Open login in another browser"</string>
+  <string name="ui_this_browser_is_not_available_a7408" formatted="false">"This browser is not available."</string>
+  <string name="ui_open_a_website_first_9bb0d" formatted="false">"Open a website first."</string>
+  <string name="ui_this_bookmark_already_exists_ff1af" formatted="false">"This bookmark already exists."</string>
+  <string name="ui_bookmark_saved_56b50" formatted="false">"Bookmark saved"</string>
+  <string name="ui_could_not_save_36578" formatted="false">"Could not save."</string>
+  <string name="ui_share_page_9c8bc" formatted="false">"Share page"</string>
+  <string name="ui_which_word_are_you_looking_for_5c1f2" formatted="false">"Which word are you looking for?"</string>
+  <string name="ui_find_in_page_91025" formatted="false">"Find in page"</string>
+  <string name="ui_search_5d33a" formatted="false">"Search"</string>
+  <string name="ui_no_results_addf4" formatted="false">"No results"</string>
+  <string name="ui_results_cc7a6" formatted="false">" results"</string>
+  <string name="ui_done_6fb77" formatted="false">"Done"</string>
+  <string name="ui_search_failed_f82b1" formatted="false">"Search failed."</string>
+  <string name="ui_this_type_of_link_is_not_supported_yet_1ab45" formatted="false">"This type of link is not supported yet."</string>
+  <string name="ui_open_another_app_42d5c" formatted="false">"Open another app?"</string>
+  <string name="ui_open_5b1e5" formatted="false">"Open"</string>
+  <string name="ui_no_suitable_app_found_cc97e" formatted="false">"No suitable app found."</string>
+  <string name="ui_download_started_see_menu_downloads_b2233" formatted="false">"Download started. See Menu → Downloads."</string>
+  <string name="ui_the_download_could_not_start_check_the_destination_fil_00ed7" formatted="false">"The download could not start. Check the destination file."</string>
+  <string name="ui_private_tab_no_history_or_tab_restoration_2a1cb" formatted="false">"Private tab: no history or tab restoration"</string>
+  <string name="ui_download_unavailable_or_a_file_picker_is_already_open_88af7" formatted="false">"Download unavailable, or a file picker is already open."</string>
+  <string name="ui_this_download_address_is_not_allowed_c75b9" formatted="false">"This download address is not allowed."</string>
+  <string name="ui_save_a_private_file_85734" formatted="false">"Save a private file?"</string>
+  <string name="ui_the_selected_file_will_remain_on_your_device_after_pri_1346d" formatted="false">"The selected file will remain on your device after private tabs close. Its download address will not be saved."</string>
+  <string name="ui_choose_file_235cc" formatted="false">"Choose file"</string>
+  <string name="ui_open_in_new_tab_02b11" formatted="false">"Open in new tab"</string>
+  <string name="ui_open_in_private_tab_619b3" formatted="false">"Open in private tab"</string>
+  <string name="ui_copy_link_97baa" formatted="false">"Copy link"</string>
+  <string name="ui_you_can_open_up_to_twelve_tabs_70529" formatted="false">"You can open up to twelve tabs."</string>
+  <string name="ui_link_copied_9c8bb" formatted="false">"Link copied"</string>
+  <string name="ui_extra_extensions_disabled_built_in_protection_remains_58090" formatted="false">"Extra extensions disabled. Built-in protection remains active."</string>
+  <string name="ui_not_all_extensions_could_be_disabled_try_again_from_ex_5c159" formatted="false">"Not all extensions could be disabled. Try again from Extensions."</string>
+  <string name="ui_website_data_or_permissions_changed_open_the_page_agai_99d9d" formatted="false">"Website data or permissions changed. Open the page again."</string>
+  <string name="ui_private_tab_not_saved_45d1d" formatted="false">"Private tab · not saved"</string>
+  <string name="ui_browser_and_data_2f71d" formatted="false">"Browser and data"</string>
+  <string name="ui_set_veyra_as_the_default_browser_bac8b" formatted="false">"Set Veyra as the default browser"</string>
+  <string name="ui_history_749cb" formatted="false">"History"</string>
+  <string name="ui_downloads_d5fdc" formatted="false">"Downloads"</string>
+  <string name="ui_privacy_and_clear_data_30b22" formatted="false">"Privacy and clear data"</string>
+  <string name="ui_encrypted_sync_158d1" formatted="false">"Encrypted sync"</string>
+  <string name="ui_custom_search_engine_use_an_https_template_with_s_in_p_b9363" formatted="false">"Custom search engine: use an HTTPS template with %s in place of search text, such as https://example.org/search?q=%s."</string>
+  <string name="ui_search_url_with_s_14e39" formatted="false">"Search URL with %s"</string>
+  <string name="ui_use_custom_search_engine_cd3a4" formatted="false">"Use custom search engine"</string>
+  <string name="ui_use_a_valid_https_address_with_exactly_one_s_in_the_qu_d527f" formatted="false">"Use a valid HTTPS address with exactly one %s in the query parameters."</string>
+  <string name="ui_custom_search_engine_selected_ebd1e" formatted="false">"Custom search engine selected."</string>
+  <string name="ui_tab_restoration_only_saves_normal_tab_addresses_and_ti_b907a" formatted="false">"Tab restoration only saves normal tab addresses and titles. Form content and private tabs are not restored after process termination. Fewer active pages reduce memory use, but may require reloading."</string>
+  <string name="ui_choose_maximum_active_pages_5413b" formatted="false">"Choose maximum active pages"</string>
+  <string name="ui_2_active_pages_55bb6" formatted="false">"2 active pages"</string>
+  <string name="ui_3_active_pages_d6367" formatted="false">"3 active pages"</string>
+  <string name="ui_4_active_pages_265c7" formatted="false">"4 active pages"</string>
+  <string name="ui_applies_on_the_next_tab_switch_a3ec9" formatted="false">"Applies on the next tab switch."</string>
+  <string name="ui_recover_browser_without_extra_extensions_06233" formatted="false">"Recover browser without extra extensions"</string>
+  <string name="ui_open_recovery_mode_da3ef" formatted="false">"Open recovery mode?"</string>
+  <string name="ui_extra_extensions_will_be_disabled_website_pages_will_r_91089" formatted="false">"Extra extensions will be disabled. Website pages will reopen; bookmarks and preferences are retained."</string>
+  <string name="ui_recover_6f145" formatted="false">"Recover"</string>
+  <string name="ui_keyboard_ctrl_l_address_bar_ctrl_t_new_tab_ctrl_shift_0ca33" formatted="false">"Keyboard: Ctrl+L address bar, Ctrl+T new tab, Ctrl+Shift+P private tab, Ctrl+W close and Ctrl+Tab switch. Android animation preferences are respected."</string>
+  <string name="ui_check_your_connection_or_try_the_address_again_certifi_dce35" formatted="false">"Check your connection or try the address again. Certificate errors are not bypassed."</string>
+  <string name="ui_this_page_was_removed_from_memory_tap_try_again_f7257" formatted="false">"This page was removed from memory. Tap try again."</string>
+  <string name="ui_the_page_has_closed_tap_try_again_73e47" formatted="false">"The page has closed. Tap try again."</string>
+  <string name="ui_leave_this_page_83769" formatted="false">"Leave this page?"</string>
+  <string name="ui_unsaved_changes_may_be_lost_08c51" formatted="false">"Unsaved changes may be lost."</string>
+  <string name="ui_leave_65275" formatted="false">"Leave"</string>
+  <string name="ui_browser_protection_could_not_start_restart_veyra_b843a" formatted="false">"Browser protection could not start. Restart Veyra."</string>
+  <string name="ui_privacy_and_data_5621b" formatted="false">"Privacy and data"</string>
+  <string name="ui_private_tabs_use_a_separate_gecko_private_session_thei_55769" formatted="false">"Private tabs use a separate Gecko private session. Their addresses are excluded from history and tab restoration. Explicit downloads and bookmarks remain saved."</string>
+  <string name="ui_website_data_and_permissions_70a57" formatted="false">"Website data and permissions"</string>
+  <string name="ui_clear_browsing_history_fc740" formatted="false">"Clear browsing history"</string>
+  <string name="ui_clear_cookies_and_website_storage_may_sign_you_out_a4e9c" formatted="false">"Clear cookies and website storage (may sign you out)"</string>
+  <string name="ui_clear_image_and_network_caches_9edde" formatted="false">"Clear image and network caches"</string>
+  <string name="ui_ask_for_site_permissions_again_cf4ba" formatted="false">"Ask for site permissions again"</string>
+  <string name="ui_reset_personal_preferences_1014b" formatted="false">"Reset personal preferences"</string>
+  <string name="ui_clear_selected_data_ce79a" formatted="false">"Clear selected data"</string>
+  <string name="ui_choose_what_to_clear_first_7b441" formatted="false">"Choose what to clear first."</string>
+  <string name="ui_clear_selected_data_32834" formatted="false">"Clear selected data?"</string>
+  <string name="ui_bookmarks_and_saved_files_are_retained_open_pages_clos_c0a09" formatted="false">"\n\nBookmarks and saved files are retained. Open pages close when clearing history or website data to prevent data from being saved again."</string>
+  <string name="ui_clear_54e3b" formatted="false">"Clear"</string>
+  <string name="ui_selected_data_cleared_2b733" formatted="false">"Selected data cleared."</string>
+  <string name="ui_the_engine_could_not_confirm_clearing_try_again_local_9d985" formatted="false">"The engine could not confirm clearing. Try again; local selections have not been cleared yet."</string>
+  <string name="ui_files_are_saved_where_you_choose_using_the_signed_in_w_6996d" formatted="false">"Files are saved where you choose, using the signed-in website session. Request interrupted downloads again; private download addresses are not saved."</string>
+  <string name="ui_no_downloads_yet_8ab73" formatted="false">"No downloads yet."</string>
+  <string name="ui_no_app_or_permission_is_available_to_open_this_file_b55c9" formatted="false">"No app or permission is available to open this file."</string>
+  <string name="ui_request_again_1b4ff" formatted="false">"Request again?"</string>
+  <string name="ui_the_website_will_reopen_with_your_current_session_conf_ae2a3" formatted="false">"The website will reopen with your current session. Confirm the download there and choose a destination. Earlier forms are not automatically resubmitted."</string>
+  <string name="ui_open_website_fb953" formatted="false">"Open website"</string>
+  <string name="ui_in_progress_18d64" formatted="false">"In progress"</string>
+  <string name="ui_complete_ca532" formatted="false">"Complete"</string>
+  <string name="ui_cancelled_92c56" formatted="false">"Cancelled"</string>
+  <string name="ui_interrupted_be65c" formatted="false">"Interrupted"</string>
+  <string name="ui_this_extension_works_in_the_background_and_has_no_cont_67f1b" formatted="false">"This extension works in the background and has no control panel."</string>
+  <string name="ui_extensions_8966f" formatted="false">"Extensions"</string>
+  <string name="ui_a_little_extra_veyra_1b81b" formatted="false">"A little extra Veyra."</string>
+  <string name="ui_discover_extensions_from_mozilla_add_ons_for_firefox_o_9f892" formatted="false">"Discover extensions from Mozilla Add-ons for Firefox on Android. Compatibility varies by extension."</string>
+  <string name="ui_disable_all_extra_extensions_ab3a3" formatted="false">"Disable all extra extensions"</string>
+  <string name="ui_disable_extensions_d0ffd" formatted="false">"Disable extensions?"</string>
+  <string name="ui_your_websites_and_browser_data_are_retained_built_in_p_dba35" formatted="false">"Your websites and browser data are retained. Built-in protection stays on. You can enable extensions individually later."</string>
+  <string name="ui_disable_257f2" formatted="false">"Disable"</string>
+  <string name="ui_extra_extensions_disabled_56aa3" formatted="false">"Extra extensions disabled"</string>
+  <string name="ui_compatibility_and_test_status_27405" formatted="false">"Compatibility and test status"</string>
+  <string name="ui_extension_compatibility_24da9" formatted="false">"Extension compatibility"</string>
+  <string name="ui_ublock_origin_device_validation_pending_dark_reader_de_2e380" formatted="false">"uBlock Origin · device validation pending\nDark Reader · device validation pending\nClearURLs · device validation pending\n\nThe catalog checks Android and engine versions. Listing does not prove tested behavior. Native messages are restricted to built-in Veyra protection; extra extensions have no app bridge."</string>
+  <string name="ui_installed_7ddcb" formatted="false">"Installed"</string>
+  <string name="ui_discover_100e7" formatted="false">"Discover"</string>
+  <string name="ui_search_firefox_extensions_91332" formatted="false">"Search Firefox extensions"</string>
+  <string name="ui_geckoview_verifies_downloads_and_signatures_new_permis_6e116" formatted="false">"GeckoView verifies downloads and signatures. New permissions always require consent. Start updates from each installed extension."</string>
+  <string name="ui_extension_changed_12817" formatted="false">"Extension changed"</string>
+  <string name="ui_check_for_updates_bbfdb" formatted="false">"Check for updates"</string>
+  <string name="ui_update_check_completed_cb124" formatted="false">"Update check completed"</string>
+  <string name="ui_remove_d6c44" formatted="false">"Remove"</string>
+  <string name="ui_remove_extension_57080" formatted="false">"Remove extension?"</string>
+  <string name="ui_and_its_extension_data_will_be_removed_75496" formatted="false">" and its extension data will be removed."</string>
+  <string name="ui_extension_removed_9eec3" formatted="false">"Extension removed"</string>
+  <string name="ui_no_extensions_yet_discover_what_works_for_you_below_98814" formatted="false">"No extensions yet. Discover what works for you below."</string>
+  <string name="ui_installed_extensions_could_not_be_loaded_reopen_this_s_20b49" formatted="false">"Installed extensions could not be loaded. Reopen this screen."</string>
+  <string name="ui_version_0d39b" formatted="false">"Version "</string>
+  <string name="ui_add_to_veyra_55ca7" formatted="false">"Add to Veyra"</string>
+  <string name="ui_source_mozilla_add_ons_firefox_on_android_8c202" formatted="false">"\nSource: Mozilla Add-ons (Firefox on Android)\n\n"</string>
+  <string name="ui_geckoview_verifies_the_signature_and_then_requests_con_c9fb8" formatted="false">"\n\nGeckoView verifies the signature and then requests consent for actual permissions and declared data collection."</string>
+  <string name="ui_continue_65c33" formatted="false">"Continue"</string>
+  <string name="ui_extension_added_f937f" formatted="false">"Extension added"</string>
+  <string name="ui_the_change_was_not_applied_check_your_connection_and_w_ed8b4" formatted="false">"The change was not applied. Check your connection and whether the extension supports this browser."</string>
+  <string name="ui_installation_cancelled_or_rejected_code_c18ec" formatted="false">"Installation cancelled or rejected (code "</string>
+  <string name="ui_the_extension_must_be_compatible_and_have_a_valid_mozi_0084f" formatted="false">"). The extension must be compatible and have a valid Mozilla signature."</string>
+  <string name="ui_recent_websites_stay_on_this_device_private_tabs_are_n_ffa72" formatted="false">"Recent websites stay on this device. Private tabs are never saved here."</string>
+  <string name="ui_search_history_010f1" formatted="false">"Search history"</string>
+  <string name="ui_clear_history_07b6a" formatted="false">"Clear history"</string>
+  <string name="ui_clear_all_history_61c73" formatted="false">"Clear all history?"</string>
+  <string name="ui_this_clears_local_history_not_bookmarks_or_website_dat_af770" formatted="false">"This clears local history, not bookmarks or website data."</string>
+  <string name="ui_no_visited_websites_found_53ebd" formatted="false">"No visited websites found."</string>
+  <string name="ui_remember_for_this_website_826e0" formatted="false">"Remember for this website"</string>
+  <string name="ui_requests_access_to_d7e16" formatted="false">" requests access to:"</string>
+  <string name="ui_website_permission_e9fd6" formatted="false">"Website permission"</string>
+  <string name="ui_allow_aefe3" formatted="false">"Allow"</string>
+  <string name="ui_deny_cd769" formatted="false">"Deny"</string>
+  <string name="ui_choose_a_known_https_website_this_overview_shows_permi_fb2b3" formatted="false">"Choose a known HTTPS website. This overview shows permission choices, not a complete measurement of website storage."</string>
+  <string name="ui_no_known_websites_yet_7cc63" formatted="false">"No known websites yet."</string>
+  <string name="ui_these_choices_apply_to_this_https_origin_android_also_c400b" formatted="false">"These choices apply to this HTTPS origin. Android also requests device permission. Private-tab choices are not remembered."</string>
+  <string name="ui_always_ask_2070c" formatted="false">"Ask"</string>
+  <string name="ui_block_76d58" formatted="false">"Block"</string>
+  <string name="ui_engine_permissions_could_not_be_refreshed_restart_veyr_fdaa7" formatted="false">"Engine permissions could not be refreshed. Restart Veyra."</string>
+  <string name="ui_ask_for_permissions_again_b3c09" formatted="false">"Ask for permissions again"</string>
+  <string name="ui_permissions_reset_9fbaa" formatted="false">"Permissions reset."</string>
+  <string name="ui_reset_not_completed_try_again_0f4b6" formatted="false">"Reset not completed. Try again."</string>
+  <string name="ui_clear_website_data_e4ca6" formatted="false">"Clear website data"</string>
+  <string name="ui_clear_website_data_27434" formatted="false">"Clear website data?"</string>
+  <string name="ui_cookies_storage_cache_and_permissions_for_01444" formatted="false">"Cookies, storage, cache and permissions for "</string>
+  <string name="ui_will_be_cleared_you_may_be_signed_out_open_pages_close_fce56" formatted="false">" will be cleared. You may be signed out. Open pages close; other websites are not cleared."</string>
+  <string name="ui_website_data_cleared_2f7fd" formatted="false">"Website data cleared."</string>
+  <string name="ui_clearing_not_completed_try_again_de1a3" formatted="false">"Clearing not completed. Try again."</string>
+  <string name="ui_sync_bookmarks_and_the_start_page_through_your_own_htt_6b549" formatted="false">"Sync bookmarks and the start page through your own HTTPS/WebDAV file. The server only receives encrypted content. History, private tabs, cookies, passwords and site permissions are excluded."</string>
+  <string name="ui_https_address_of_the_sync_file_286d4" formatted="false">"HTTPS address of the sync file"</string>
+  <string name="ui_server_username_a3be5" formatted="false">"Server username"</string>
+  <string name="ui_server_password_97db4" formatted="false">"Server password"</string>
+  <string name="ui_recovery_phrase_at_least_12_characters_90487" formatted="false">"Recovery phrase (at least 12 characters)"</string>
+  <string name="ui_store_connection_details_encrypted_on_this_device_14832" formatted="false">"Store connection details encrypted on this device"</string>
+  <string name="ui_stored_connection_details_could_not_be_decrypted_enter_987c4" formatted="false">"Stored connection details could not be decrypted. Enter them again."</string>
+  <string name="ui_not_synced_yet_db346" formatted="false">"Not synced yet."</string>
+  <string name="ui_merge_and_sync_b2e10" formatted="false">"Merge and sync"</string>
+  <string name="ui_use_a_recovery_phrase_of_at_least_twelve_characters_ca958" formatted="false">"Use a recovery phrase of at least twelve characters."</string>
+  <string name="ui_secure_storage_failed_the_connection_will_only_be_used_47707" formatted="false">"Secure storage failed. The connection will only be used this time."</string>
+  <string name="ui_fetching_encrypted_server_file_2619f" formatted="false">"Fetching encrypted server file…"</string>
+  <string name="ui_create_a_new_encrypted_file_868cb" formatted="false">"Create a new encrypted file?"</string>
+  <string name="ui_merge_server_data_d6504" formatted="false">"Merge server data?"</string>
+  <string name="ui_your_bookmarks_and_start_page_will_be_encrypted_on_the_a4219" formatted="false">"Your bookmarks and start page will be encrypted on the selected server. Keep your recovery phrase: Veyra cannot recover it."</string>
+  <string name="ui_sync_9210d" formatted="false">"Sync"</string>
+  <string name="ui_encrypting_and_saving_dbb19" formatted="false">"Encrypting and saving…"</string>
+  <string name="ui_synced_your_data_is_stored_encrypted_on_the_server_67e4c" formatted="false">"Synced. Your data is stored encrypted on the server."</string>
+  <string name="ui_server_saved_local_data_changed_in_the_meantime_sync_a_cbba5" formatted="false">"Server saved; local data changed in the meantime. Sync again to merge."</string>
+  <string name="ui_forget_saved_connection_b7e28" formatted="false">"Forget saved connection"</string>
+  <string name="ui_local_connection_forgotten_the_server_file_was_not_del_59363" formatted="false">"Local connection forgotten. The server file was not deleted."</string>
+  <string name="ui_incorrect_recovery_phrase_or_damaged_file_nothing_chan_daffe" formatted="false">"Incorrect recovery phrase or damaged file. Nothing changed."</string>
+  <string name="ui_not_synced_efac6" formatted="false">"Not synced: "</string>
+  <string name="ui_check_your_connection_and_recovery_phrase_cced8" formatted="false">"check your connection and recovery phrase"</string>
+</resources>

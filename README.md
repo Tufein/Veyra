@@ -2,196 +2,76 @@
 
 **The web. At your pace.**
 
-A customizable Android browser with a calm start page, bottom navigation, local ad blocking, and practical HTTPS controls. Built with Java, Material 3 components, and Mozilla GeckoView.
+A native Android browser built with Java, Material 3 and Mozilla GeckoView. A calm start page, independent settings and a shared bookmark/shortcut library keep everyday controls close at hand.
 
-**Version:** 0.4.2 · **Stage:** early alpha · **Android:** 9+ (API 28)
+**Development:** 0.5.0 candidate · **Latest published alpha:** 0.4.2 · **Android:** 9+ (API 28).
 
-[Download 0.4.2 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.2) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
+[Published releases](https://github.com/Tufein/Veyra/releases) · [Nederlandse handleiding](docs/README.nl.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [0.5 verification](docs/verification-0.5.md)
 
-**New in 0.4.2:** direct access to Android Autofill settings.
+The candidate is not a stable 1.0 release. Physical-device acceptance, actual signed-update validation, three-extension compatibility and live two-device sync remain open. The new fixed signing key requires [migration from old alpha installations](docs/signing-and-migration.md). **Export before uninstalling an existing app.**
 
-**Included from 0.4.1:** a shared bookmark/start-page library and redesigned browser panels. [Preview and behavior](docs/library-design.md).
+## Candidate features
 
-[Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.4.md)
+- Bottom address/navigation controls, up to twelve normal/private tabs, find on page, sharing, file uploads and external HTTP(S) links.
+- A searchable bookmark/start-page library with linked names/URLs, pin/unpin, ordering and confirmed deletion; up to eight start-page sites. Large lists load in pages.
+- Local searchable history with selective deletion, excluded private visits and a 2000-address bound.
+- Downloads from the original Gecko response, preserving the website session without reissuing POST requests; Android document destinations, progress, cancel, interrupted-transfer recovery and opening files. Retry reopens the website.
+- Independent Material You settings with search, dedicated pages, light/dark/system palettes, Android 12+ wallpaper colors, manual accents, live previews, tablet navigation and Dutch/English localization.
+- Personal greeting, compact home, text zoom 85–150%, built-in search providers and a validated custom HTTPS search template. Android default-browser selection.
+- Versioned local bookmark/shortcut backups with optional preferences and normal-tab addresses, validated before import. No cookies, passwords or private tabs.
+- Website camera/microphone/location consent, exact-origin decisions, a recording-stop action, per-host reset, normal cookie counts and selective data clearing.
+- Manual encrypted bookmark/start-page [synchronization with an own HTTPS/WebDAV server](docs/sync.md), conditional ETag writes, three-way conflict/deletion handling and optional Keystore-encrypted connection storage.
+- Keyboard shortcuts, visible focus, fullscreen media, configurable 2–4 resident page sessions and explicit retry after renderer failure. Evicted pages can reload and lose form state.
 
-## Features
+### Firefox extensions and blocking
 
-### Browsing
+Search the Mozilla Add-ons Android catalog, inspect requested permissions/site access/declared data collection, and install signed packages after consent. Manage enable/disable/update/uninstall, supported browser-action popups and options; recovery can disable all user extensions. New update permissions require consent.
 
-- Search or enter an address from the bottom address bar.
-- Back, forward, reload, bookmarks, page sharing, and find on page.
-- A searchable library with bookmarks and start-page shortcuts, explicit pin/unpin actions, linked editing, and confirmed deletion.
-- Scrollable Material browser and tab panels with clear selection and separate close controls.
-- Up to twelve tabs, with at most three live Gecko sessions to limit memory usage.
-- Restore tab addresses after reopening the app.
-- Select files for website uploads.
-- Open HTTP and HTTPS links from other Android apps.
+Compatibility depends on GeckoView and Veyra's implemented WebExtensions APIs. uBlock Origin, Dark Reader and ClearURLs are **device-test candidates**, not verified recommendations. Unsupported tab pinning, muting, discarded/reader/container creation is rejected. Private tabs do not enable user-installed extensions. Only the app-owned protection background receives the restricted native message bridge; websites and downloaded extensions do not.
 
-### Make it yours
+Bundled blocking includes 56,339 domains plus baseline rules, limited cosmetic filtering, per-host exceptions and session counts. The list does not auto-update and does not cover all first-party/video ads, WebSockets or service-worker traffic. See [third-party notices](docs/third-party.md). Private exceptions stay in memory rather than extension storage.
 
-- An independent Material You settings hub with search and separate appearance, home, reading, privacy, shortcut, password-provider, and about pages.
-- Rounded tonal cards, a live palette preview, adaptive theme selection, Material switches, and a reading-size preview.
-- Edit shortcuts and your greeting inside settings without returning to the browser. Navigation and unsaved forms survive activity recreation.
-- Wallpaper-derived colors on Android 12+, with manual accents available on every supported version.
-- Dark, light, or system theme.
-- Mint, lavender, sky blue, and peach accent colors.
-- Spacious or compact start page and an optional personal greeting.
-- Add, edit, or remove up to eight website shortcuts; pin bookmarks to the start page and keep linked website names and addresses in sync.
-- Website text sizes from 85% to 150%.
-- DuckDuckGo, Google, Brave Search, or Ecosia as your search provider.
+### HTTPS, passwords and privacy
 
-### Ads and tracking
+Prefer-HTTPS never silently downgrades after failure; explicit HTTP remains possible in that mode. HTTPS-only rejects HTTP navigation and ordinary intercepted HTTP resources. Certificate validation remains enabled.
 
-- A bundled list of 56,339 domains, plus the original baseline rules.
-- Local request blocking and a small set of cosmetic rules for common ad containers.
-- Global on/off control and exceptions for individual website hosts.
-- A counter for blocked requests in the current browsing session.
+Normal tabs integrate with Android Autofill and link directly to the provider settings. Veyra has no password vault. Passkey sign-in can open an external browser; **that login session stays in the external browser**. Direct arbitrary-website passkeys require a provider/browser integration that is not available here. Autofill is disabled in private tabs.
 
-The list is bundled with the app and is not updated automatically. Blocking does not cover every ad, first-party ad delivery, video ads, WebSockets, or all service-worker traffic. Source attribution and licenses are included in the APK and documented in [third-party notices](docs/third-party.md).
+Private tabs use real Gecko private contexts and are excluded from persisted normal tab/history data. Intentionally saved files, bookmarks and copied text can persist. Cookie isolation after crashes/process termination still needs device validation. Read the [privacy/data guide](docs/privacy.md) before relying on alpha behavior.
 
-### Firefox extensions
+## APKs and signing
 
-- Discover and search the Mozilla Add-ons catalog for Firefox on Android directly in Veyra.
-- Install signed extensions after reviewing their requested permissions, site access, and declared data collection.
-- Enable, disable, update, or uninstall installed extensions. Open their browser-action popup or options page.
-- Keep installed extensions in the Gecko profile across restarts. Updates are initiated manually; new permissions require consent.
+The last published release is [0.4.2](https://github.com/Tufein/Veyra/releases/tag/v0.4.2), with an [ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.2/Veyra-0.4.2-arm64-v8a-debug.apk). This link remains the old build until the candidate is actually released. Public builds are debuggable alpha APKs, not Play Store production packages.
 
-Compatibility depends on the extension and the WebExtensions APIs supported by GeckoView and Veyra. Desktop-only extensions and catalog entries outside the engine's Android version range are excluded. Downloads and extension signatures are verified by GeckoView; arbitrary package URLs and unsigned packages are not offered by the catalog UI.
+The 0.5 candidate introduces a new fixed certificate because the earlier CI debug private keys were not retained. [Migration instructions](docs/signing-and-migration.md) explain a read-only USB export before removing an older installation. The release workflow requires the fixed key in GitHub Secrets and verifies every APK against [the public certificate pin](docs/signing-certificate-sha256.txt); it stops when secrets are missing. The GitHub API is reachable, but the available API credential returns `401 Bad credentials`; secret provisioning/publication is pending a valid repository-secret-management credential. An independent owner-controlled backup of the private key is also required.
 
-**Engine migration:** 0.3.0 uses GeckoView instead of Android System WebView. Existing preferences, bookmarks, shortcuts, and saved tab addresses are retained. Cookies and website storage use a separate engine profile, so websites require signing in again. Old WebView data is not deleted or copied.
+Release APKs are standalone per ABI: `arm64-v8a` for most modern phones, `armeabi-v7a` for older 32-bit ARM, `x86_64` for matching emulators/devices. Check version, certificate and `SHA256SUMS.txt` before installing. Never uninstall merely to dismiss a signature-conflict message if you need the old data.
 
-### HTTPS, passwords, and passkeys
+## Build and check
 
-- **Prefer HTTPS:** typed domains use HTTPS; explicit HTTP links remain available. A failed HTTPS connection never silently falls back to HTTP.
-- **HTTPS only:** refuse HTTP page navigation and ordinary intercepted HTTP resource requests.
-- Use the connection indicator to try HTTPS or explicitly choose HTTP when your preference permits it.
-- Offer website login fields to your existing Android Autofill provider.
-- Request Autofill from the password menu and open Android settings to configure your provider.
-- Open an HTTPS login page in another installed browser for external passkey sign-in.
-
-**Passkey sign-in happens in the external browser. Its login session is not transferred back to Veyra.** Direct passkeys for arbitrary websites inside Veyra require credential-provider approval as a privileged browser; this alpha does not have that integration. Passwords and passkeys remain with your selected provider. Veyra does not maintain its own credential vault.
-
-## Try Veyra
-
-Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. [Download the ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.2/Veyra-0.4.2-arm64-v8a-debug.apk) for most modern phones, or choose another architecture on the [0.4.2 release page](https://github.com/Tufein/Veyra/releases/tag/v0.4.2). These are debug-signed testing builds; live-device validation remains outstanding.
-
-The previously shared 0.2.0 test APK uses the same signing certificate as the previously shared 0.1.0 APK, allowing an update that preserves local app data. An APK built on another machine or a CI runner normally has a different debug signing key. Keeping the same application ID, a compatible version code, and the same signing key is necessary to update an existing installation.
-
-In-place update compatibility between the published alpha builds has not been established. Uninstalling the app deletes its local data; do not uninstall to resolve a signature conflict if you need to keep that data. See the [release notes](docs/releases/v0.4.2.md).
-
-In the app:
-
-- **Menu → Instellingen**, or the settings icon on the start page, opens the independent settings hub.
-- **Instellingen → Uitstraling** controls the theme and palette; **Startpagina** and **Snelkoppelingen** manage your personal start page.
-- **Menu → Extensies**, or **Instellingen → Extensies**, opens the catalog and installed extension manager.
-- **Menu → Adblocker voor deze website** controls a website exception.
-- **Menu → HTTPS en verbinding** opens connection and protocol choices.
-- **Menu → Wachtwoorden en passkeys** opens the external credential options.
-
-The current app interface is in Dutch. This README is the English project guide.
-
-## Quick start
-
-### Requirements
-
-- Android Studio, or JDK 21 and the Android SDK.
-- Android SDK Platform 37.2 and Build Tools 37.0.0. The target SDK remains 35 and Android 9 remains the minimum.
-- An Android phone or emulator running API 28 or later.
-- Network access for the first Gradle dependency download.
-
-### Android Studio
-
-1. Clone `https://github.com/Tufein/Veyra.git` and open the project root.
-2. Allow Gradle to sync and install any requested SDK components.
-3. Select your Android device or emulator and run the `app` configuration.
-
-### Command line
+Use Android Studio, or JDK 21 and Android SDK Platform 37.2 / Build Tools 37.0.0. Compile SDK is 37.2; target SDK remains 35, minimum 28. The included Gradle 9.8.2 wrapper verifies its distribution checksum. GeckoView is pinned in `app/build.gradle` and ships with the app.
 
 ```sh
 git clone https://github.com/Tufein/Veyra.git
 cd Veyra
-
 export ANDROID_HOME=/path/to/Android/Sdk
-./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
-
-# Use app-x86_64-debug.apk for the x86_64 emulator, or app-armeabi-v7a-debug.apk for 32-bit ARM.
-adb install -r app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
-```
-
-On Windows, use `gradlew.bat` and configure the Android SDK path through your environment or a local `local.properties` file. On networks requiring a proxy, configure your local Gradle proxy settings. The Gradle Wrapper is included and downloads Gradle 9.8.2 with SHA-256 verification.
-
-## Checks and CI
-
-```sh
-# Build the debug APK, run unit tests, and run Android Lint
-./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
-
-# Test the bundled Gecko extension's blocking, exceptions, and HTTPS policy (Node 22+)
+./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest
 node --test tools/protection_test.cjs
-
-# The JVM suite also renders real Material widgets with Robolectric on Android 9/15.
-# Device checks for settings, theme recreation, protection startup, and unsigned-package rejection
-./gradlew :app:connectedDebugAndroidTest
-
-# Optional device smoke test; requires Python 3 and one connected test device
-python3 tools/smoke_test.py
+python3 -m unittest discover -s tools -p 'test_*.py'
 ```
 
-The smoke test starts a local HTTP fixture through `adb reverse`, then checks typed navigation, JavaScript, links, back navigation, bookmarks, tabs, and request blocking. Enable the adblocker and select **Prefer HTTPS** before running it. It creates test tabs and a bookmark without clearing existing app data. Set `ADB` if `adb` is not on your PATH. Screenshots are written to `app/build/smoke/`.
+On Windows use `gradlew.bat`. Keep SDK paths, proxy credentials and keystores out of Git. Developer builds without configured signing use a local debug key; they are not automatically compatible with published APKs. `tools/run_signed_build.py --help` describes file-based local signing without password command arguments.
 
-The Android CI workflow runs the build, unit tests, bundled-protection tests, and Lint on pushes and pull requests. It saves the debug APK and available reports as workflow artifacts. Device tests, Autofill, and passkey sign-in are outside this workflow. Robolectric settings renderings are saved under `app/build/reports/settings-ui/` and included in the CI reports artifact; these are Android-widget test renderings, not phone screenshots.
+Build outputs: `app/build/outputs/apk/debug/app-<ABI>-debug.apk`. CI runs build/JVM/Lint/protection/migration checks and retains APK/report artifacts. Push-build artifacts use a development key; only the versioned release workflow requires the pinned fixed certificate.
 
-See [library and browser-panel verification](docs/verification-library.md), [settings verification](docs/verification-0.4.md), and [engine verification](docs/verification-0.3.md). Physical-device and signed-update validation remain outstanding for this alpha.
+JVM tests render native Material widgets under Robolectric. Renderings in `app/build/reports/settings-ui/` and [the design notes](docs/settings-design.md) are test renderings, not phone screenshots. No completed physical-device result is claimed. Follow the [isolated-device acceptance guide](docs/device-validation.md) for instrumentation, optional official extension fixtures and browser smoke tests. See [benchmarking](docs/benchmark.md) for actual startup/page/memory/battery measurement; no speed advantage over another browser has been established.
 
-For the earlier 0.2.0 snapshot, the local build, seven unit tests, and Android Lint passed with no Lint findings. **The 0.2.0 update has not been run on a working emulator or physical phone in the development environment.** See the [verification record](docs/verification-0.2.md) for the exact checks and remaining device tests.
+## Project and maintenance
 
-## Project structure
+`BrowserActivity` owns browser chrome and tabs; `BrowserView` adapts Gecko sessions; `VeyraRuntime` owns the runtime, extension consent and builtin protection. Settings and data tools use independent native Material activities. Local store/backup/sync components validate data before replacing preferences.
 
-```text
-.
-├── app/
-│   ├── build.gradle
-│   └── src/
-│       ├── main/
-│       │   ├── java/nl/veyra/browser/
-│       │   │   ├── BrowserActivity.java   # Browser chrome, tabs, native integration
-│       │   │   ├── BrowserView.java       # GeckoView tab/session adapter
-│       │   │   ├── SettingsActivity.java  # Material You settings
-│       │   │   ├── ExtensionsActivity.java # Mozilla catalog and installed add-ons
-│       │   │   ├── VeyraRuntime.java      # Shared engine, consent, built-in protection
-│       │   │   ├── TrackerBlocker.java    # Local domain matching and list loading
-│       │   │   └── UrlPolicy.java         # Address resolution and HTTPS policy
-│       │   ├── assets/                   # Blocklist, attribution, license texts
-│       │   └── res/                      # Theme, icon, and backup rules
-│       └── test/                         # URL and blocking unit tests
-├── docs/                                 # Verification, benchmark, Dutch guide
-├── tools/smoke_test.py                    # Optional connected-device test
-├── .github/workflows/android.yml          # Build, unit tests, Lint, artifacts
-├── gradle/wrapper/                        # Pinned Gradle distribution
-├── CHANGELOG.md
-└── CONTRIBUTING.md
-```
+Veyra adds no analytics or hosted account backend. Local history, prefs, cookies and cache stay on-device unless you explicitly export or use encrypted sync. Websites, search providers, external credential apps and Gecko services make their own network requests. OS app backup/transfer is disabled. Clear selected data in the app or use Android app-storage controls; external files and sync-server files need separate deletion.
 
-## Architecture and privacy
+[Contributing](CONTRIBUTING.md) · [Security and maintenance](SECURITY.md) · [Release candidate notes](docs/releases/v0.5.0.md)
 
-The app uses native Android views and Material 3 components with a shared light/dark palette and optional Material You dynamic colors. GeckoView supplies browsing and WebExtensions; the engine is pinned in `app/build.gradle` and is updated with the app. A bundled, app-owned WebExtension implements the existing local blocklist, cosmetic filtering, per-site exceptions, and HTTP request blocking in HTTPS-only mode. Only that built-in background extension has the protection configuration/counting native message channel; websites and downloaded extensions receive no native credential bridge. Some services restrict sign-in from embedded browsers.
-
-Tab addresses, bookmarks, preferences, cookies, website storage, and the Gecko cache remain on the device. Veyra has no application backend or added analytics. Your selected search provider, websites, external credential provider, and Gecko engine handle their own requests; this may include Safe Browsing traffic.
-
-Third-party cookies, mixed content, page access to local files, OS backup, and device transfer are disabled. Certificate errors are not bypassed. The app does not add a JavaScript-to-Java credential bridge. Phone, mail, and map links request confirmation before opening another app.
-
-Changing HTTPS mode recreates existing Gecko sessions to remove old navigation state. Tab addresses and cookies remain, but per-tab navigation history starts again. Tabs evicted to save memory may reload and lose unsaved form state.
-
-To remove all local data, use **Android Settings → Apps → Veyra → Storage → Clear data**. There is no in-app clear-all-data control yet.
-
-## Current limitations and next steps
-
-This is an early browser project. Private browsing, download management, synchronization, a built-in credential vault, direct in-browser passkeys, fullscreen video, camera, microphone, and location access are not implemented. There is no published Play Store release or production signing process in this repository.
-
-The next priorities are device verification of 0.2.0, broader website and Autofill compatibility, accessibility checks, and measurements of startup time, page loading, memory, and battery use. Faster performance than Samsung Internet has **not** been demonstrated. The [benchmark procedure](docs/benchmark.md) describes how to compare browsers on the same phone.
-
-## Contributing and licensing
-
-Bug reports and focused improvements are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, checks, and reporting guidance.
-
-No license has been selected for Veyra's original application code. Public source availability alone does not grant reuse or redistribution rights. Bundled third-party data and tooling retain their respective licenses; see [third-party notices](docs/third-party.md) and the license headers included with the Gradle Wrapper.
+No license has been selected for Veyra's original application code. Public source availability alone does not grant reuse/redistribution rights. Third-party data and tooling retain their own licenses.

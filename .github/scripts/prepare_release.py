@@ -7,9 +7,12 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
+from apk_certificate import certificate_digest
 
 
-def prepare(tag, output, apksigner):
+def prepare(tag, output, apksigner, expected_certificate=None):
     if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
         raise ValueError("Release tag must have the form v0.3.0")
     source = Path("app/build/outputs/apk/debug")
@@ -31,7 +34,11 @@ def prepare(tag, output, apksigner):
         path = source / entry["outputFile"]
         if path.resolve().parent != source.resolve() or not path.is_file():
             raise ValueError("Missing or invalid APK path")
-        subprocess.run([apksigner, "verify", str(path)], check=True)
+        verification = subprocess.run([apksigner, "verify", "--print-certs", str(path)], check=True, capture_output=True, text=True)
+        if expected_certificate is not None:
+            expected_digest = expected_certificate.read_text().strip().lower()
+            if certificate_digest(verification.stdout) != expected_digest:
+                raise ValueError("APK certificate does not match the pinned stable signing certificate")
         seen.add(abi)
     if seen != expected:
         raise ValueError("All supported ABIs must be present")
@@ -53,5 +60,6 @@ if __name__ == "__main__":
     parser.add_argument("--tag", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--apksigner", required=True)
+    parser.add_argument("--expected-certificate", type=Path)
     args = parser.parse_args()
-    prepare(args.tag, args.output, args.apksigner)
+    prepare(args.tag, args.output, args.apksigner, args.expected_certificate)

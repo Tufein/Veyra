@@ -70,12 +70,12 @@ final class SettingsViews {
     }
     void category(LinearLayout parent, int icon, String title, String summary, View.OnClickListener listener) {
         MaterialCardView card = new MaterialCardView(activity); card.setRadius(dp(18));
-        card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(low);
+        card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(new ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{accentSurface,low}));
         LinearLayout row = row(); row.setPadding(dp(14), dp(12), dp(12), dp(12)); row.setMinimumHeight(dp(76));
         ImageView badge = image(icon, primary); badge.setPadding(dp(10), dp(10), dp(10), dp(10));
         badge.setBackground(shape(high, 14));
         row.addView(badge, new LinearLayout.LayoutParams(dp(42), dp(42)));
-        LinearLayout copy = column(); copy.setPadding(dp(12), 0, dp(8), 0);
+        LinearLayout copy = column(); copy.setPaddingRelative(dp(12), 0, dp(8), 0);
         TextView label = text(title, 16, ink); label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         copy.addView(label); add(copy, text(summary, 13, muted), 4);
         row.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
@@ -86,10 +86,10 @@ final class SettingsViews {
     }
     View site(LinearLayout parent, String title, String url, String detail, View.OnClickListener listener) {
         MaterialCardView card = new MaterialCardView(activity);
-        card.setRadius(dp(18)); card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(low);
+        card.setRadius(dp(18)); card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(new ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{accentSurface,low}));
         LinearLayout row = row(); row.setMinimumHeight(dp(78)); row.setPadding(dp(14), dp(12), dp(12), dp(12));
         row.addView(monogram(title, url), new LinearLayout.LayoutParams(dp(42), dp(42)));
-        LinearLayout copy = column(); copy.setPadding(dp(12), 0, dp(8), 0);
+        LinearLayout copy = column(); copy.setPaddingRelative(dp(12), 0, dp(8), 0);
         TextView label = text(title, 15, ink); label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         label.setMaxLines(2); label.setEllipsize(android.text.TextUtils.TruncateAt.END); copy.addView(label);
         TextView address = text(host(url), 12, muted); address.setMaxLines(1); address.setEllipsize(android.text.TextUtils.TruncateAt.END);
@@ -145,7 +145,7 @@ final class SettingsViews {
     GradientDrawable shape(int fill, int radius) {
         GradientDrawable d = new GradientDrawable(); d.setColor(fill); d.setCornerRadius(dp(radius)); return d;
     }
-    private static void buttonRole(View v) {
+    static void buttonRole(View v) {
         v.setAccessibilityDelegate(new View.AccessibilityDelegate() {
             @Override public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info); info.setClassName("android.widget.Button");

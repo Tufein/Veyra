@@ -18,7 +18,7 @@ import org.robolectric.annotation.GraphicsMode;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk=35,qualifiers="w412dp-h892dp-mdpi")
+@Config(sdk=35,qualifiers="nl-rNL-w412dp-h892dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public final class BrowserSheetsTest {
     public static class Host extends Activity {
@@ -64,7 +64,7 @@ public final class BrowserSheetsTest {
         View target=LibraryActivityTest.find(sheet.root,"Tab 2"); while(!target.isClickable())target=(View)target.getParent();
         target.performClick(); assertEquals(2,selected.get());
     }
-    @Test @Config(qualifiers="w320dp-h740dp-mdpi") public void smallScreenLargeTextMenuRemainsScrollable() throws Exception {
+    @Test @Config(qualifiers="nl-rNL-w320dp-h740dp-mdpi") public void smallScreenLargeTextMenuRemainsScrollable() throws Exception {
         android.content.res.Configuration config=new android.content.res.Configuration(RuntimeEnvironment.getApplication().getResources().getConfiguration());
         config.fontScale=1.6f;
         RuntimeEnvironment.getApplication().getResources().updateConfiguration(config,RuntimeEnvironment.getApplication().getResources().getDisplayMetrics());

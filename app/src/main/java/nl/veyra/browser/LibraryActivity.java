@@ -28,10 +28,10 @@ public final class LibraryActivity extends Activity {
     private SavedSitesStore store;
     private SettingsViews ui;
     private LinearLayout root, content, list;
-    private boolean pins, editing;
+    private boolean pins, editing, initialResume=true;
     private String query = "", originalUrl, draftTitle = "", draftUrl = "";
     private TextInputEditText nameInput, urlInput;
-    private int scrollPosition;
+    private int scrollPosition,visibleLimit=100;
     private ScrollView scroll;
 
     @Override public void onCreate(Bundle state) {
@@ -40,11 +40,12 @@ public final class LibraryActivity extends Activity {
         pins = state == null ? getIntent().getBooleanExtra(EXTRA_START_PAGE, false) : state.getBoolean("pins");
         if (state != null) {
             query = state.getString("query", ""); editing = state.getBoolean("editing"); originalUrl = state.getString("original");
-            draftTitle = state.getString("title", ""); draftUrl = state.getString("url", ""); scrollPosition = state.getInt("scroll");
+            draftTitle = state.getString("title", ""); draftUrl = state.getString("url", ""); scrollPosition = state.getInt("scroll");visibleLimit=Math.max(100,state.getInt("visibleLimit",100));
         }
         if (Build.VERSION.SDK_INT >= 33) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::back);
         render();
     }
+    @Override protected void onResume(){super.onResume();if(initialResume)initialResume=false;else if(!editing)refresh();}
     private void render() {
         ui = new SettingsViews(this); root = ui.column(); root.setBackgroundColor(ui.surface);
         root.setOnApplyWindowInsetsListener((v, insets) -> {
@@ -57,13 +58,15 @@ public final class LibraryActivity extends Activity {
         MaterialToolbar toolbar = new MaterialToolbar(this); toolbar.setTitle(editing ? originalUrl == null ? R.string.library_add : R.string.library_edit : R.string.library_title);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back); toolbar.setNavigationContentDescription(R.string.library_back);
         toolbar.setNavigationOnClickListener(v -> back()); toolbar.setBackgroundColor(ui.surface);
+        toolbar.getMenu().add(getString(R.string.ui_import_and_export_2ae54)).setIcon(R.drawable.ic_share).setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        toolbar.setOnMenuItemClickListener(item -> { startActivity(new Intent(this,BackupActivity.class)); return true; });
         root.addView(toolbar, new LinearLayout.LayoutParams(-1, ui.dp(60)));
         if (!editing) {
             TabLayout tabs = new TabLayout(this); tabs.setId(R.id.library_tabs); tabs.setBackgroundColor(ui.surface);
             tabs.addTab(tabs.newTab().setText(R.string.library_bookmarks), !pins);
             tabs.addTab(tabs.newTab().setText(R.string.library_start_page), pins);
             tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override public void onTabSelected(TabLayout.Tab tab) { pins = tab.getPosition() == 1; query = ""; scrollPosition = 0; render(); }
+                @Override public void onTabSelected(TabLayout.Tab tab) { pins = tab.getPosition() == 1; query = ""; visibleLimit=100;scrollPosition = 0; render(); }
                 @Override public void onTabUnselected(TabLayout.Tab tab) { }
                 @Override public void onTabReselected(TabLayout.Tab tab) { }
             }); root.addView(tabs);
@@ -86,7 +89,7 @@ public final class LibraryActivity extends Activity {
         ui.add(content, search, 18); list = ui.column(); list.setId(R.id.library_list); ui.add(content, list, 12); populate();
         input.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int c, int d) { }
-            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { query = s.toString(); populate(); }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { query = s.toString();visibleLimit=100; populate(); }
             @Override public void afterTextChanged(Editable s) { }
         });
         MaterialButton add = ui.button(R.string.library_add, R.drawable.ic_add, v -> edit(null)); add.setId(R.id.library_add);
@@ -98,9 +101,11 @@ public final class LibraryActivity extends Activity {
         int count = 0; String needle = query.trim().toLowerCase(Locale.ROOT);
         for (SavedSitesStore.Site site : entries) {
             if (!(site.title + " " + site.url).toLowerCase(Locale.ROOT).contains(needle)) continue;
+            count++;if(count>visibleLimit)continue;
             ui.site(list, site.title, site.url, pins ? (store.isBookmarked(site.url) ? getString(R.string.library_also_bookmarked) : null)
-                    : store.isPinned(site.url) ? getString(R.string.library_pinned) : null, v -> actions(site)); count++;
+                    : store.isPinned(site.url) ? getString(R.string.library_pinned) : null, v -> actions(site));
         }
+        if(count>visibleLimit)ui.add(list,ui.button(R.string.show_more,R.drawable.ic_add,v->{visibleLimit+=100;populate();}),12);
         if (count == 0) {
             LinearLayout empty = ui.card(list, false);
             empty.addView(ui.text(query.isEmpty() ? R.string.library_empty : R.string.library_no_results, 20, ui.ink));
@@ -120,6 +125,9 @@ public final class LibraryActivity extends Activity {
             store.saveBookmark(-1, site.title, site.url); refresh();
         });
         BrowserSheets.action(sheet, R.drawable.ic_tune, R.string.library_edit, true, () -> edit(site));
+        java.util.List<SavedSitesStore.Site> current=pins?store.shortcuts():store.bookmarks();int position=SavedSitesStore.indexOf(current,site.url);
+        BrowserSheets.action(sheet,R.drawable.ic_arrow_back,R.string.library_move_up,position>0,()->{store.move(pins,site.url,-1);refresh();});
+        BrowserSheets.action(sheet,R.drawable.ic_chevron_right,R.string.library_move_down,position>=0&&position<current.size()-1,()->{store.move(pins,site.url,1);refresh();});
         if (store.isBookmarked(site.url)) BrowserSheets.action(sheet, R.drawable.ic_delete, R.string.library_delete, true, () -> confirmDelete(site));
         sheet.show();
     }
@@ -173,7 +181,7 @@ public final class LibraryActivity extends Activity {
     void back() { if (editing) { editing = false; render(); } else finish(); }
     @Override public void onBackPressed() { back(); }
     @Override public void onSaveInstanceState(Bundle state) {
-        state.putBoolean("pins", pins); state.putBoolean("editing", editing); state.putString("query", query); state.putString("original", originalUrl);
+        state.putInt("visibleLimit",visibleLimit);state.putBoolean("pins", pins); state.putBoolean("editing", editing); state.putString("query", query); state.putString("original", originalUrl);
         state.putString("title", editing ? nameInput.getText().toString() : draftTitle); state.putString("url", editing ? urlInput.getText().toString() : draftUrl);
         state.putInt("scroll", editing ? scrollPosition : scroll.getScrollY()); super.onSaveInstanceState(state);
     }

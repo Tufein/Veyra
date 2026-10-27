@@ -36,14 +36,14 @@ public final class SettingsInstrumentedTest {
     @Test public void settingsHubOpensIndependentDetailScreenAndReturns() throws Exception {
         try (ActivityScenario<SettingsActivity> scenario = ActivityScenario.launch(SettingsActivity.class)) {
             scenario.onActivity(activity -> {
-                assertEquals("Instellingen", ((MaterialToolbar) activity.findViewById(R.id.settings_toolbar)).getTitle());
+                assertEquals(activity.getString(R.string.settings_title), ((MaterialToolbar) activity.findViewById(R.id.settings_toolbar)).getTitle());
                 assertNull(activity.findViewById(R.id.settings_theme_group));
-                clickCategory(activity.getWindow().getDecorView(), "Startpagina");
+                clickCategory(activity.getWindow().getDecorView(), activity.getString(R.string.settings_home));
                 MaterialSwitch control = activity.findViewById(R.id.settings_compact_switch);
                 assertNotNull(control); assertEquals(compact, control.isChecked()); control.performClick();
                 assertEquals(!compact, preferences.getBoolean("compact_home", compact));
                 activity.navigateUp(); assertFalse(activity.isFinishing());
-                assertEquals("Instellingen", ((MaterialToolbar) activity.findViewById(R.id.settings_toolbar)).getTitle());
+                assertEquals(activity.getString(R.string.settings_title), ((MaterialToolbar) activity.findViewById(R.id.settings_toolbar)).getTitle());
             });
             screenshot("settings-dark.png");
         }
@@ -51,14 +51,14 @@ public final class SettingsInstrumentedTest {
     @Test public void themeSelectionAndDetailScreenSurviveRecreation() throws Exception {
         try (ActivityScenario<SettingsActivity> scenario = ActivityScenario.launch(SettingsActivity.class)) {
             scenario.onActivity(activity -> {
-                clickCategory(activity.getWindow().getDecorView(), "Uitstraling");
+                clickCategory(activity.getWindow().getDecorView(), activity.getString(R.string.settings_appearance));
                 activity.findViewById(R.id.settings_theme_light).performClick();
             });
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             scenario.onActivity(activity -> {
                 assertEquals("light", preferences.getString("theme", ""));
                 assertTrue(ThemeSupport.isLight(activity, preferences));
-                assertEquals("Uitstraling", ((MaterialToolbar) activity.findViewById(R.id.settings_toolbar)).getTitle());
+                assertEquals(activity.getString(R.string.settings_appearance), ((MaterialToolbar) activity.findViewById(R.id.settings_toolbar)).getTitle());
                 MaterialButtonToggleGroup group = activity.findViewById(R.id.settings_theme_group);
                 assertEquals(R.id.settings_theme_light, group.getCheckedButtonId());
             });

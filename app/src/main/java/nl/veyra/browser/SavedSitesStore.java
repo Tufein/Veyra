@@ -22,13 +22,13 @@ final class SavedSitesStore {
     List<Site> bookmarks() { return read("bookmarks", "[]"); }
     List<Site> shortcuts() { return read("shortcuts", DEFAULTS); }
     private List<Site> read(String key, String fallback) {
-        List<Site> result = new ArrayList<>();
+        List<Site> result = new ArrayList<>();java.util.Set<String> seen=new java.util.HashSet<>();
         try {
             JSONArray array = new JSONArray(preferences.getString(key, fallback));
             for (int i = 0; i < array.length(); i++) {
                 JSONObject value = array.optJSONObject(i); if (value == null) continue;
                 String title = value.optString("title").trim(), url = UrlPolicy.normalizeWebUrl(value.optString("url"));
-                if (!title.isEmpty() && url != null && indexOf(result, url) < 0
+                if (!title.isEmpty() && url != null && seen.add(url)
                         && (!key.equals("shortcuts") || result.size() < LIMIT)) result.add(new Site(title, url));
             }
         } catch (JSONException invalid) { /* A read must never overwrite damaged legacy data. */ }
@@ -81,6 +81,11 @@ final class SavedSitesStore {
         SharedPreferences.Editor editor = preferences.edit().putString("bookmarks", encode(saved).toString());
         if (pin >= 0) { pins.remove(pin); editor.putString("shortcuts", encode(pins).toString()); }
         editor.apply();
+    }
+    void move(boolean shortcut,String url,int delta) {
+        List<Site> entries=shortcut?shortcuts():bookmarks();int from=indexOf(entries,url),to=from+delta;
+        if(from<0||to<0||to>=entries.size())return;java.util.Collections.swap(entries,from,to);
+        preferences.edit().putString(shortcut?"shortcuts":"bookmarks",encode(entries).toString()).apply();
     }
     static int indexOf(List<Site> values, String url) {
         String normalized = UrlPolicy.normalizeWebUrl(url);

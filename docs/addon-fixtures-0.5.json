@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "ublock-origin",
+    "guid": "uBlock0@raymondhill.net",
+    "version": "1.75.0",
+    "sha256": "5b74415860456370644bd80f16125e865b0e6c356bb5dfcfb84069967eaa5287",
+    "source": "https://addons.mozilla.org/firefox/downloads/file/5034826/ublock_origin-1.75.0.xpi",
+    "device_result": "not run"
+  },
+  {
+    "slug": "darkreader",
+    "guid": "addon@darkreader.org",
+    "version": "4.9.133",
+    "sha256": "eb06c5096d761616c7f1d954c11524ca4bff4fe7229044dc1fce288a8c0853ab",
+    "source": "https://addons.mozilla.org/firefox/downloads/file/5055786/darkreader-4.9.133.xpi",
+    "device_result": "not run"
+  },
+  {
+    "slug": "clearurls",
+    "guid": "{74145f27-f039-47ce-a470-a662b129930a}",
+    "version": "1.27.3",
+    "sha256": "54926b6e4274d5935a5fc0daa6320f1d371e3d2f1a5877467ca3ab22a65c4f20",
+    "source": "https://addons.mozilla.org/firefox/downloads/file/4432106/clearurls-1.27.3.xpi",
+    "device_result": "not run"
+  }
+]

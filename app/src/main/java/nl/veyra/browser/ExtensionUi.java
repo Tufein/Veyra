@@ -13,7 +13,10 @@ import org.mozilla.geckoview.WebExtension;
 
 /** Hosts extension popups/options and wires browser-action and tabs.create delegates. */
 final class ExtensionUi {
-    interface TabFactory { GeckoSession create(String uri); }
+    interface TabFactory {
+        GeckoSession create(String uri);
+        default GeckoSession create(WebExtension.CreateTabDetails details) { return create(details.url); }
+    }
     private final Activity activity;
     private final VeyraRuntime engine;
     private final TabFactory tabs;
@@ -48,7 +51,7 @@ final class ExtensionUi {
         extension.setTabDelegate(new WebExtension.TabDelegate() {
             @Override public GeckoResult<GeckoSession> onNewTab(WebExtension source, WebExtension.CreateTabDetails details) {
                 if (!active || activity.isFinishing() || activity.isDestroyed()) return null;
-                return GeckoResult.fromValue(tabs == null ? panel(VeyraRuntime.name(source), true).session : tabs.create(details.url));
+                return GeckoResult.fromValue(tabs == null ? panel(VeyraRuntime.name(source), true).session : tabs.create(details));
             }
             @Override public void onOpenOptionsPage(WebExtension source) { options(source); }
         });
@@ -70,7 +73,7 @@ final class ExtensionUi {
         }
         if (action != null && !Boolean.FALSE.equals(action.enabled)) action.click();
         else if (extension.metaData != null && extension.metaData.optionsPageUrl != null) options(extension);
-        else Toast.makeText(activity, "Deze extensie werkt op de achtergrond en heeft geen bedieningspaneel.", Toast.LENGTH_LONG).show();
+        else Toast.makeText(activity, activity.getString(R.string.ui_this_extension_works_in_the_background_and_has_no_cont_67f1b), Toast.LENGTH_LONG).show();
     }
     void options(WebExtension extension) {
         if (!active || activity.isFinishing() || activity.isDestroyed()) return;
@@ -99,10 +102,14 @@ final class ExtensionUi {
         panels.add(view);
         int height = Math.round(activity.getResources().getDisplayMetrics().heightPixels * .68f);
         view.setLayoutParams(new android.widget.FrameLayout.LayoutParams(-1, height));
-        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(title).setView(view).setNegativeButton("Sluiten", null)
+        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(title).setView(view).setNegativeButton(activity.getString(R.string.ui_close_5a468), null)
                 .setOnDismissListener(d -> { view.destroy(); panels.remove(view); dialogs.remove(d); }).create();
         dialogs.add(dialog); dialog.show();
         return view;
+    }
+    void closePanels() {
+        for (androidx.appcompat.app.AlertDialog dialog : new ArrayList<>(dialogs)) dialog.dismiss();
+        for (BrowserView panel : new ArrayList<>(panels)) panel.destroy(); panels.clear(); dialogs.clear();
     }
     void destroy() {
         active = false;

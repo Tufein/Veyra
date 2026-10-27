@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="nl">
+  <string name="ui_import_and_export_2ae54" formatted="false">"Importeren en exporteren"</string>
+  <string name="ui_take_your_bookmarks_and_start_page_with_you_in_a_local_aca50" formatted="false">"Neem je bladwijzers en startpagina mee in een lokaal JSON-bestand. Cookies, wachtwoorden, website-toestemmingen en geschiedenis worden niet meegenomen."</string>
+  <string name="ui_include_personal_preferences_4b857" formatted="false">"Ook persoonlijke instellingen meenemen"</string>
+  <string name="ui_export_backup_2bb69" formatted="false">"Backup exporteren"</string>
+  <string name="ui_import_backup_6cf71" formatted="false">"Backup importeren"</string>
+  <string name="ui_import_merges_websites_and_preserves_existing_entries_33727" formatted="false">"Importeren voegt websites samen en overschrijft bestaande websites niet. Controleer het bestand voordat je het importeert. Geïmporteerde instellingen worden alleen toegepast als je bovenstaande keuze aanzet."</string>
+  <string name="ui_no_file_picker_is_available_7a3e5" formatted="false">"Geen bestandskiezer beschikbaar."</string>
+  <string name="ui_backup_saved_5f54c" formatted="false">"Backup opgeslagen."</string>
+  <string name="ui_merge_backup_29005" formatted="false">"Backup samenvoegen?"</string>
+  <string name="ui_bookmarks_and_54838" formatted="false">" bladwijzers en "</string>
+  <string name="ui_shortcuts_existing_websites_are_retained_1077f" formatted="false">" snelkoppelingen. Bestaande websites blijven behouden."</string>
+  <string name="ui_supported_preferences_will_be_applied_25c77" formatted="false">" Ondersteunde instellingen worden toegepast."</string>
+  <string name="ui_preferences_will_not_change_45a4e" formatted="false">" Instellingen worden niet gewijzigd."</string>
+  <string name="ui_cancel_c6a8d" formatted="false">"Annuleren"</string>
+  <string name="ui_import_1b9b2" formatted="false">"Importeren"</string>
+  <string name="ui_backup_imported_fc396" formatted="false">"Backup geïmporteerd."</string>
+  <string name="ui_not_completed_9db37" formatted="false">"Niet voltooid: "</string>
+  <string name="ui_file_unavailable_a3a8d" formatted="false">"bestand niet beschikbaar"</string>
+  <string name="ui_https_only_is_enabled_this_http_page_is_blocked_open_t_d00eb" formatted="false">"Alleen HTTPS staat aan. Deze HTTP-pagina is geblokkeerd. Open het verbindingsmenu om HTTPS te proberen."</string>
+  <string name="ui_connection_information_d437e" formatted="false">"Verbindingsinformatie"</string>
+  <string name="ui_search_or_enter_a_web_address_6c60f" formatted="false">"Zoek of voer een webadres in"</string>
+  <string name="ui_search_or_web_address_45960" formatted="false">"Zoeken of webadres"</string>
+  <string name="ui_reload_page_3974b" formatted="false">"Pagina vernieuwen"</string>
+  <string name="ui_back_ebf6c" formatted="false">"Terug"</string>
+  <string name="ui_forward_9df38" formatted="false">"Vooruit"</string>
+  <string name="ui_start_page_a582e" formatted="false">"Startpagina"</string>
+  <string name="ui_tabs_c36a5" formatted="false">"Tabbladen"</string>
+  <string name="ui_menu_99af6" formatted="false">"Menu"</string>
+  <string name="ui_settings_27018" formatted="false">"Instellingen"</string>
+  <string name="ui_a_new_day_a_new_discovery_f9c79" formatted="false">"EEN NIEUWE DAG. EEN NIEUWE ONTDEKKING."</string>
+  <string name="ui_good_to_see_you_019a4" formatted="false">"FIJN DAT JE ER BENT, "</string>
+  <string name="ui_space_for_you_cdeb2" formatted="false">"RUIMTE VOOR JOU"</string>
+  <string name="ui_the_web_at_your_pace_4dacc" formatted="false">"Het web.\nOp jouw tempo."</string>
+  <string name="ui_where_would_you_like_to_go_today_a3a25" formatted="false">"Waar wil je vandaag naartoe?"</string>
+  <string name="ui_discover_something_new_526c5" formatted="false">"Zoek iets nieuws   ↗"</string>
+  <string name="ui_edit_ea89b" formatted="false">"Bewerken"</string>
+  <string name="ui_edit_shortcuts_d7fea" formatted="false">"Snelkoppelingen bewerken"</string>
+  <string name="ui_fewer_ads_more_calm_19b86" formatted="false">"Minder advertenties. Meer rust."</string>
+  <string name="ui_ad_blocker_is_off_a6c8c" formatted="false">"Adblocker staat uit"</string>
+  <string name="ui_https_only_enabled_674fe" formatted="false">"●  Alleen HTTPS ingeschakeld"</string>
+  <string name="ui_https_preferred_7eb8e" formatted="false">"●  HTTPS heeft de voorkeur"</string>
+  <string name="ui_open_8679f" formatted="false">" openen"</string>
+  <string name="ui_enter_a_valid_web_address_or_a_search_query_b4f3d" formatted="false">"Voer een geldig webadres of een zoekopdracht in."</string>
+  <string name="ui_extensions_could_not_be_connected_e6821" formatted="false">"Extensies konden niet worden gekoppeld."</string>
+  <string name="ui_this_page_uses_http_037f4" formatted="false">"Deze pagina gebruikt HTTP."</string>
+  <string name="ui_unable_to_connect_6733b" formatted="false">"Even geen verbinding."</string>
+  <string name="ui_try_https_b3d5f" formatted="false">"Probeer met HTTPS"</string>
+  <string name="ui_try_again_57643" formatted="false">"Opnieuw proberen"</string>
+  <string name="ui_you_can_enable_blocking_from_the_menu_ec645" formatted="false">"Via het menu kun je blokkering aanzetten"</string>
+  <string name="ui_maximum_of_12_tabs_close_a_tab_first_0c165" formatted="false">"Maximaal 12 tabbladen. Sluit eerst een tabblad."</string>
+  <string name="ui_a_calmer_web_f96df" formatted="false">"Meer rust op het web"</string>
+  <string name="ui_the_ad_blocker_is_333d7" formatted="false">"De adblocker staat "</string>
+  <string name="ui_the_main_page_itself_is_not_blocked_this_does_not_bloc_8116e" formatted="false">"De hoofdpagina zelf wordt niet geblokkeerd. Dit blokkeert niet elke advertentie, zoals veel videoadvertenties.\n\n"</string>
+  <string name="ui_open_a_website_to_add_an_exception_d3ae5" formatted="false">"Open een website om een uitzondering toe te voegen."</string>
+  <string name="ui_blocking_is_off_for_this_website_7e3b1" formatted="false">"Blokkering staat uit voor deze website."</string>
+  <string name="ui_blocking_follows_your_general_preference_da263" formatted="false">"Blokkering volgt je algemene instelling."</string>
+  <string name="ui_close_5a468" formatted="false">"Sluiten"</string>
+  <string name="ui_remove_exception_231e4" formatted="false">"Uitzondering wissen"</string>
+  <string name="ui_turn_off_here_39996" formatted="false">"Hier uitzetten"</string>
+  <string name="ui_the_general_ad_blocker_is_still_off_a1a9c" formatted="false">"De algemene adblocker staat nog uit."</string>
+  <string name="ui_this_page_could_not_be_loaded_893d2" formatted="false">"Deze pagina kon niet worden geladen.\n\n"</string>
+  <string name="ui_https_encrypts_this_connection_it_does_not_guarantee_t_61f57" formatted="false">"HTTPS versleutelt deze verbinding. Dat garandeert niet dat de website betrouwbaar is.\n\n"</string>
+  <string name="ui_http_is_not_encrypted_d2a0f" formatted="false">"HTTP is niet versleuteld.\n\n"</string>
+  <string name="ui_https_only_is_enabled_there_is_no_automatic_fallback_t_b6ef3" formatted="false">"Alleen HTTPS staat aan. Er is geen automatische terugval naar HTTP."</string>
+  <string name="ui_https_is_preferred_you_can_choose_http_yourself_when_a_cf412" formatted="false">"HTTPS heeft de voorkeur. Je kunt HTTP zelf kiezen als een website dat nodig heeft."</string>
+  <string name="ui_try_https_b3496" formatted="false">"Probeer HTTPS"</string>
+  <string name="ui_choose_http_0bc1d" formatted="false">"Kies HTTP"</string>
+  <string name="ui_open_without_encryption_6d547" formatted="false">"Openen zonder versleuteling?"</string>
+  <string name="ui_the_connection_will_use_http_use_this_only_when_this_w_a5b5c" formatted="false">"De verbinding wordt HTTP. Gebruik dit alleen als deze website dat nodig heeft."</string>
+  <string name="ui_open_with_http_012bc" formatted="false">"Open met HTTP"</string>
+  <string name="ui_prefer_https_explicit_http_links_are_allowed_8e11d" formatted="false">"Voorkeur HTTPS · expliciete HTTP-links toegestaan"</string>
+  <string name="ui_https_only_block_http_d8886" formatted="false">"Alleen HTTPS · HTTP blokkeren"</string>
+  <string name="ui_use_the_password_manager_configured_in_android_such_as_3d431" formatted="false">"Gebruik de wachtwoordmanager die je in Android hebt ingesteld, bijvoorbeeld Google Password Manager, Bitwarden of 1Password. "</string>
+  <string name="ui_veyra_does_not_store_passwords_or_passkeys_itself_37b82" formatted="false">"Veyra bewaart zelf geen wachtwoorden of passkeys."</string>
+  <string name="ui_passwords_and_passkeys_17e09" formatted="false">"Wachtwoorden en passkeys"</string>
+  <string name="ui_fill_password_69897" formatted="false">"Wachtwoord invullen"</string>
+  <string name="ui_select_a_login_field_on_the_website_first_64f80" formatted="false">"Selecteer eerst een inlogveld op de website"</string>
+  <string name="ui_open_a_login_page_and_select_a_login_field_first_5299e" formatted="false">"Open eerst een inlogpagina en selecteer een inlogveld."</string>
+  <string name="ui_choose_your_password_manager_9a528" formatted="false">"Kies je wachtwoordmanager"</string>
+  <string name="ui_choose_your_password_manager_as_the_autofill_service_i_65497" formatted="false">"Kies je wachtwoordmanager als dienst voor automatisch invullen in Android."</string>
+  <string name="ui_autofill_settings_966d6" formatted="false">"Autofill-instellingen"</string>
+  <string name="ui_set_up_your_password_manager_e6a54" formatted="false">"Je wachtwoordmanager instellen"</string>
+  <string name="ui_choose_your_autofill_service_4bc39" formatted="false">"Kies je dienst voor automatisch invullen"</string>
+  <string name="ui_sign_in_with_an_external_passkey_f9cea" formatted="false">"Inloggen met een externe passkey"</string>
+  <string name="ui_open_this_website_in_a_supported_browser_d5787" formatted="false">"Open deze website in een ondersteunde browser"</string>
+  <string name="ui_passkeys_for_arbitrary_websites_require_additional_bro_a88fe" formatted="false">"Voor passkeys op willekeurige websites is extra browsergoedkeuring nodig. Deze versie gebruikt daarvoor een externe browser. "</string>
+  <string name="ui_the_login_stays_in_that_browser_its_session_is_not_tra_de285" formatted="false">"De login blijft in die browser; de sessie wordt niet naar Veyra overgezet. Automatisch invullen hangt af van je manager en de website."</string>
+  <string name="ui_open_an_https_login_page_first_44f56" formatted="false">"Open eerst een HTTPS-inlogpagina."</string>
+  <string name="ui_no_other_browser_found_install_a_browser_with_passkey_b5182" formatted="false">"Geen andere browser gevonden. Installeer een browser met passkey-ondersteuning."</string>
+  <string name="ui_open_login_in_another_browser_01ef8" formatted="false">"Login openen in andere browser"</string>
+  <string name="ui_this_browser_is_not_available_a7408" formatted="false">"Deze browser is niet beschikbaar."</string>
+  <string name="ui_open_a_website_first_9bb0d" formatted="false">"Open eerst een website."</string>
+  <string name="ui_this_bookmark_already_exists_ff1af" formatted="false">"Deze bladwijzer bestaat al."</string>
+  <string name="ui_bookmark_saved_56b50" formatted="false">"Bladwijzer opgeslagen"</string>
+  <string name="ui_could_not_save_36578" formatted="false">"Opslaan is niet gelukt."</string>
+  <string name="ui_share_page_9c8bc" formatted="false">"Pagina delen"</string>
+  <string name="ui_which_word_are_you_looking_for_5c1f2" formatted="false">"Welk woord zoek je?"</string>
+  <string name="ui_find_in_page_91025" formatted="false">"Zoeken op pagina"</string>
+  <string name="ui_search_5d33a" formatted="false">"Zoeken"</string>
+  <string name="ui_no_results_addf4" formatted="false">"Geen resultaten"</string>
+  <string name="ui_results_cc7a6" formatted="false">" resultaten"</string>
+  <string name="ui_done_6fb77" formatted="false">"Gereed"</string>
+  <string name="ui_search_failed_f82b1" formatted="false">"Zoeken is niet gelukt."</string>
+  <string name="ui_this_type_of_link_is_not_supported_yet_1ab45" formatted="false">"Dit type link wordt nog niet ondersteund."</string>
+  <string name="ui_open_another_app_42d5c" formatted="false">"Andere app openen?"</string>
+  <string name="ui_open_5b1e5" formatted="false">"Openen"</string>
+  <string name="ui_no_suitable_app_found_cc97e" formatted="false">"Geen geschikte app gevonden."</string>
+  <string name="ui_download_started_see_menu_downloads_b2233" formatted="false">"Download gestart. Zie Menu → Downloads."</string>
+  <string name="ui_the_download_could_not_start_check_the_destination_fil_00ed7" formatted="false">"Download kon niet starten. Controleer het doelbestand."</string>
+  <string name="ui_private_tab_no_history_or_tab_restoration_2a1cb" formatted="false">"Privétab: geen geschiedenis of tabherstel"</string>
+  <string name="ui_download_unavailable_or_a_file_picker_is_already_open_88af7" formatted="false">"Download niet beschikbaar of er staat al een bestandskeuze open."</string>
+  <string name="ui_this_download_address_is_not_allowed_c75b9" formatted="false">"Dit downloadadres is niet toegestaan."</string>
+  <string name="ui_save_a_private_file_85734" formatted="false">"Privébestand opslaan?"</string>
+  <string name="ui_the_selected_file_will_remain_on_your_device_after_pri_1346d" formatted="false">"Het gekozen bestand blijft op je apparaat staan, ook nadat je de privétabs sluit. Het downloadadres wordt niet opgeslagen."</string>
+  <string name="ui_choose_file_235cc" formatted="false">"Bestand kiezen"</string>
+  <string name="ui_open_in_new_tab_02b11" formatted="false">"Openen in nieuw tabblad"</string>
+  <string name="ui_open_in_private_tab_619b3" formatted="false">"Openen in privétab"</string>
+  <string name="ui_copy_link_97baa" formatted="false">"Link kopiëren"</string>
+  <string name="ui_you_can_open_up_to_twelve_tabs_70529" formatted="false">"Je kunt maximaal twaalf tabbladen openen."</string>
+  <string name="ui_link_copied_9c8bb" formatted="false">"Link gekopieerd"</string>
+  <string name="ui_extra_extensions_disabled_built_in_protection_remains_58090" formatted="false">"Extra extensies uitgeschakeld. De ingebouwde bescherming blijft actief."</string>
+  <string name="ui_not_all_extensions_could_be_disabled_try_again_from_ex_5c159" formatted="false">"Extensies konden niet volledig worden uitgeschakeld. Probeer opnieuw via Extensies."</string>
+  <string name="ui_website_data_or_permissions_changed_open_the_page_agai_99d9d" formatted="false">"Websitegegevens of toestemmingen zijn gewijzigd. Open de pagina opnieuw."</string>
+  <string name="ui_private_tab_not_saved_45d1d" formatted="false">"Privétab · wordt niet bewaard"</string>
+  <string name="ui_browser_and_data_2f71d" formatted="false">"Browser en gegevens"</string>
+  <string name="ui_set_veyra_as_the_default_browser_bac8b" formatted="false">"Veyra als standaardbrowser"</string>
+  <string name="ui_history_749cb" formatted="false">"Geschiedenis"</string>
+  <string name="ui_downloads_d5fdc" formatted="false">"Downloads"</string>
+  <string name="ui_privacy_and_clear_data_30b22" formatted="false">"Privacy en gegevens wissen"</string>
+  <string name="ui_encrypted_sync_158d1" formatted="false">"Versleutelde synchronisatie"</string>
+  <string name="ui_custom_search_engine_use_an_https_template_with_s_in_p_b9363" formatted="false">"Eigen zoekmachine: gebruik een HTTPS-sjabloon met %s op de plaats van de zoektekst, bijvoorbeeld https://example.org/search?q=%s."</string>
+  <string name="ui_search_url_with_s_14e39" formatted="false">"Zoek-URL met %s"</string>
+  <string name="ui_use_custom_search_engine_cd3a4" formatted="false">"Eigen zoekmachine gebruiken"</string>
+  <string name="ui_use_a_valid_https_address_with_exactly_one_s_in_the_qu_d527f" formatted="false">"Gebruik een geldig HTTPS-adres met precies één %s in de zoekparameters."</string>
+  <string name="ui_custom_search_engine_selected_ebd1e" formatted="false">"Eigen zoekmachine ingesteld."</string>
+  <string name="ui_tab_restoration_only_saves_normal_tab_addresses_and_ti_b907a" formatted="false">"Tabherstel bewaart alleen normale tabadressen en titels. Formulierinhoud en privétabs worden na procesbeëindiging niet hersteld. Minder actieve pagina’s beperkt geheugenverbruik, maar kan opnieuw laden veroorzaken."</string>
+  <string name="ui_choose_maximum_active_pages_5413b" formatted="false">"Maximaal actieve pagina’s kiezen"</string>
+  <string name="ui_2_active_pages_55bb6" formatted="false">"2 actieve pagina’s"</string>
+  <string name="ui_3_active_pages_d6367" formatted="false">"3 actieve pagina’s"</string>
+  <string name="ui_4_active_pages_265c7" formatted="false">"4 actieve pagina’s"</string>
+  <string name="ui_applies_on_the_next_tab_switch_a3ec9" formatted="false">"Toegepast bij de volgende tabwissel."</string>
+  <string name="ui_recover_browser_without_extra_extensions_06233" formatted="false">"Browser herstellen zonder extra extensies"</string>
+  <string name="ui_open_recovery_mode_da3ef" formatted="false">"Herstelmodus openen?"</string>
+  <string name="ui_extra_extensions_will_be_disabled_website_pages_will_r_91089" formatted="false">"Extra extensies worden uitgeschakeld. Websitepagina’s worden opnieuw geopend; bladwijzers en instellingen blijven behouden."</string>
+  <string name="ui_recover_6f145" formatted="false">"Herstellen"</string>
+  <string name="ui_keyboard_ctrl_l_address_bar_ctrl_t_new_tab_ctrl_shift_0ca33" formatted="false">"Toetsenbord: Ctrl+L adresbalk, Ctrl+T nieuw tabblad, Ctrl+Shift+P privétab, Ctrl+W sluiten en Ctrl+Tab wisselen. Androids instelling voor minder animaties wordt gerespecteerd."</string>
+  <string name="ui_check_your_connection_or_try_the_address_again_certifi_dce35" formatted="false">"Controleer je verbinding of probeer het webadres opnieuw. Certificaatfouten worden niet omzeild."</string>
+  <string name="ui_this_page_was_removed_from_memory_tap_try_again_f7257" formatted="false">"Deze pagina is uit het geheugen gehaald. Tik op opnieuw proberen."</string>
+  <string name="ui_the_page_has_closed_tap_try_again_73e47" formatted="false">"De pagina is gesloten. Tik op opnieuw proberen."</string>
+  <string name="ui_leave_this_page_83769" formatted="false">"Pagina verlaten?"</string>
+  <string name="ui_unsaved_changes_may_be_lost_08c51" formatted="false">"Niet-opgeslagen wijzigingen kunnen verloren gaan."</string>
+  <string name="ui_leave_65275" formatted="false">"Verlaten"</string>
+  <string name="ui_browser_protection_could_not_start_restart_veyra_b843a" formatted="false">"De browserbescherming kon niet starten. Herstart Veyra."</string>
+  <string name="ui_privacy_and_data_5621b" formatted="false">"Privacy en gegevens"</string>
+  <string name="ui_private_tabs_use_a_separate_gecko_private_session_thei_55769" formatted="false">"Privétabs gebruiken een afzonderlijke Gecko-privésessie. Hun adressen worden niet opgeslagen in geschiedenis of tabherstel. Bewuste downloads en bladwijzers blijven bewaard."</string>
+  <string name="ui_website_data_and_permissions_70a57" formatted="false">"Websitegegevens en toestemmingen"</string>
+  <string name="ui_clear_browsing_history_fc740" formatted="false">"Browsegeschiedenis wissen"</string>
+  <string name="ui_clear_cookies_and_website_storage_may_sign_you_out_a4e9c" formatted="false">"Cookies en websiteopslag wissen (meldt je mogelijk af)"</string>
+  <string name="ui_clear_image_and_network_caches_9edde" formatted="false">"Afbeeldingen en netwerkcache wissen"</string>
+  <string name="ui_ask_for_site_permissions_again_cf4ba" formatted="false">"Website-toestemmingen opnieuw vragen"</string>
+  <string name="ui_reset_personal_preferences_1014b" formatted="false">"Persoonlijke voorkeuren herstellen"</string>
+  <string name="ui_clear_selected_data_ce79a" formatted="false">"Gekozen gegevens wissen"</string>
+  <string name="ui_choose_what_to_clear_first_7b441" formatted="false">"Kies eerst wat je wilt wissen."</string>
+  <string name="ui_clear_selected_data_32834" formatted="false">"Gekozen gegevens wissen?"</string>
+  <string name="ui_bookmarks_and_saved_files_are_retained_open_pages_clos_c0a09" formatted="false">"\n\nBladwijzers en opgeslagen bestanden blijven staan. Bij geschiedenis en websitegegevens worden open pagina’s gesloten om heropslag te voorkomen."</string>
+  <string name="ui_clear_54e3b" formatted="false">"Wissen"</string>
+  <string name="ui_selected_data_cleared_2b733" formatted="false">"De gekozen gegevens zijn gewist."</string>
+  <string name="ui_the_engine_could_not_confirm_clearing_try_again_local_9d985" formatted="false">"De engine kon het wissen niet bevestigen. Probeer opnieuw; lokale keuzes zijn nog niet gewist."</string>
+  <string name="ui_files_are_saved_where_you_choose_using_the_signed_in_w_6996d" formatted="false">"Bestanden worden opgeslagen waar jij kiest, met de ingelogde websitesessie. Onderbroken downloads vraag je opnieuw aan; privé-downloadadressen worden niet bewaard."</string>
+  <string name="ui_no_downloads_yet_8ab73" formatted="false">"Nog geen downloads."</string>
+  <string name="ui_no_app_or_permission_is_available_to_open_this_file_b55c9" formatted="false">"Geen app of toegang beschikbaar om dit bestand te openen."</string>
+  <string name="ui_request_again_1b4ff" formatted="false">"Opnieuw aanvragen?"</string>
+  <string name="ui_the_website_will_reopen_with_your_current_session_conf_ae2a3" formatted="false">"De website opent opnieuw met je huidige sessie. Bevestig daar de download en kies een doelbestand. Eerdere formulieren worden niet automatisch opnieuw verstuurd."</string>
+  <string name="ui_open_website_fb953" formatted="false">"Website openen"</string>
+  <string name="ui_in_progress_18d64" formatted="false">"Bezig"</string>
+  <string name="ui_complete_ca532" formatted="false">"Voltooid"</string>
+  <string name="ui_cancelled_92c56" formatted="false">"Geannuleerd"</string>
+  <string name="ui_interrupted_be65c" formatted="false">"Onderbroken"</string>
+  <string name="ui_this_extension_works_in_the_background_and_has_no_cont_67f1b" formatted="false">"Deze extensie werkt op de achtergrond en heeft geen bedieningspaneel."</string>
+  <string name="ui_extensions_8966f" formatted="false">"Extensies"</string>
+  <string name="ui_a_little_extra_veyra_1b81b" formatted="false">"Een beetje extra Veyra."</string>
+  <string name="ui_discover_extensions_from_mozilla_add_ons_for_firefox_o_9f892" formatted="false">"Ontdek extensies uit Mozilla Add-ons voor Firefox op Android. Compatibiliteit verschilt per extensie."</string>
+  <string name="ui_disable_all_extra_extensions_ab3a3" formatted="false">"Alle extra extensies uitschakelen"</string>
+  <string name="ui_disable_extensions_d0ffd" formatted="false">"Extensies uitschakelen?"</string>
+  <string name="ui_your_websites_and_browser_data_are_retained_built_in_p_dba35" formatted="false">"Je websites en browsergegevens blijven behouden. De ingebouwde bescherming blijft aan. Je kunt extensies later afzonderlijk weer inschakelen."</string>
+  <string name="ui_disable_257f2" formatted="false">"Uitschakelen"</string>
+  <string name="ui_extra_extensions_disabled_56aa3" formatted="false">"Extra extensies uitgeschakeld"</string>
+  <string name="ui_compatibility_and_test_status_27405" formatted="false">"Compatibiliteit en teststatus"</string>
+  <string name="ui_extension_compatibility_24da9" formatted="false">"Extensiecompatibiliteit"</string>
+  <string name="ui_ublock_origin_device_validation_pending_dark_reader_de_2e380" formatted="false">"uBlock Origin · apparaatvalidatie open\nDark Reader · apparaatvalidatie open\nClearURLs · apparaatvalidatie open\n\nDe catalogus controleert Android- en engineversies. Een vermelding bewijst geen geteste werking. Native berichten zijn alleen beschikbaar voor de ingebouwde Veyra-bescherming; extra extensies krijgen geen app-bridge."</string>
+  <string name="ui_installed_7ddcb" formatted="false">"Geïnstalleerd"</string>
+  <string name="ui_discover_100e7" formatted="false">"Ontdekken"</string>
+  <string name="ui_search_firefox_extensions_91332" formatted="false">"Zoeken in Firefox-extensies"</string>
+  <string name="ui_geckoview_verifies_downloads_and_signatures_new_permis_6e116" formatted="false">"Downloads en handtekeningen worden gecontroleerd door GeckoView. Nieuwe rechten vragen altijd je toestemming. Updates start je zelf bij de geïnstalleerde extensie."</string>
+  <string name="ui_extension_changed_12817" formatted="false">"Extensie aangepast"</string>
+  <string name="ui_check_for_updates_bbfdb" formatted="false">"Controleren op updates"</string>
+  <string name="ui_update_check_completed_cb124" formatted="false">"Updatecontrole voltooid"</string>
+  <string name="ui_remove_d6c44" formatted="false">"Verwijderen"</string>
+  <string name="ui_remove_extension_57080" formatted="false">"Extensie verwijderen?"</string>
+  <string name="ui_and_its_extension_data_will_be_removed_75496" formatted="false">" en de bijbehorende extensiegegevens worden verwijderd."</string>
+  <string name="ui_extension_removed_9eec3" formatted="false">"Extensie verwijderd"</string>
+  <string name="ui_no_extensions_yet_discover_what_works_for_you_below_98814" formatted="false">"Nog geen extensies. Ontdek hieronder wat bij je past."</string>
+  <string name="ui_installed_extensions_could_not_be_loaded_reopen_this_s_20b49" formatted="false">"Geïnstalleerde extensies konden niet worden geladen. Open dit scherm opnieuw."</string>
+  <string name="ui_version_0d39b" formatted="false">"Versie "</string>
+  <string name="ui_add_to_veyra_55ca7" formatted="false">"Toevoegen aan Veyra"</string>
+  <string name="ui_source_mozilla_add_ons_firefox_on_android_8c202" formatted="false">"\nBron: Mozilla Add-ons (Firefox op Android)\n\n"</string>
+  <string name="ui_geckoview_verifies_the_signature_and_then_requests_con_c9fb8" formatted="false">"\n\nGeckoView controleert de handtekening en vraagt daarna om toestemming voor de werkelijke rechten en opgegeven gegevensverzameling."</string>
+  <string name="ui_continue_65c33" formatted="false">"Doorgaan"</string>
+  <string name="ui_extension_added_f937f" formatted="false">"Extensie toegevoegd"</string>
+  <string name="ui_the_change_was_not_applied_check_your_connection_and_w_ed8b4" formatted="false">"De wijziging is niet uitgevoerd. Controleer de verbinding en of de extensie deze browser ondersteunt."</string>
+  <string name="ui_installation_cancelled_or_rejected_code_c18ec" formatted="false">"Installatie geannuleerd of geweigerd (code "</string>
+  <string name="ui_the_extension_must_be_compatible_and_have_a_valid_mozi_0084f" formatted="false">"). De extensie moet compatibel zijn en een geldige Mozilla-handtekening hebben."</string>
+  <string name="ui_recent_websites_stay_on_this_device_private_tabs_are_n_ffa72" formatted="false">"Je recente websites staan alleen op dit apparaat. Privétabs worden hier nooit bewaard."</string>
+  <string name="ui_search_history_010f1" formatted="false">"Zoek in geschiedenis"</string>
+  <string name="ui_clear_history_07b6a" formatted="false">"Geschiedenis wissen"</string>
+  <string name="ui_clear_all_history_61c73" formatted="false">"Alle geschiedenis wissen?"</string>
+  <string name="ui_this_clears_local_history_not_bookmarks_or_website_dat_af770" formatted="false">"Dit wist je lokale geschiedenis, niet je bladwijzers of websitegegevens."</string>
+  <string name="ui_no_visited_websites_found_53ebd" formatted="false">"Geen bezochte websites gevonden."</string>
+  <string name="ui_remember_for_this_website_826e0" formatted="false">"Voor deze website onthouden"</string>
+  <string name="ui_requests_access_to_d7e16" formatted="false">" wil toegang tot:"</string>
+  <string name="ui_website_permission_e9fd6" formatted="false">"Website-toestemming"</string>
+  <string name="ui_allow_aefe3" formatted="false">"Toestaan"</string>
+  <string name="ui_deny_cd769" formatted="false">"Weigeren"</string>
+  <string name="ui_choose_a_known_https_website_this_overview_shows_permi_fb2b3" formatted="false">"Kies een bekende HTTPS-website. Dit overzicht toont verleende keuzes, geen volledige meting van alle websiteopslag."</string>
+  <string name="ui_no_known_websites_yet_7cc63" formatted="false">"Nog geen bekende websites."</string>
+  <string name="ui_these_choices_apply_to_this_https_origin_android_also_c400b" formatted="false">"Deze keuzes gelden voor deze HTTPS-oorsprong. Android vraagt daarnaast om apparaat-toestemming. In privétabs worden keuzes niet onthouden."</string>
+  <string name="ui_always_ask_2070c" formatted="false">"Vragen"</string>
+  <string name="ui_block_76d58" formatted="false">"Blokkeren"</string>
+  <string name="ui_engine_permissions_could_not_be_refreshed_restart_veyr_fdaa7" formatted="false">"Vernieuwen van engine-toestemmingen is niet gelukt. Herstart Veyra."</string>
+  <string name="ui_ask_for_permissions_again_b3c09" formatted="false">"Toestemmingen opnieuw vragen"</string>
+  <string name="ui_permissions_reset_9fbaa" formatted="false">"Toestemmingen hersteld."</string>
+  <string name="ui_reset_not_completed_try_again_0f4b6" formatted="false">"Reset niet voltooid. Probeer opnieuw."</string>
+  <string name="ui_clear_website_data_e4ca6" formatted="false">"Websitegegevens wissen"</string>
+  <string name="ui_clear_website_data_27434" formatted="false">"Websitegegevens wissen?"</string>
+  <string name="ui_cookies_storage_cache_and_permissions_for_01444" formatted="false">"Cookies, opslag, cache en toestemmingen voor "</string>
+  <string name="ui_will_be_cleared_you_may_be_signed_out_open_pages_close_fce56" formatted="false">" worden gewist. Je kunt hier worden afgemeld. Open pagina’s worden gesloten; andere websites worden niet gewist."</string>
+  <string name="ui_website_data_cleared_2f7fd" formatted="false">"Websitegegevens gewist."</string>
+  <string name="ui_clearing_not_completed_try_again_de1a3" formatted="false">"Wissen niet voltooid. Probeer opnieuw."</string>
+  <string name="ui_sync_bookmarks_and_the_start_page_through_your_own_htt_6b549" formatted="false">"Synchroniseer bladwijzers en de startpagina via een eigen HTTPS/WebDAV-bestand. De server krijgt alleen versleutelde inhoud. Geschiedenis, privétabs, cookies, wachtwoorden en website-toestemmingen worden niet verstuurd."</string>
+  <string name="ui_https_address_of_the_sync_file_286d4" formatted="false">"HTTPS-adres van het synchronisatiebestand"</string>
+  <string name="ui_server_username_a3be5" formatted="false">"Servergebruikersnaam"</string>
+  <string name="ui_server_password_97db4" formatted="false">"Serverwachtwoord"</string>
+  <string name="ui_recovery_phrase_at_least_12_characters_90487" formatted="false">"Herstelzin (minstens 12 tekens)"</string>
+  <string name="ui_store_connection_details_encrypted_on_this_device_14832" formatted="false">"Verbindingsgegevens versleuteld op dit apparaat bewaren"</string>
+  <string name="ui_stored_connection_details_could_not_be_decrypted_enter_987c4" formatted="false">"Opgeslagen verbindingsgegevens konden niet worden ontsleuteld. Vul ze opnieuw in."</string>
+  <string name="ui_not_synced_yet_db346" formatted="false">"Nog niet gesynchroniseerd."</string>
+  <string name="ui_merge_and_sync_b2e10" formatted="false">"Samenvoegen en synchroniseren"</string>
+  <string name="ui_use_a_recovery_phrase_of_at_least_twelve_characters_ca958" formatted="false">"Gebruik een herstelzin van minstens twaalf tekens."</string>
+  <string name="ui_secure_storage_failed_the_connection_will_only_be_used_47707" formatted="false">"Veilig bewaren is niet gelukt. Er wordt alleen deze keer verbinding gemaakt."</string>
+  <string name="ui_fetching_encrypted_server_file_2619f" formatted="false">"Versleuteld serverbestand ophalen…"</string>
+  <string name="ui_create_a_new_encrypted_file_868cb" formatted="false">"Nieuw versleuteld bestand maken?"</string>
+  <string name="ui_merge_server_data_d6504" formatted="false">"Servergegevens samenvoegen?"</string>
+  <string name="ui_your_bookmarks_and_start_page_will_be_encrypted_on_the_a4219" formatted="false">"Je bladwijzers en startpagina worden versleuteld opgeslagen op de gekozen server. Bewaar je herstelzin: Veyra kan deze niet herstellen."</string>
+  <string name="ui_sync_9210d" formatted="false">"Synchroniseren"</string>
+  <string name="ui_encrypting_and_saving_dbb19" formatted="false">"Versleutelen en opslaan…"</string>
+  <string name="ui_synced_your_data_is_stored_encrypted_on_the_server_67e4c" formatted="false">"Gesynchroniseerd. Je gegevens staan versleuteld op de server."</string>
+  <string name="ui_server_saved_local_data_changed_in_the_meantime_sync_a_cbba5" formatted="false">"Server opgeslagen; lokale gegevens zijn ondertussen gewijzigd. Synchroniseer opnieuw om samen te voegen."</string>
+  <string name="ui_forget_saved_connection_b7e28" formatted="false">"Opgeslagen verbinding vergeten"</string>
+  <string name="ui_local_connection_forgotten_the_server_file_was_not_del_59363" formatted="false">"Lokale verbinding vergeten. Het serverbestand is niet verwijderd."</string>
+  <string name="ui_incorrect_recovery_phrase_or_damaged_file_nothing_chan_daffe" formatted="false">"Onjuiste herstelzin of beschadigd bestand. Er is niets gewijzigd."</string>
+  <string name="ui_not_synced_efac6" formatted="false">"Niet gesynchroniseerd: "</string>
+  <string name="ui_check_your_connection_and_recovery_phrase_cced8" formatted="false">"controleer de verbinding en herstelzin"</string>
+</resources>

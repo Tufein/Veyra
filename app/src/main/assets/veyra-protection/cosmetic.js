@@ -11,6 +11,6 @@
     style.textContent = ".adsbygoogle,.ad-slot,.advertisement,.advertentie,[data-ad-slot],iframe[id^=google_ads_iframe]{display:none!important}";
     document.documentElement.appendChild(style);
   }
-  browser.storage.local.get("config").then(({config}) => apply(config));
-  browser.storage.onChanged.addListener(changes => { if (changes.config) apply(changes.config.newValue); });
+  browser.runtime.sendMessage({type: "cosmetic-config"}).then(apply).catch(() => {});
+  browser.runtime.onMessage.addListener(message => { if (message.type === "protection-config") apply(message.config); });
 })();

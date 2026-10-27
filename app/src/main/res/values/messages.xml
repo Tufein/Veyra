@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="nl">
+  <string name="prompt_install" formatted="false">"Extensie toevoegen?"</string>
+  <string name="prompt_update" formatted="false">"Nieuwe rechten voor update"</string>
+  <string name="prompt_optional" formatted="false">"Extra rechten toestaan?"</string>
+  <string name="prompt_access" formatted="false">"\n\nDeze extensie vraagt toegang tot:"</string>
+  <string name="prompt_collection" formatted="false">"\n\nGegevensverzameling:"</string>
+  <string name="prompt_none" formatted="false">"\nGeen extra rechten."</string>
+  <string name="prompt_trust" formatted="false">"\n\nVoeg alleen extensies toe die je vertrouwt."</string>
+  <string name="prompt_allow" formatted="false">"Toestaan"</string>
+  <string name="prompt_cancel" formatted="false">"Annuleren"</string>
+  <string name="site_camera" formatted="false">"Camera"</string>
+  <string name="site_microphone" formatted="false">"Microfoon"</string>
+  <string name="site_location" formatted="false">"Locatie"</string>
+  <string name="default_browser_fallback" formatted="false">"Open Android-instellingen en kies Veyra als standaardbrowser."</string>
+  <string name="download_notification_title" formatted="false">"Veyra-downloads"</string>
+  <string name="download_notification_body" formatted="false">"Bezig met opslaan. Open om voortgang te zien of te annuleren."</string>
+  <string name="protection_on" formatted="false">"aan"</string>
+  <string name="protection_off" formatted="false">"uit"</string>
+  <string name="protection_rules" formatted="false">" lokale domeinregels en het verbergen van bekende advertentievakken. "</string>
+  <string name="protection_request" formatted="false">" verzoek geblokkeerd in deze sessie"</string>
+  <string name="protection_requests" formatted="false">" verzoeken geblokkeerd in deze sessie"</string>
+  <string name="protection_requests_detail" formatted="false">" verzoeken geblokkeerd in deze sessie.\n"</string>
+  <string name="connection_preference" formatted="false">"Voorkeur"</string>
+  <string name="error_00" formatted="false">"De gegevens konden niet worden geëxporteerd."</string>
+  <string name="error_01" formatted="false">"Het bestand is groter dan 2 MB."</string>
+  <string name="error_02" formatted="false">"Onbekend backupformaat of niet-ondersteunde versie."</string>
+  <string name="error_03" formatted="false">"Te veel tabadressen in de backup."</string>
+  <string name="error_04" formatted="false">"Ongeldige of privé-tab in de backup."</string>
+  <string name="error_05" formatted="false">"Het backupbestand is ongeldig. Er is niets gewijzigd."</string>
+  <string name="error_06" formatted="false">"De samengevoegde backup heeft te veel websites. Maak eerst ruimte op de startpagina."</string>
+  <string name="error_07" formatted="false">"Te veel websites na samenvoegen. Maak eerst ruimte op je startpagina."</string>
+  <string name="error_08" formatted="false">"De backup bevat te veel websites."</string>
+  <string name="error_09" formatted="false">"Ongeldige website in de backup. Er is niets gewijzigd."</string>
+  <string name="error_10" formatted="false">"Niet-ondersteunde of ongeldige instelling in de backup: "</string>
+  <string name="error_11" formatted="false">"Gebruik een volledig HTTPS-adres naar een synchronisatiebestand."</string>
+  <string name="error_12" formatted="false">"Ongeldige servergegevens."</string>
+  <string name="error_13" formatted="false">"De server biedt geen bruikbare versiecontrole (ETag). Er is niets overschreven."</string>
+  <string name="error_14" formatted="false">"Synchronisatiebestand te groot."</string>
+  <string name="error_15" formatted="false">"Conflict: het serverbestand is ondertussen gewijzigd. Synchroniseer opnieuw; er is niets overschreven."</string>
+  <string name="error_16" formatted="false">"De server heeft de toegang geweigerd. Controleer je inloggegevens."</string>
+  <string name="error_17" formatted="false">"De server verwijst door. Gebruik het definitieve HTTPS-bestandsadres."</string>
+  <string name="error_18" formatted="false">"De synchronisatieserver antwoordde met HTTP "</string>
+  <string name="error_19" formatted="false">"Te veel synchronisatiegegevens."</string>
+  <string name="error_20" formatted="false">"Gebruik een herstelzin van minstens twaalf tekens."</string>
+  <string name="error_21" formatted="false">"Niet-ondersteunde synchronisatieversie."</string>
+  <string name="error_22" formatted="false">"Ongeldig synchronisatiebestand."</string>
+  <string name="error_23" formatted="false">"Onderbroken doordat Veyra werd afgesloten. Kies opnieuw aanvragen; controleer het gedeeltelijke bestand."</string>
+  <string name="error_24" formatted="false">"Download kon niet starten. Controleer het lege doelbestand."</string>
+  <string name="error_25" formatted="false">"Android kon de download niet op de voorgrond starten. Controleer het doelbestand."</string>
+  <string name="error_26" formatted="false">"Doelbestand niet beschikbaar"</string>
+  <string name="error_27" formatted="false">"Onvolledige download"</string>
+  <string name="error_28" formatted="false">"Download onderbroken. Vraag het bestand opnieuw aan via de website."</string>
+  <string name="error_29" formatted="false">" Controleer het gedeeltelijke doelbestand."</string>
+  <string name="error_30" formatted="false">"Geannuleerd"</string>
+</resources>

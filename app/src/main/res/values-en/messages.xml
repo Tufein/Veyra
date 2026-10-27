@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="prompt_install" formatted="false">"Add extension?"</string>
+  <string name="prompt_update" formatted="false">"New permissions for update"</string>
+  <string name="prompt_optional" formatted="false">"Allow additional permissions?"</string>
+  <string name="prompt_access" formatted="false">"\n\nThis extension requests access to:"</string>
+  <string name="prompt_collection" formatted="false">"\n\nData collection:"</string>
+  <string name="prompt_none" formatted="false">"\nNo additional permissions."</string>
+  <string name="prompt_trust" formatted="false">"\n\nOnly install extensions you trust."</string>
+  <string name="prompt_allow" formatted="false">"Allow"</string>
+  <string name="prompt_cancel" formatted="false">"Cancel"</string>
+  <string name="site_camera" formatted="false">"Camera"</string>
+  <string name="site_microphone" formatted="false">"Microphone"</string>
+  <string name="site_location" formatted="false">"Location"</string>
+  <string name="default_browser_fallback" formatted="false">"Open Android settings and select Veyra as your default browser."</string>
+  <string name="download_notification_title" formatted="false">"Veyra downloads"</string>
+  <string name="download_notification_body" formatted="false">"Saving files. Open to view progress or cancel."</string>
+  <string name="protection_on" formatted="false">"on"</string>
+  <string name="protection_off" formatted="false">"off"</string>
+  <string name="protection_rules" formatted="false">" local domain rules and hiding known ad containers. "</string>
+  <string name="protection_request" formatted="false">" request blocked in this session"</string>
+  <string name="protection_requests" formatted="false">" requests blocked in this session"</string>
+  <string name="protection_requests_detail" formatted="false">" requests blocked in this session.\n"</string>
+  <string name="connection_preference" formatted="false">"Preference"</string>
+  <string name="error_00" formatted="false">"The data could not be exported."</string>
+  <string name="error_01" formatted="false">"The file is larger than 2 MB."</string>
+  <string name="error_02" formatted="false">"Unknown backup format or unsupported version."</string>
+  <string name="error_03" formatted="false">"Too many tab addresses in the backup."</string>
+  <string name="error_04" formatted="false">"Invalid or private tab in the backup."</string>
+  <string name="error_05" formatted="false">"The backup is invalid. Nothing changed."</string>
+  <string name="error_06" formatted="false">"The merged backup has too many websites. Make room on the start page first."</string>
+  <string name="error_07" formatted="false">"Too many websites after merging. Make room on your start page first."</string>
+  <string name="error_08" formatted="false">"The backup contains too many websites."</string>
+  <string name="error_09" formatted="false">"Invalid website in the backup. Nothing changed."</string>
+  <string name="error_10" formatted="false">"Unsupported or invalid preference in the backup: "</string>
+  <string name="error_11" formatted="false">"Use a complete HTTPS address for a sync file."</string>
+  <string name="error_12" formatted="false">"Invalid server details."</string>
+  <string name="error_13" formatted="false">"The server does not provide usable version checks (ETag). Nothing was overwritten."</string>
+  <string name="error_14" formatted="false">"Sync file too large."</string>
+  <string name="error_15" formatted="false">"Conflict: the server file changed. Sync again; nothing was overwritten."</string>
+  <string name="error_16" formatted="false">"The server denied access. Check your credentials."</string>
+  <string name="error_17" formatted="false">"The server redirects. Use the final HTTPS file address."</string>
+  <string name="error_18" formatted="false">"The sync server returned HTTP "</string>
+  <string name="error_19" formatted="false">"Too much sync data."</string>
+  <string name="error_20" formatted="false">"Use a recovery phrase of at least twelve characters."</string>
+  <string name="error_21" formatted="false">"Unsupported sync version."</string>
+  <string name="error_22" formatted="false">"Invalid sync file."</string>
+  <string name="error_23" formatted="false">"Interrupted when Veyra closed. Request it again and check the partial file."</string>
+  <string name="error_24" formatted="false">"The download could not start. Check the empty destination file."</string>
+  <string name="error_25" formatted="false">"Android could not start the foreground download. Check the destination file."</string>
+  <string name="error_26" formatted="false">"Destination file unavailable"</string>
+  <string name="error_27" formatted="false">"Incomplete download"</string>
+  <string name="error_28" formatted="false">"Download interrupted. Request the file again through the website."</string>
+  <string name="error_29" formatted="false">" Check the partial destination file."</string>
+  <string name="error_30" formatted="false">"Cancelled"</string>
+</resources>

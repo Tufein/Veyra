@@ -1,6 +1,6 @@
 # Veyra — productroadmap
 
-Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De 0.4.2-alpha is een testrelease met openstaande apparaat- en updatecontroles; zie de [releasebeperkingen](docs/releases/v0.4.2.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
+Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De ontwikkelstand is de **0.5.0-kandidaat**. De laatste daadwerkelijk gepubliceerde alpha blijft 0.4.2 zolang de nieuwe GitHub-release ontbreekt. Zie het [0.5-verificatieverslag](docs/verification-0.5.md), de [migratieprocedure](docs/signing-and-migration.md) en de open [apparaatmatrix](docs/device-validation.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
 
 Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handhelds. De prioriteit is betrouwbare dagelijkse navigatie met een verzorgde Material You-interface, bruikbare Firefox-extensies en duidelijke privacykeuzes. Meer functies mogen de browser niet onoverzichtelijk of onnodig zwaar maken.
 
@@ -15,13 +15,34 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | Material You-instellingen 0.4.0 | Nieuwe instellingenhub, detailpagina’s, zoeken, eigen editor en uitgebreidere kleurrollen beschikbaar als testalpha | Visuele en functionele controle op een telefoon naast de UI-tests |
 | Bibliotheek in 0.4.1 | Bladwijzers en startpagina samen beheren, vastzetten/losmaken, gekoppeld bewerken en bevestigd verwijderen | Gebruik op hardware; import/export en bredere dagelijkse browserfuncties |
 | Startpagina | Begroeting, compact beeld, maximaal acht eigen snelkoppelingen | Groot lettertype, kleine schermen, toetsenbord en controller op hardware |
-| Downloads, browsegeschiedenis, privétabs, synchronisatie | Niet geïmplementeerd | Volledige onderstaande oplevercriteria |
+| Dagelijkse functies | Geïmplementeerd: downloads, lokale geschiedenis, backups, websitebeheer, browserrol en eigen zoekaanbieder | Ingelogde downloads, Android-documentproviders en OS-rechten op hardware |
+| Privacy | Gecko-privétabs, afzonderlijk wissen, hostreset en normale cookietellingen geïmplementeerd | Websitecookie-isolatie bij procesbeëindiging en wisgedrag op hardware |
+| Synchronisatie | Handmatige versleutelde HTTPS-bestandssync, driewegsamenvoeging en conflictkeuze geïmplementeerd | Twee echte clients met een beheerde server; geen gehoste accountdienst |
+| Vormgeving/lokalisatie | Tabletinstellingen, volledig NL/EN, RTL en groottekst-renderingen | TalkBack, controller en echte schermen |
+| Vaste sleutel | Nieuwe sleutel gegenereerd en lokale APK-certificaten gepind | GitHub Secrets geblokkeerd door ongeldige API-aanmelding (401); onafhankelijke sleutelbackup en echte updatecontrole |
+| Automatische controles | 104 JVM-tests, 8 beschermingstests, 5 migratietests; APK/test-APK bouwt | Deze controles vervangen geen engine-/hardwareacceptatie |
+
+## Wat deze ontwikkelronde wel en niet afsluit
+
+De onderstaande oorspronkelijke productdoelen blijven gelden. Alle lokaal uitvoerbare implementaties zijn samengebracht in de 0.5-kandidaat; een vinkje op **code** is geen afgeronde productmijlpaal. Er zijn geen gemeten snelheidsclaims, bewezen drie-extensiecompatibiliteit of afgeronde 1.0-poorten.
+
+| Oorspronkelijke mijlpaal | Geïmplementeerde code / hulpmiddelen | Nog open voor afronding |
+| --- | --- | --- |
+| 0.4 ontwerp | Eigen pagina’s, gedeelde bibliotheek, bodemmenu/tabpaneel, tablet-tweepaneel | Visuele hardwaregoedkeuring |
+| Betrouwbare basis | Vaste certificaatcontrole, migratie-export, APK-checksums, expliciet rendererherstel, testdevicescript | Sleutelbackup/CI-secrets en installatie/update/stabiliteit op apparaatmatrix |
+| 0.5 dagelijks | Geschiedenis, overdrachten met origineel antwoord, backups, herschikken, rechten, zoektemplate, browserrol, normale tabadressen | Onderbroken/geauthenticeerde downloads, OS- en websiteflows |
+| 0.6 extensies | Rechtenoverzicht, beheer, updateconsent, herstel/alles uitschakelen, tabs-delegates, drie officiële testfixtures | Drie volledige extensiescenario’s op hardware; werkelijke update/popup/API-matrix |
+| 0.7 handhelds | Instelbaar 2–4 actieve paginasessies, RAM-herstel, toetsenbordfocus/shortcuts, paginering bibliotheek, benchmarkrunner | Start/load/tab/batterijmetingen, echte controller en formulier/mediastabiliteit |
+| 0.8 privacy | Echte private enginecontexten, geen private snapshots/geschiedenis, vluchtige uitzonderingen, wissen, cookieaantallen en backups | Profielinspectie na crash/kill en selectieve siteopslagcontrole op hardware |
+| 0.9 beta | NL/EN, RTL, 200%-renderingen, focusrollen, migratie, foutflows, onderhoudsprocedure en issuetemplate | TalkBack/sitecompatibiliteit/Autofill op de volledige apparaatmatrix |
+| Synchronisatie (naar voren gehaald op verzoek) | AES-GCM, TLS/ETag, lokale basis, wijzigingen/verwijderingen/conflicten, Keystore-opslag | Echte eigen server/twee toestellen en extern beheer; onafhankelijke crypto-review |
+| 1.0 stabiel | Documentatie en uitvoerbare controleprocedures voorbereid | Alle open vrijgavepoorten hieronder; dus geen 1.0-release |
 
 ## Werkvolgorde
 
 | Mijlpaal | Doel | Prioriteit | Afhankelijk van |
 | --- | --- | --- | --- |
-| 0.4.0 — Een eigen Veyra | Afzonderlijke instellingen en een samenhangende Material You-interface | P0, huidige ontwikkelronde | UI-tests en apparaatcontrole |
+| 0.4.0 — Een eigen Veyra | Afzonderlijke instellingen en een samenhangende Material You-interface | P0, code beschikbaar | UI-tests en apparaatcontrole |
 | Volgende 0.4.x — Een betrouwbare basis | Reproduceerbare updates, apparaatvalidatie en crashherstel | P0 | Ondertekeningssleutel en testtoestellen |
 | 0.5 — Dagelijks bruikbaar | Downloads, geschiedenis, bladwijzerbeheer en websitevoorkeuren | P1 | Basisvalidatie en veilige gegevensopslag |
 | 0.6 — Extensies die je kunt vertrouwen | Compatibiliteitsmatrix, betere toestemmingen en herstelbare updates | P1 | Gecko-API-validatie op hardware |
@@ -29,7 +50,7 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 | 0.8 — Privacy onder jouw controle | Privétabs, selectief gegevens wissen en duidelijke sitegegevens | P1 | Aantoonbare scheiding van sessiegegevens |
 | 0.9 — Beta | Toegankelijkheid, migraties, foutmeldingen en een brede testmatrix | P1 | Alle dagelijkse basisfuncties gevalideerd |
 | 1.0 — Eerste stabiele versie | Betrouwbare installatie, updates en dagelijks gebruik | Vrijgavepoort | Alle criteria onder ‘Wanneer is 1.0 klaar?’ |
-| Na 1.0 | Eventuele versleutelde synchronisatie en verdere uitbreidingen | P2 | Een expliciet privacy- en productbesluit |
+| Nu, naast lokale browser | Versleutelde synchronisatie met eigen server | P1, expliciet gevraagd | Eigen server en apparaatvalidatie |
 
 ## 0.4.0 — Een eigen Veyra
 
@@ -51,14 +72,14 @@ Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handheld
 
 - [x] Een rustig Material 3-bodemmenu met de belangrijkste browseracties binnen duimbereik (beschikbaar in 0.4.1; apparaatcontrole open).
 - [x] Een tabbladenpaneel met duidelijke selectie en aparte sluitknoppen (beschikbaar in 0.4.1; apparaatcontrole open).
-- Consistente pictogrammen en benoeming van alle acties; geen instellingsdialogen die onverwacht naar een ander onderdeel terugsturen.
-- Op tablets een bredere of tweedelige instellingenindeling, zonder uitgerekte telefoonkaarten.
+- [x] Consistente pictogrammen en benoeming van alle acties; geen instellingsdialogen die onverwacht naar een ander onderdeel terugsturen.
+- [x] Op tablets een bredere of tweedelige instellingenindeling, zonder uitgerekte telefoonkaarten.
 
 **Klaar wanneer:** alle instellingen via hun eigen pagina bereikbaar zijn, Terug de vorige pagina herstelt, opgeslagen voorkeuren na opnieuw openen blijven gelden en de UI leesbaar blijft op een scherm van 320 dp met groot lettertype. Een UI-rendering vervangt de controle op een echt toestel niet.
 
 ## Volgende 0.4.x — Eerst betrouwbaarheid en updates
 
-De 0.4.1-alpha levert de vormgeving en bibliotheek. De onderstaande betrouwbaarheidstaken blijven open en hebben voorrang boven extra browserfuncties.
+De 0.4.1-alpha levert de vormgeving en bibliotheek. De code voor de onderstaande controles en migratie is in de 0.5-kandidaat voorbereid; de hardware-uitvoering en duurzaam sleutelbeheer blijven open.
 
 1. **Vaste ondertekening.** Kies en beveilig de toekomstige ondertekeningssleutel, sla die uitsluitend in de daarvoor bestemde geheime opslag op en gebruik dezelfde sleutel voor volgende builds. Leg vast welke bestaande alpha-installaties in-place kunnen worden bijgewerkt. Geen geheime sleutels in Git of releasebestanden.
 2. **Apparaatmatrix.** Test minimaal Android 9, Android 12+ met Material You en een recente Android-versie; voeg minimaal één echte handheld toe. Test ARM64 en de ondersteunde oudere ARM-variant waar hardware beschikbaar is.
@@ -148,9 +169,9 @@ Gebruik dezelfde toestellen, websites, netwerkcondities en engineversies voor ve
 - [ ] Privacyverklaring, pakketnamen, herkomst van afhankelijkheden en releaseprocedure zijn op orde.
 - [ ] Er is een onderhoudsplan voor beveiligingsupdates en een ondersteund kanaal voor bugmeldingen.
 
-## Bewust later of nog te besluiten
+## Buiten de huidige opdracht of afhankelijk van externe goedkeuring
 
-- **Synchronisatie en accounts:** pas na een expliciete keuze over end-to-end-versleuteling, sleutelherstel, serverbeheer, kosten en verwijdering. Veyra krijgt geen accountknop die nog niets doet.
+- **Gehoste accounts:** niet aangeboden. Op uitdrukkelijk verzoek is eigen-server-synchronisatie nu geïmplementeerd; [protocol, herstel en beheer](docs/sync.md) beschrijven de keuzes. Een serverdienst aanbieden vereist apart beheer, kosten, beveiliging en verwijderbeleid.
 - **Ingebouwde wachtwoordkluis:** geen huidige prioriteit; eerst goede integratie met bestaande Android-providers.
 - **Rechtstreekse website-passkeys:** afhankelijk van de vereiste browser-/providergoedkeuring en een geteste integratie.
 - **Play Store-publicatie:** afhankelijk van vaste ondertekening, privacyinformatie en de releasecriteria; geen aangekondigde datum voordat die voorwaarden zijn ingevuld.

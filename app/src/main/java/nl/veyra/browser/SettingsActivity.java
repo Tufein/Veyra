@@ -52,6 +52,7 @@ public final class SettingsActivity extends Activity {
     private int editing = -1;
     private TextInputEditText nameInput, shortcutName, shortcutUrl;
     private String nameDraft, titleDraft, urlDraft;
+    private String appliedPalette;
 
     static Intent intent(Context context, SettingsSection section) {
         return new Intent(context, SettingsActivity.class).putExtra(EXTRA_SECTION, section.name());
@@ -60,6 +61,7 @@ public final class SettingsActivity extends Activity {
     @Override public void onCreate(Bundle state) {
         preferences = getSharedPreferences("veyra", MODE_PRIVATE);
         ThemeSupport.apply(this, preferences);
+        appliedPalette = paletteKey();
         super.onCreate(state);
         shortcuts = new ShortcutStore(preferences);
         setResult(RESULT_OK);
@@ -83,8 +85,14 @@ public final class SettingsActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         // Provider availability may change while Android's settings screen is open.
-        if ((section == SettingsSection.PASSWORDS || section == SettingsSection.SHORTCUTS) && scroll != null) { remember(); render(false); }
+        if (scroll != null) {
+            remember();
+            if (!paletteKey().equals(appliedPalette)) { recreate(); return; }
+            render(false);
+        }
     }
+
+    private String paletteKey() { return preferences.getString("theme","dark") + ":" + preferences.getString("accent","mint") + ":" + preferences.getBoolean("dynamic_colors",true); }
 
     private void render(boolean animate) {
         ui = new SettingsViews(this);
@@ -118,8 +126,22 @@ public final class SettingsActivity extends Activity {
         FrameLayout centered = new FrameLayout(this);
         content = ui.column(); content.setPadding(ui.dp(20), ui.dp(4), ui.dp(20), ui.dp(32));
         int available = getResources().getDisplayMetrics().widthPixels;
-        centered.addView(content, new FrameLayout.LayoutParams(Math.min(available, ui.dp(720)), -2, Gravity.TOP | Gravity.CENTER_HORIZONTAL));
-        scroll.addView(centered); root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
+        boolean wide = available >= ui.dp(840) && section != SettingsSection.OVERVIEW;
+        centered.addView(content, new FrameLayout.LayoutParams(Math.min(available - (wide ? ui.dp(280) : 0), ui.dp(720)), -2, Gravity.TOP | Gravity.CENTER_HORIZONTAL));
+        scroll.addView(centered);
+        if (wide) {
+            LinearLayout split = ui.row(); split.setGravity(Gravity.TOP);
+            ScrollView navigation = new ScrollView(this); LinearLayout links = ui.column(); links.setPadding(ui.dp(16),ui.dp(8),ui.dp(8),ui.dp(24));
+            for (SettingsSection destination : new SettingsSection[]{SettingsSection.OVERVIEW,SettingsSection.APPEARANCE,SettingsSection.HOME,
+                    SettingsSection.READING,SettingsSection.SHORTCUTS,SettingsSection.BROWSER,SettingsSection.PRIVACY,SettingsSection.PASSWORDS,SettingsSection.EXTENSIONS,SettingsSection.ABOUT}) {
+                MaterialButton link = new MaterialButton(this,null,com.google.android.material.R.attr.materialButtonOutlinedStyle);
+                link.setText(destination.title); link.setIconResource(destination.icon); link.setSingleLine(false); link.setMinHeight(ui.dp(56));
+                link.setGravity(Gravity.START|Gravity.CENTER_VERTICAL); link.setCheckable(true); link.setChecked(destination == section);
+                link.setOnClickListener(v -> open(destination)); ui.add(links,link,4);
+            }
+            navigation.addView(links); split.addView(navigation,new LinearLayout.LayoutParams(ui.dp(280),-1));
+            split.addView(scroll,new LinearLayout.LayoutParams(0,-1,1)); root.addView(split,new LinearLayout.LayoutParams(-1,0,1));
+        } else root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         switch (section) {
             case OVERVIEW: overview(); break;
             case APPEARANCE: appearance(); break;
@@ -174,7 +196,7 @@ public final class SettingsActivity extends Activity {
     private void populateCategories() {
         categories.removeAllViews();
         SettingsSection[] destinations = {SettingsSection.APPEARANCE, SettingsSection.HOME, SettingsSection.SHORTCUTS,
-                SettingsSection.READING, SettingsSection.PRIVACY, SettingsSection.PASSWORDS, SettingsSection.EXTENSIONS, SettingsSection.ABOUT};
+                SettingsSection.READING, SettingsSection.BROWSER, SettingsSection.PRIVACY, SettingsSection.PASSWORDS, SettingsSection.EXTENSIONS, SettingsSection.ABOUT};
         int count = 0;
         for (SettingsSection destination : destinations) {
             String title = getString(destination.title), summary = summary(destination);
@@ -310,6 +332,7 @@ public final class SettingsActivity extends Activity {
         ui.add(content, ui.text(R.string.settings_search_engine_description, 13, ui.muted), 8);
         String[] values = {"duckduckgo", "google", "brave", "ecosia"};
         String[] labels = {"DuckDuckGo", "Google", "Brave Search", "Ecosia"};
+        ui.add(content, ui.button(R.string.browser_custom_search,R.drawable.ic_tune,v -> startActivity(new Intent(this,BrowserToolsActivity.class))),12);
         for (int i = 0; i < values.length; i++) {
             String key = values[i]; boolean selected = key.equals(preferences.getString("search", "duckduckgo"));
             MaterialButton button = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
@@ -323,6 +346,7 @@ public final class SettingsActivity extends Activity {
 
     private void privacy() {
         ui.heading(content, R.string.settings_privacy, R.string.settings_privacy_summary);
+        ui.add(content, ui.button(R.string.browser_data,R.drawable.ic_shield,v -> startActivity(new Intent(this,DataSettingsActivity.class))),12);
         LinearLayout card = ui.card(content, false);
         ui.toggle(card, R.string.settings_blocking, R.string.settings_blocking_summary, preferences.getBoolean("blocking", true),
                 (button, checked) -> preferences.edit().putBoolean("blocking", checked).apply());
@@ -445,6 +469,7 @@ public final class SettingsActivity extends Activity {
     }
     private void open(SettingsSection next) {
         hideKeyboard(); remember();
+        if (next == SettingsSection.BROWSER) { startActivity(new Intent(this,BrowserToolsActivity.class)); return; }
         if (next == SettingsSection.EXTENSIONS) { startActivity(new Intent(this, ExtensionsActivity.class)); return; }
         if (next == section) return;
         history.add(section); section = next; render(true);
@@ -497,7 +522,7 @@ public final class SettingsActivity extends Activity {
     }
     private String searchLabel() {
         switch (preferences.getString("search", "duckduckgo")) {
-            case "google": return "Google"; case "brave": return "Brave Search"; case "ecosia": return "Ecosia"; default: return "DuckDuckGo";
+            case "google": return "Google"; case "brave": return "Brave Search"; case "ecosia": return "Ecosia"; case "custom": return getString(R.string.search_custom); default: return "DuckDuckGo";
         }
     }
 }

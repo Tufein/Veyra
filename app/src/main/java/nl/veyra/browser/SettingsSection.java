@@ -20,6 +20,8 @@ enum SettingsSection {
             "wachtwoorden passkeys autofill invullen wachtwoordmanager bitwarden 1password"),
     EXTENSIONS(R.string.settings_extensions, R.string.settings_extensions_summary, R.drawable.ic_extension,
             "extensies extensions firefox addons add-ons uitbreidingen plugins"),
+    BROWSER(R.string.browser_tools, R.string.browser_tools_summary, R.drawable.ic_home,
+            "downloads geschiedenis standaardbrowser zoekmachine eigen export import backup synchronisatie geheugen gegevens cookies wissen"),
     ABOUT(R.string.settings_about, R.string.settings_about_summary, R.drawable.ic_info,
             "versie veyra alpha over browser"),
     SHORTCUT_EDITOR(R.string.shortcut_edit, R.string.shortcut_editor_summary, R.drawable.ic_link, "");

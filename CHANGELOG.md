@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0 — candidate (not yet published)
+
+- Add local searchable history; keep private visits out of history and saved tab state.
+- Add authenticated-response downloads with Android document destinations, foreground progress, cancellation, interrupted-transfer recovery, safe names and opening saved files. Retry reopens the source instead of replaying POST data.
+- Add versioned, bounded and validated bookmark/preference backups, optional normal-tab addresses, linked-name preservation and bookmark ordering. Render large libraries/history in pages.
+- Add camera/microphone/location consent, per-origin decisions, permission reset, normal cookie counts and selective host/global data clearing.
+- Add real Gecko private sessions, private Autofill/user-extension restrictions, volatile private blocking exceptions and secure-window behavior. Add explicit renderer recovery, fullscreen media and recording-stop controls.
+- Add custom HTTPS search templates, Android default-browser role, a browser/data settings hub and configurable live-session limit.
+- Add manual encrypted bookmark/start-page sync to an own HTTPS/WebDAV file server, strong ETag conditional writes, three-way changes/deletions, explicit conflict choices and optional Android Keystore-encrypted connection storage.
+- Improve extension permission summaries, tab API handling and disable-all recovery; add official three-add-on fixture preparation and isolated-device runners. Hardware compatibility remains unverified.
+- Add complete Dutch/English interface resources, RTL improvements, tablet settings navigation, keyboard focus and native Android-widget rendering checks.
+- Introduce a new fixed signing certificate and fail-closed public release validation. Older public alpha keys are unavailable: export before changing installations; migration assistance does not preserve cookies/logins.
+- Add privacy/sync/migration documentation, a device acceptance matrix, benchmark tooling, dependency maintenance and issue templates. GitHub secret provisioning/publication and real-device release gates remain open.
+
+
 ## 0.4.2 — 2026-10-27 (alpha)
 
 - Open Android’s Autofill provider picker directly from password settings and browser credential actions, with a general-settings fallback when unavailable.

@@ -5,6 +5,7 @@ Requires an installed debug APK and exactly one adb device/emulator. Uses a loca
 HTTP fixture through adb reverse; does not depend on public websites. Test tab
 URLs/bookmarks are created on the connected test device. No app data is cleared.
 """
+import argparse
 import http.server
 import os
 from pathlib import Path
@@ -17,10 +18,11 @@ import xml.etree.ElementTree as ET
 ADB = os.environ.get("ADB", "adb")
 OUTPUT = Path(os.environ.get("VEYRA_TEST_OUTPUT", "app/build/smoke"))
 PORT = 8765
+SERIAL = None
 
 
 def adb(*args, binary=False):
-    return subprocess.check_output([ADB, *args], text=not binary, timeout=45)
+    return subprocess.check_output([ADB, *(["-s", SERIAL] if SERIAL else []), *args], text=not binary, timeout=45)
 
 
 def hierarchy():
@@ -81,6 +83,13 @@ class Fixture(http.server.BaseHTTPRequestHandler):
 
 
 def main():
+    global SERIAL
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--serial',required=True)
+    parser.add_argument('--confirm-isolated-test-device',action='store_true')
+    args=parser.parse_args()
+    if not args.confirm_isolated_test_device:parser.error('Use an isolated test device; this test creates tabs and a bookmark. Set the app language to Dutch first.')
+    SERIAL=args.serial
     OUTPUT.mkdir(parents=True, exist_ok=True)
     server = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), Fixture)
     threading.Thread(target=server.serve_forever, daemon=True).start()
@@ -99,10 +108,10 @@ def main():
         tap("Terug", "content-desc")
         find("JavaScript werkt", partial=True)
         print("PASS link navigation and browser back", flush=True)
-        menu("Bladwijzer toevoegen")
-        menu("Bladwijzers")
+        menu("Bewaren")
+        menu("Bibliotheek")
         find("Veyra rooktest", partial=True)
-        tap("Sluiten")
+        adb("shell", "input", "keyevent", "4")
         print("PASS bookmark creation and listing", flush=True)
         menu("Nieuw tabblad")
         find("Het web.", partial=True)

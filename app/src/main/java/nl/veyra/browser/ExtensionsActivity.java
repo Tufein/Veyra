@@ -64,26 +64,32 @@ public final class ExtensionsActivity extends Activity {
             } else view.setPadding(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom());
             return insets;
         });
-        MaterialToolbar toolbar = new MaterialToolbar(this); toolbar.setTitle("Extensies");
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back); toolbar.setNavigationContentDescription("Terug");
+        MaterialToolbar toolbar = new MaterialToolbar(this); toolbar.setTitle(getString(R.string.ui_extensions_8966f));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back); toolbar.setNavigationContentDescription(getString(R.string.ui_back_ebf6c));
         toolbar.setNavigationOnClickListener(v -> finish()); root.addView(toolbar);
         ScrollView scroll = new ScrollView(this); LinearLayout content = column();
         content.setPadding(dp(20), dp(12), dp(20), dp(32)); scroll.addView(content);
-        TextView headline = text("Een beetje extra Veyra.", 30); content.addView(headline);
-        add(content, text("Ontdek extensies uit Mozilla Add-ons voor Firefox op Android. Compatibiliteit verschilt per extensie.", 15), 12);
-        add(content, text("Geïnstalleerd", 18), 28);
+        TextView headline = text(getString(R.string.ui_a_little_extra_veyra_1b81b), 30); content.addView(headline);
+        add(content, text(getString(R.string.ui_discover_extensions_from_mozilla_add_ons_for_firefox_o_9f892), 15), 12);
+        add(content, button(getString(R.string.ui_disable_all_extra_extensions_ab3a3),v -> new MaterialAlertDialogBuilder(this).setTitle(getString(R.string.ui_disable_extensions_d0ffd))
+                .setMessage(getString(R.string.ui_your_websites_and_browser_data_are_retained_built_in_p_dba35))
+                .setNegativeButton(getString(R.string.ui_cancel_c6a8d),null).setPositiveButton(getString(R.string.ui_disable_257f2),(d,w)->operation(engine.disableUserExtensions(),getString(R.string.ui_extra_extensions_disabled_56aa3))).show()),16);
+        add(content, button(getString(R.string.ui_compatibility_and_test_status_27405),v -> new MaterialAlertDialogBuilder(this).setTitle(getString(R.string.ui_extension_compatibility_24da9))
+                .setMessage(getString(R.string.ui_ublock_origin_device_validation_pending_dark_reader_de_2e380))
+                .setPositiveButton(getString(R.string.ui_done_6fb77),null).show()),4);
+        add(content, text(getString(R.string.ui_installed_7ddcb), 18), 28);
         installed = column(); add(content, installed, 12);
-        add(content, text("Ontdekken", 18), 28);
-        TextInputLayout input = new TextInputLayout(this); input.setHint("Zoeken in Firefox-extensies");
+        add(content, text(getString(R.string.ui_discover_100e7), 18), 28);
+        TextInputLayout input = new TextInputLayout(this); input.setHint(getString(R.string.ui_search_firefox_extensions_91332));
         input.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
         search = new TextInputEditText(input.getContext()); search.setSingleLine(); search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setOnEditorActionListener((v, action, event) -> { if (action == EditorInfo.IME_ACTION_SEARCH) { searchCatalog(); return true; } return false; });
         input.addView(search); add(content, input, 16);
-        MaterialButton find = button("Zoeken", v -> searchCatalog()); add(content, find, 8);
+        MaterialButton find = button(getString(R.string.ui_search_5d33a), v -> searchCatalog()); add(content, find, 8);
         progress = new ProgressBar(this); progress.setVisibility(View.GONE); add(content, progress, 12);
         status = text("", 14); status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE); add(content, status, 8);
         catalog = column(); add(content, catalog, 12);
-        add(content, text("Downloads en handtekeningen worden gecontroleerd door GeckoView. Nieuwe rechten vragen altijd je toestemming. Updates start je zelf bij de geïnstalleerde extensie.", 12), 20);
+        add(content, text(getString(R.string.ui_geckoview_verifies_downloads_and_signatures_new_permis_6e116), 12), 20);
         root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1)); setContentView(root);
         getWindow().setStatusBarColor(surface); getWindow().setNavigationBarColor(surface);
         if (ThemeSupport.isLight(this, getSharedPreferences("veyra", MODE_PRIVATE)))
@@ -106,26 +112,26 @@ public final class ExtensionsActivity extends Activity {
                     if (busy) { loadInstalled(); return; }
                     WebExtensionController controller = engine.runtime.getWebExtensionController();
                     operation(checked ? controller.enable(extension, WebExtensionController.EnableSource.USER)
-                            : controller.disable(extension, WebExtensionController.EnableSource.USER), "Extensie aangepast");
+                            : controller.disable(extension, WebExtensionController.EnableSource.USER), getString(R.string.ui_extension_changed_12817));
                 });
-                MaterialButton open = button("Openen", v -> extensionUi.open(extension));
+                MaterialButton open = button(getString(R.string.ui_open_5b1e5), v -> extensionUi.open(extension));
                 open.setEnabled(extension.metaData != null && extension.metaData.enabled);
                 add(card, open, 4);
                 if (extension.metaData != null && extension.metaData.optionsPageUrl != null)
-                    add(card, button("Instellingen", v -> extensionUi.options(extension)), 0);
-                add(card, button("Controleren op updates", v -> {
-                    if (!busy) operation(engine.runtime.getWebExtensionController().update(extension), "Updatecontrole voltooid");
+                    add(card, button(getString(R.string.ui_settings_27018), v -> extensionUi.options(extension)), 0);
+                add(card, button(getString(R.string.ui_check_for_updates_bbfdb), v -> {
+                    if (!busy) operation(engine.runtime.getWebExtensionController().update(extension), getString(R.string.ui_update_check_completed_cb124));
                 }), 0);
-                add(card, button("Verwijderen", v -> {
+                add(card, button(getString(R.string.ui_remove_d6c44), v -> {
                     if (busy) return;
-                    new MaterialAlertDialogBuilder(this).setTitle("Extensie verwijderen?")
-                            .setMessage(VeyraRuntime.name(extension) + " en de bijbehorende extensiegegevens worden verwijderd.")
-                            .setPositiveButton("Verwijderen", (d, w) -> operation(engine.runtime.getWebExtensionController().uninstall(extension), "Extensie verwijderd"))
-                            .setNegativeButton("Annuleren", null).show();
+                    new MaterialAlertDialogBuilder(this).setTitle(getString(R.string.ui_remove_extension_57080))
+                            .setMessage(VeyraRuntime.name(extension) + getString(R.string.ui_and_its_extension_data_will_be_removed_75496))
+                            .setPositiveButton(getString(R.string.ui_remove_d6c44), (d, w) -> operation(engine.runtime.getWebExtensionController().uninstall(extension), getString(R.string.ui_extension_removed_9eec3)))
+                            .setNegativeButton(getString(R.string.ui_cancel_c6a8d), null).show();
                 }), 0);
             }
-            if (installedIds.isEmpty()) installed.addView(text("Nog geen extensies. Ontdek hieronder wat bij je past.", 14));
-        }, failure -> { if (!isDestroyed()) installed.addView(text("Geïnstalleerde extensies konden niet worden geladen. Open dit scherm opnieuw.", 14)); });
+            if (installedIds.isEmpty()) installed.addView(text(getString(R.string.ui_no_extensions_yet_discover_what_works_for_you_below_98814), 14));
+        }, failure -> { if (!isDestroyed()) installed.addView(text(getString(R.string.ui_installed_extensions_could_not_be_loaded_reopen_this_s_20b49), 14)); });
     }
     private void searchCatalog() {
         String query = search.getText() == null ? "" : search.getText().toString();
@@ -141,10 +147,13 @@ public final class ExtensionsActivity extends Activity {
                     for (AddonRepository.Addon addon : results) {
                         LinearLayout card = card(catalog); card.addView(text(addon.name, 18));
                         add(card, text(Html.fromHtml(addon.summary, Html.FROM_HTML_MODE_COMPACT).toString(), 14), 8);
-                        add(card, text("Versie " + addon.version, 12), 8);
-                        MaterialButton install = button(installedIds.contains(addon.id) ? "Geïnstalleerd" : "Toevoegen aan Veyra", v -> {
+                        add(card, text(getString(R.string.ui_version_0d39b) + addon.version, 12), 8);
+                        MaterialButton install = button(installedIds.contains(addon.id) ? getString(R.string.ui_installed_7ddcb) : getString(R.string.ui_add_to_veyra_55ca7), v -> {
                             if (busy || installedIds.contains(addon.id)) return;
-                            operation(engine.runtime.getWebExtensionController().install(addon.downloadUrl), "Extensie toegevoegd");
+                            new MaterialAlertDialogBuilder(this).setTitle(addon.name)
+                                    .setMessage(getString(R.string.ui_version_0d39b) + addon.version + getString(R.string.ui_source_mozilla_add_ons_firefox_on_android_8c202) + addon.permissions
+                                            + getString(R.string.ui_geckoview_verifies_the_signature_and_then_requests_con_c9fb8))
+                                    .setNegativeButton(getString(R.string.ui_cancel_c6a8d),null).setPositiveButton(getString(R.string.ui_continue_65c33),(d,w) -> operation(engine.runtime.getWebExtensionController().install(addon.downloadUrl),getString(R.string.ui_extension_added_f937f))).show();
                         });
                         install.setEnabled(!installedIds.contains(addon.id)); add(card, install, 12);
                     }
@@ -166,10 +175,10 @@ public final class ExtensionsActivity extends Activity {
         }, failure -> {
             if (isDestroyed()) return;
             busy = false; progress.setVisibility(View.GONE);
-            String message = "De wijziging is niet uitgevoerd. Controleer de verbinding en of de extensie deze browser ondersteunt.";
+            String message = getString(R.string.ui_the_change_was_not_applied_check_your_connection_and_w_ed8b4);
             if (failure instanceof WebExtension.InstallException) {
                 int code = ((WebExtension.InstallException) failure).code;
-                message = "Installatie geannuleerd of geweigerd (code " + code + "). De extensie moet compatibel zijn en een geldige Mozilla-handtekening hebben.";
+                message = getString(R.string.ui_installation_cancelled_or_rejected_code_c18ec) + code + getString(R.string.ui_the_extension_must_be_compatible_and_have_a_valid_mozi_0084f);
             }
             status.setText(message); loadInstalled();
         });

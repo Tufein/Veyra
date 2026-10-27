@@ -25,4 +25,5 @@
     <item name="library_name" type="id" />
     <item name="library_url" type="id" />
     <item name="library_save" type="id" />
+    <item name="browser_custom_template" type="id" />
 </resources>

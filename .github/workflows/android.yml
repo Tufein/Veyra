@@ -48,6 +48,9 @@ jobs:
       - name: Test bundled browser protection
         run: node --test tools/protection_test.cjs
 
+      - name: Test migration and signing tools
+        run: python3 -m unittest discover -s tools -p 'test_*.py'
+
       - name: Build, test and lint
         run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 

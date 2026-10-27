@@ -42,7 +42,9 @@ public final class BrowserEngineInstrumentedTest {
     }
     /** Optional real AMO fixture, supplied explicitly to an isolated test device. */
     @Test public void installsSignedAddonWithConsentAndManagesItsState() throws Exception {
-        File fixture = new File(InstrumentationRegistry.getInstrumentation().getTargetContext().getCacheDir(), "signed-test-addon.xpi");
+        String fixtureName=InstrumentationRegistry.getArguments().getString("addon_fixture","signed-test-addon.xpi");
+        assertTrue("Fixture must be a cache filename",fixtureName.matches("[A-Za-z0-9._-]+\\.xpi"));
+        File fixture = new File(InstrumentationRegistry.getInstrumentation().getTargetContext().getCacheDir(), fixtureName);
         org.junit.Assume.assumeTrue("Supply a signed AMO test fixture in the test app cache", fixture.isFile());
         try (ActivityScenario<BrowserActivity> scenario = ActivityScenario.launch(BrowserActivity.class)) {
             AtomicReference<VeyraRuntime> reference = new AtomicReference<>();
@@ -50,13 +52,24 @@ public final class BrowserEngineInstrumentedTest {
             VeyraRuntime engine = reference.get(); await(engine.ready);
             java.util.Set<String> existing = new java.util.HashSet<>();
             for (WebExtension extension : await(engine.runtime.getWebExtensionController().list())) existing.add(extension.id);
-            // The supplied fixture is ClearURLs. Preserve any pre-existing user installation.
-            org.junit.Assume.assumeFalse(existing.contains("{74145f27-f039-47ce-a470-a662b129930a}"));
+            // Read the real package ID, preserving any pre-existing user installation.
+            String fixtureId;
+            try(java.util.zip.ZipFile zip=new java.util.zip.ZipFile(fixture)) {
+                ZipEntry manifest=zip.getEntry("manifest.json");assertNotNull(manifest);
+                try(java.io.InputStream stream=zip.getInputStream(manifest)) {
+                    java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();byte[] buffer=new byte[8192];int count;
+                    while((count=stream.read(buffer))!=-1){assertTrue("Manifest too large",bytes.size()+count<=1024*1024);bytes.write(buffer,0,count);}
+                    org.json.JSONObject json=new org.json.JSONObject(bytes.toString("UTF-8"));
+                    org.json.JSONObject settings=json.optJSONObject("browser_specific_settings");if(settings==null)settings=json.getJSONObject("applications");
+                    fixtureId=settings.getJSONObject("gecko").getString("id");
+                }
+            }
+            org.junit.Assume.assumeFalse("Preserving an existing installation",existing.contains(fixtureId));
             AtomicReference<GeckoResult<WebExtension>> operation = new AtomicReference<>();
             scenario.onActivity(activity -> operation.set(engine.runtime.getWebExtensionController().install(Uri.fromFile(fixture).toString())));
             androidx.test.uiautomator.UiDevice device = androidx.test.uiautomator.UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
             androidx.test.uiautomator.UiObject2 allow = device.wait(androidx.test.uiautomator.Until.findObject(
-                    androidx.test.uiautomator.By.text("Toestaan")), 90000);
+                    androidx.test.uiautomator.By.text(InstrumentationRegistry.getInstrumentation().getTargetContext().getString(R.string.prompt_allow))), 90000);
             assertNotNull("Signed installation must present the permission consent dialog", allow);
             allow.click();
             WebExtension installed = await(operation.get());

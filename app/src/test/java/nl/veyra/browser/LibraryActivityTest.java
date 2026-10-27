@@ -23,7 +23,7 @@ import org.robolectric.annotation.GraphicsMode;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk=35, qualifiers="w412dp-h892dp-mdpi")
+@Config(sdk=35, qualifiers="nl-rNL-w412dp-h892dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public final class LibraryActivityTest {
     private ActivityController<LibraryActivity> controller;
@@ -99,7 +99,7 @@ public final class LibraryActivityTest {
         confirmation.getButton(android.content.DialogInterface.BUTTON_POSITIVE).performClick(); idle();
         assertFalse(store.isBookmarked("https://example.org/")); assertFalse(store.isPinned("https://example.org/"));
     }
-    @Test @Config(qualifiers="w320dp-h740dp-mdpi") public void largeTextLibraryKeepsFullWidthRowsAndScrollableContent() throws Exception {
+    @Test @Config(qualifiers="nl-rNL-w320dp-h740dp-mdpi") public void largeTextLibraryKeepsFullWidthRowsAndScrollableContent() throws Exception {
         android.content.res.Configuration config=new android.content.res.Configuration(RuntimeEnvironment.getApplication().getResources().getConfiguration());
         config.fontScale=1.6f;
         RuntimeEnvironment.getApplication().getResources().updateConfiguration(config,RuntimeEnvironment.getApplication().getResources().getDisplayMetrics());

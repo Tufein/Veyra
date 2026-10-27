@@ -132,8 +132,9 @@ final class BrowserSheets {
     }
     static final class TabItem {
         final String title, url;
-        final boolean home;
-        TabItem(String title, String url, boolean home) { this.title = title; this.url = url; this.home = home; }
+        final boolean home, privateMode;
+        TabItem(String title, String url, boolean home) { this(title,url,home,false); }
+        TabItem(String title, String url, boolean home,boolean privateMode) { this.title = title; this.url = url; this.home = home; this.privateMode = privateMode; }
     }
     static Sheet tabs(Activity activity, List<TabItem> tabs, int selected, int limit, IntConsumer select, IntConsumer close, Runnable add) {
         Sheet sheet = new Sheet(activity, activity.getString(R.string.panel_tabs), activity.getString(R.string.panel_tab_count, tabs.size(), limit));
@@ -148,11 +149,11 @@ final class BrowserSheets {
             LinearLayout copy = ui.column(); copy.setPadding(ui.dp(12), 0, ui.dp(4), 0);
             TextView title = ui.text(tab.home ? activity.getString(R.string.panel_new_tab) : tab.title, 15, current ? ui.accentInk : ui.ink);
             title.setMaxLines(2); title.setEllipsize(android.text.TextUtils.TruncateAt.END); copy.addView(title);
-            TextView subtitle = ui.text(current ? activity.getString(R.string.panel_current_tab)
+            TextView subtitle = ui.text(tab.privateMode ? activity.getString(R.string.ui_private_tab_not_saved_45d1d) : current ? activity.getString(R.string.panel_current_tab)
                     : tab.home ? "Veyra" : SettingsViews.host(tab.url), 12, current ? ui.accentInk : ui.muted);
             subtitle.setMaxLines(1); subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END); ui.add(copy, subtitle, 4);
             target.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
-            target.setOnClickListener(v -> sheet.run(() -> select.accept(index))); target.setFocusable(true); target.setSelected(current);
+            target.setOnClickListener(v -> sheet.run(() -> select.accept(index))); target.setFocusable(true); target.setSelected(current); SettingsViews.buttonRole(target);
             target.setContentDescription(title.getText() + ", " + subtitle.getText());
             target.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             copy.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);

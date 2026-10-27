@@ -1,0 +1,28 @@
+name: Browser problem
+description: Report a reproducible problem without private data.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include passwords, cookies, recovery phrases, private URLs, signing keys, or personal account screenshots. Use a test account and public example when possible.
+  - type: input
+    id: version
+    attributes:
+      label: Veyra version and download source
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device model and Android version
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps, expected result, and actual result
+    validations:
+      required: true
+  - type: textarea
+    id: conditions
+    attributes:
+      label: Relevant settings and enabled extensions

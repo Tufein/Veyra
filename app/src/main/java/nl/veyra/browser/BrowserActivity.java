@@ -55,12 +55,16 @@ public final class BrowserActivity extends Activity {
     private volatile boolean httpsOnly;
     private volatile Set<String> adExceptions = Collections.emptySet();
     private String searchPrefix = "https://duckduckgo.com/?q=";
-    private static final String HTTPS_ERROR = "Alleen HTTPS staat aan. Deze HTTP-pagina is geblokkeerd. Open het verbindingsmenu om HTTPS te proberen.";
+    private String httpsError() { return getString(R.string.ui_https_only_is_enabled_this_http_page_is_blocked_open_t_d00eb); }
     private static final int MAX_TABS = 12;
     private static final int MAX_RESIDENT = 3;
     private static final int FILE_PICKER = 41;
     private static final int SETTINGS_PAGE = 42;
     private static final int LIBRARY_PAGE = 43;
+    private static final int DOWNLOAD_DESTINATION = 44;
+    private org.mozilla.geckoview.WebResponse pendingDownload;
+    private boolean pendingDownloadPrivate;
+    private SitePermissionController sitePermissions;
 
     private final List<Tab> tabs = new ArrayList<>();
     private int selected;
@@ -74,11 +78,12 @@ public final class BrowserActivity extends Activity {
     private IconButton back;
     private IconButton forward;
     private ProgressBar progress;
-    private View home;
+    private View home, browserControls;
+    private boolean fullscreen;
     private View error;
-    private TextView blockedSummary;
+    private TextView blockedSummary, recordingNotice;
     private ValueCallback<Uri[]> fileCallback;
-    private boolean destroyed;
+    private boolean destroyed, resumed;
     private VeyraRuntime engine;
     private ExtensionUi extensionUi;
     private final Runnable blockedListener = this::updateBlockedSummary;
@@ -86,8 +91,10 @@ public final class BrowserActivity extends Activity {
     private static final class Tab {
         volatile String url = "";
         volatile String pageHost = "";
-        String title = "Nieuw tabblad";
+        String title = "";
         boolean home = true;
+        boolean privateMode;
+        boolean recording;
         String error;
         BrowserView web;
         Bundle savedWebState;
@@ -99,8 +106,17 @@ public final class BrowserActivity extends Activity {
         readSettings();
         super.onCreate(state);
         engine = VeyraRuntime.get(this);
+        sitePermissions = new SitePermissionController(this);
+        engine.registerBrowser(this);
         engine.addBlockedListener(blockedListener);
-        extensionUi = new ExtensionUi(this, this::createExtensionTab);
+        extensionUi = new ExtensionUi(this, new ExtensionUi.TabFactory() {
+            public GeckoSession create(String uri) { return createExtensionTab(uri); }
+            public GeckoSession create(WebExtension.CreateTabDetails details) {
+                if(Boolean.TRUE.equals(details.pinned)||Boolean.TRUE.equals(details.openInReaderMode)||Boolean.TRUE.equals(details.discarded))return null;
+                if(details.cookieStoreId!=null && !"firefox-default".equals(details.cookieStoreId))return null;
+                return createContentTab(details.url,false,!Boolean.FALSE.equals(details.active),details.index);
+            }
+        });
         buildChrome();
         restoreTabs();
         Thread lists = new Thread(() -> {
@@ -113,7 +129,8 @@ public final class BrowserActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 33) {
             getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::goBack);
         }
-        if (!openIntent(getIntent())) showSelected();
+        if (getIntent().getBooleanExtra("safe_mode",false)) recoverExtensions();
+        else if (!openIntent(getIntent())) showSelected();
     }
 
     private void buildChrome() {
@@ -138,12 +155,16 @@ public final class BrowserActivity extends Activity {
         page = new FrameLayout(this);
         page.setBackgroundColor(BG);
         root.addView(page, new LinearLayout.LayoutParams(-1, 0, 1));
+        recordingNotice = text("",13,ACCENT);recordingNotice.setGravity(Gravity.CENTER);recordingNotice.setPadding(dp(16),dp(10),dp(16),dp(10));
+        recordingNotice.setMinHeight(dp(48));recordingNotice.setFocusable(true);recordingNotice.setVisibility(View.GONE);
+        recordingNotice.setOnClickListener(v->{for(Tab tab:tabs)if(tab.recording){dispose(tab,false);tab.error=getString(R.string.recording_stopped);}renderPage();updateChrome();});
+        root.addView(recordingNotice,new LinearLayout.LayoutParams(-1,-2));
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progress.setProgressTintList(android.content.res.ColorStateList.valueOf(ACCENT));
         progress.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(BG));
         root.addView(progress, new LinearLayout.LayoutParams(-1, dp(3)));
 
-        LinearLayout bottom = column();
+        LinearLayout bottom = column(); browserControls = bottom;
         bottom.setPadding(dp(12), dp(9), dp(12), dp(4));
         LinearLayout omnibox = row();
         omnibox.setBackground(shape(SURFACE, 24, BORDER));
@@ -151,7 +172,7 @@ public final class BrowserActivity extends Activity {
         connection = text("V", 14, ACCENT);
         connection.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         connection.setGravity(Gravity.CENTER);
-        connection.setContentDescription("Verbindingsinformatie");
+        connection.setContentDescription(getString(R.string.ui_connection_information_d437e));
         connection.setOnClickListener(v -> showConnection());
         omnibox.addView(connection, new LinearLayout.LayoutParams(dp(52), dp(52)));
         address = new EditText(this);
@@ -159,11 +180,11 @@ public final class BrowserActivity extends Activity {
         address.setTextSize(15);
         address.setTextColor(TEXT);
         address.setHintTextColor(MUTED);
-        address.setHint("Zoek of voer een webadres in");
+        address.setHint(getString(R.string.ui_search_or_enter_a_web_address_6c60f));
         address.setBackgroundColor(Color.TRANSPARENT);
         address.setPadding(0, 0, 0, 0);
         address.setSelectAllOnFocus(true);
-        address.setContentDescription("Zoeken of webadres");
+        address.setContentDescription(getString(R.string.ui_search_or_web_address_45960));
         address.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO);
         address.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         address.setImeOptions(EditorInfo.IME_ACTION_GO | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
@@ -176,7 +197,7 @@ public final class BrowserActivity extends Activity {
             return false;
         });
         omnibox.addView(address, new LinearLayout.LayoutParams(0, dp(52), 1));
-        IconButton reload = icon("reload", "Pagina vernieuwen", v -> {
+        IconButton reload = icon("reload", getString(R.string.ui_reload_page_3974b), v -> {
             Tab tab = current();
             if (tab.home) focusAddress();
             else if (!UrlPolicy.allowed(tab.url, httpsOnly) || tab.web == null) navigate(tab.url);
@@ -186,8 +207,8 @@ public final class BrowserActivity extends Activity {
         bottom.addView(omnibox, new LinearLayout.LayoutParams(-1, dp(54)));
 
         LinearLayout navigation = row();
-        back = icon("back", "Terug", v -> goBack());
-        forward = icon("forward", "Vooruit", v -> {
+        back = icon("back", getString(R.string.ui_back_ebf6c), v -> goBack());
+        forward = icon("forward", getString(R.string.ui_forward_9df38), v -> {
             Tab tab = current();
             if (tab.web != null && tab.web.canGoForward()) {
                 tab.home = false;
@@ -198,7 +219,7 @@ public final class BrowserActivity extends Activity {
         });
         navigation.addView(back, weightedButton());
         navigation.addView(forward, weightedButton());
-        navigation.addView(icon("home", "Startpagina", v -> {
+        navigation.addView(icon("home", getString(R.string.ui_start_page_a582e), v -> {
             Tab tab = current();
             if (tab.web != null) { tab.web.stopLoading(); tab.web.onPause(); }
             tab.home = true;
@@ -209,14 +230,14 @@ public final class BrowserActivity extends Activity {
         tabCount.setGravity(Gravity.CENTER);
         tabCount.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         FrameLayout tabButton = new FrameLayout(this);
-        tabButton.setContentDescription("Tabbladen");
+        tabButton.setContentDescription(getString(R.string.ui_tabs_c36a5));
         TextView countShape = tabCount;
         countShape.setBackground(shape(Color.TRANSPARENT, 7, MUTED));
         FrameLayout.LayoutParams countParams = new FrameLayout.LayoutParams(dp(25), dp(26), Gravity.CENTER);
         tabButton.addView(countShape, countParams);
-        tabButton.setOnClickListener(v -> showTabs());
+        SettingsViews.buttonRole(tabButton);tabButton.setFocusable(true);tabButton.setOnClickListener(v -> showTabs());
         navigation.addView(tabButton, weightedButton());
-        navigation.addView(icon("menu", "Menu", v -> showMenu()), weightedButton());
+        navigation.addView(icon("menu", getString(R.string.ui_menu_99af6), v -> showMenu()), weightedButton());
         bottom.addView(navigation, new LinearLayout.LayoutParams(-1, dp(56)));
         root.addView(bottom, new LinearLayout.LayoutParams(-1, -2));
         setContentView(root);
@@ -279,12 +300,12 @@ public final class BrowserActivity extends Activity {
         brand.setLetterSpacing(-0.065f);
         brand.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         heading.addView(brand, new LinearLayout.LayoutParams(0, -2, 1));
-        heading.addView(icon("tune", "Instellingen", v -> showSettings()),
+        heading.addView(icon("tune", getString(R.string.ui_settings_27018), v -> showSettings()),
                 new LinearLayout.LayoutParams(dp(48), dp(48)));
         content.addView(heading);
 
         String nickname = preferences.getString("nickname", "").trim();
-        TextView greeting = text(nickname.isEmpty() ? "EEN NIEUWE DAG. EEN NIEUWE ONTDEKKING." : "FIJN DAT JE ER BENT, " + nickname.toUpperCase(java.util.Locale.ROOT), 10, MUTED);
+        TextView greeting = text(nickname.isEmpty() ? getString(R.string.ui_a_new_day_a_new_discovery_f9c79) : getString(R.string.ui_good_to_see_you_019a4) + nickname.toUpperCase(java.util.Locale.ROOT), 10, MUTED);
         greeting.setLetterSpacing(0.10f);
         addSpaced(content, greeting, 12);
 
@@ -297,23 +318,23 @@ public final class BrowserActivity extends Activity {
         gradient.setStroke(dp(1), BORDER);
         hero.setBackground(gradient);
         LinearLayout heroTop = row();
-        TextView tag = text("RUIMTE VOOR JOU", 10, ACCENT);
+        TextView tag = text(getString(R.string.ui_space_for_you_cdeb2), 10, ACCENT);
         tag.setLetterSpacing(0.17f);
         heroTop.addView(tag, new LinearLayout.LayoutParams(0, -2, 1));
         TextView spark = text("✳", 28, ACCENT);
         heroTop.addView(spark);
         hero.addView(heroTop);
-        TextView title = text("Het web.\nOp jouw tempo.", compact ? 27 : 32, TEXT);
+        TextView title = text(getString(R.string.ui_the_web_at_your_pace_4dacc), compact ? 27 : 32, TEXT);
         title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         title.setLetterSpacing(-0.055f);
         title.setLineSpacing(0, 0.98f);
         addSpaced(hero, title, compact ? 2 : 12);
         if (!compact) {
-            TextView sub = text("Waar wil je vandaag naartoe?", 14, MUTED);
+            TextView sub = text(getString(R.string.ui_where_would_you_like_to_go_today_a3a25), 14, MUTED);
             sub.setLineSpacing(dp(4), 1);
             addSpaced(hero, sub, 10);
         }
-        TextView start = action("Zoek iets nieuws   ↗", v -> focusAddress());
+        TextView start = action(getString(R.string.ui_discover_something_new_526c5), v -> focusAddress());
         addSpaced(hero, start, compact ? 12 : 16);
         addSpaced(content, hero, 17);
 
@@ -321,9 +342,9 @@ public final class BrowserActivity extends Activity {
         TextView quickLabel = text(getString(R.string.home_shortcuts), 15, TEXT);
         quickLabel.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         linksHeading.addView(quickLabel, new LinearLayout.LayoutParams(0, -2, 1));
-        TextView edit = text("Bewerken", 12, ACCENT);
+        TextView edit = text(getString(R.string.ui_edit_ea89b), 12, ACCENT);
         edit.setGravity(Gravity.CENTER);
-        edit.setContentDescription("Snelkoppelingen bewerken");
+        edit.setContentDescription(getString(R.string.ui_edit_shortcuts_d7fea));
         edit.setOnClickListener(v -> showLibrary(true));
         linksHeading.addView(edit, new LinearLayout.LayoutParams(dp(80), dp(48)));
         addSpaced(content, linksHeading, 19);
@@ -354,7 +375,7 @@ public final class BrowserActivity extends Activity {
         protection.addView(shield, new LinearLayout.LayoutParams(dp(40), dp(44)));
         LinearLayout copy = column();
         copy.setPadding(dp(12), 0, 0, 0);
-        TextView label = text(blocking ? "Minder advertenties. Meer rust." : "Adblocker staat uit", 14, TEXT);
+        TextView label = text(blocking ? getString(R.string.ui_fewer_ads_more_calm_19b86) : getString(R.string.ui_ad_blocker_is_off_a6c8c), 14, TEXT);
         label.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         copy.addView(label);
         blockedSummary = text("", 11, MUTED);
@@ -362,7 +383,7 @@ public final class BrowserActivity extends Activity {
         protection.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
         protection.setOnClickListener(v -> showBlockingInfo());
         addSpaced(content, protection, 12);
-        TextView https = text(httpsOnly ? "●  Alleen HTTPS ingeschakeld" : "●  HTTPS heeft de voorkeur", 12, MUTED);
+        TextView https = text(httpsOnly ? getString(R.string.ui_https_only_enabled_674fe) : getString(R.string.ui_https_preferred_7eb8e), 12, MUTED);
         https.setPadding(dp(4), dp(16), dp(4), dp(8));
         https.setOnClickListener(v -> showHttpsChoice());
         content.addView(https);
@@ -373,7 +394,7 @@ public final class BrowserActivity extends Activity {
     private void addShortcut(LinearLayout parent, String label, String url) {
         LinearLayout shortcut = column();
         shortcut.setGravity(Gravity.CENTER_HORIZONTAL);
-        shortcut.setContentDescription(label + " openen");
+        shortcut.setContentDescription(label + getString(R.string.ui_open_8679f));
         TextView tile = new SettingsViews(this).monogram(label, url);
         shortcut.addView(tile, new LinearLayout.LayoutParams(dp(52), dp(52)));
         TextView caption = text(label, 11, MUTED);
@@ -387,8 +408,8 @@ public final class BrowserActivity extends Activity {
     }
 
     private void navigate(String input) {
-        String url = UrlPolicy.resolve(input, searchPrefix);
-        if (url == null) { toast("Voer een geldig webadres of een zoekopdracht in."); return; }
+        String url = SearchProvider.resolve(input, preferences);
+        if (url == null) { toast(getString(R.string.ui_enter_a_valid_web_address_or_a_search_query_b4f3d)); return; }
         hideKeyboard();
         Tab tab = current();
         tab.home = false;
@@ -397,7 +418,7 @@ public final class BrowserActivity extends Activity {
         tab.pageHost = host(url);
         if (!UrlPolicy.allowed(url, httpsOnly)) {
             if (tab.web != null) tab.web.stopLoading();
-            tab.error = HTTPS_ERROR;
+            tab.error = httpsError();
             renderPage(); updateChrome(); persistTabs();
             return;
         }
@@ -423,7 +444,7 @@ public final class BrowserActivity extends Activity {
                     return false;
                 }
                 if (!UrlPolicy.allowed(valid, httpsOnly)) {
-                    tab.url = valid; tab.pageHost = host(valid); tab.error = HTTPS_ERROR;
+                    tab.url = valid; tab.pageHost = host(valid); tab.error = httpsError();
                     if (tab == current()) { renderPage(); updateChrome(); }
                     return false;
                 }
@@ -444,23 +465,47 @@ public final class BrowserActivity extends Activity {
             }
             @Override public void titleChanged(String title) { if (!title.isEmpty()) tab.title = title; }
             @Override public void finished() {
+                if (!tab.home && tab.error == null) new HistoryStore(getSharedPreferences("veyra_history",MODE_PRIVATE))
+                        .record(tab.url,tab.title,System.currentTimeMillis(),tab.privateMode);
                 if (tab == current()) { updateChrome(); updateBlockedSummary(); }
                 persistTabs();
             }
             @Override public void failed(String message) {
-                tab.error = message;
-                if (tab == current()) { renderPage(); updateChrome(); }
+                tab.error = message;tab.recording=false;
+                if (tab == current()) renderPage();updateChrome();
             }
-            @Override public GeckoSession newSession(String url) { return createExtensionTab(url); }
+            @Override public GeckoSession newSession(String url) { return createContentTab(url,tab.privateMode); }
+            @Override public void download(org.mozilla.geckoview.WebResponse response) {
+                if (tab != current()) { DownloadService.close(response.body); return; }
+                beginDownload(response,tab.privateMode);
+            }
+            private boolean permissionActive() { return !destroyed && tab == current() && !tab.home && tab.web != null && !tab.web.isClosed(); }
+            @Override public void androidPermissions(String[] permissions,GeckoSession.PermissionDelegate.Callback callback) {
+                if(!resumed){callback.reject();return;}
+                String top=SitePermissions.origin(tab.url);
+                sitePermissions.androidPermissions(permissions,callback,()->permissionActive() && java.util.Objects.equals(top,SitePermissions.origin(tab.url)));
+            }
+            @Override public GeckoResult<Integer> contentPermission(GeckoSession.PermissionDelegate.ContentPermission permission) {
+                String origin = SitePermissions.origin(permission.uri);
+                return sitePermissions.content(permission,tab.privateMode,()->resumed && permissionActive() && origin != null && origin.equals(SitePermissions.origin(tab.url)));
+            }
+            @Override public void mediaPermission(String uri,GeckoSession.PermissionDelegate.MediaSource[] video,
+                    GeckoSession.PermissionDelegate.MediaSource[] audio,GeckoSession.PermissionDelegate.MediaCallback callback) {
+                String origin = SitePermissions.origin(uri),top = SitePermissions.origin(tab.url);
+                sitePermissions.media(uri,video,audio,callback,tab.privateMode,()->resumed && permissionActive() && origin != null && top != null && top.equals(SitePermissions.origin(tab.url)));
+            }
+            @Override public void contextMenu(String link) { if(tab == current()) showLinkMenu(link,tab.privateMode); }
+            @Override public void fullscreen(boolean enabled) { if(tab == current()) setFullscreen(enabled); }
+            @Override public void recording(boolean camera,boolean microphone) { tab.recording=camera||microphone;updateChrome(); }
             @Override public void chooseFile(String[] types, boolean multiple, ValueCallback<Uri[]> callback) {
                 cancelFilePicker(); fileCallback = callback;
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
                 if (types != null && types.length > 0) intent.putExtra(Intent.EXTRA_MIME_TYPES, types);
                 try { startActivityForResult(intent, FILE_PICKER); }
-                catch (ActivityNotFoundException unavailable) { cancelFilePicker(); toast("Geen bestandskiezer beschikbaar."); }
+                catch (ActivityNotFoundException unavailable) { cancelFilePicker(); toast(getString(R.string.ui_no_file_picker_is_available_7a3e5)); }
             }
-        }, openedByEngine);
+        }, openedByEngine, tab.privateMode);
         tab.web = web;
         attachExtensions(web);
         if (tab.savedWebState != null) {
@@ -469,19 +514,25 @@ public final class BrowserActivity extends Activity {
         }
     }
 
-    private GeckoSession createExtensionTab(String uri) {
+    private GeckoSession createExtensionTab(String uri) { return createContentTab(uri,false); }
+    private GeckoSession createContentTab(String uri,boolean privateMode) { return createContentTab(uri,privateMode,true,null); }
+    private GeckoSession createContentTab(String uri,boolean privateMode,boolean activate,Integer requestedIndex) {
         if (tabs.size() >= MAX_TABS) return null;
         if (uri != null && !uri.startsWith("moz-extension://") && !UrlPolicy.allowed(uri, httpsOnly)) return null;
-        Tab added = new Tab(); added.home = false; added.url = uri == null ? "" : uri;
-        for (Tab tab : tabs) if (tab.web != null) {
+        Tab added = new Tab(); added.home = false; added.privateMode = privateMode;
+        if(privateMode)engine.privateTabOpened(); added.url = uri == null ? "" : uri;
+        if(activate)for (Tab tab : tabs) if (tab.web != null) {
             tab.web.onPause(); engine.runtime.getWebExtensionController().setTabActive(tab.web.session, false);
         }
-        tabs.add(added); selected = tabs.size() - 1; ensureWeb(added, true);
-        added.web.onResume(); trimResidentTabs(); renderPage(); updateChrome(); persistTabs();
-        return added.web.session;
+        int position=requestedIndex==null?tabs.size():Math.max(0,Math.min(requestedIndex,tabs.size()));
+        tabs.add(position,added);if(activate)selected=position;else if(position<=selected)selected++;
+        added.used=++clock;ensureWeb(added,true);
+        if(activate)added.web.onResume();else added.web.onPause();
+        GeckoSession result=added.web.session;trimResidentTabs();renderPage();updateChrome();persistTabs();return result;
     }
 
     private void attachExtensions(BrowserView web) {
+        if (web.session.getSettings().getUsePrivateMode()) return;
         engine.runtime.getWebExtensionController().list().accept(extensions -> {
             if (destroyed || web.isClosed()) return;
             for (WebExtension extension : extensions) {
@@ -497,14 +548,17 @@ public final class BrowserActivity extends Activity {
                     }
                     @Override public GeckoResult<AllowOrDeny> onUpdateTab(WebExtension source, GeckoSession session,
                             WebExtension.UpdateTabDetails details) {
-                        if (Boolean.TRUE.equals(details.active)) {
+                        if(Boolean.TRUE.equals(details.pinned)||details.muted!=null||Boolean.FALSE.equals(details.autoDiscardable))return GeckoResult.fromValue(AllowOrDeny.DENY);
+                        if (details.url != null && !details.url.startsWith("moz-extension://") && !UrlPolicy.allowed(details.url,httpsOnly))
+                            return GeckoResult.fromValue(AllowOrDeny.DENY);
+                        if (Boolean.TRUE.equals(details.active) || Boolean.TRUE.equals(details.highlighted)) {
                             for (int i = 0; i < tabs.size(); i++) if (tabs.get(i).web == web) { selected = i; showSelected(); break; }
                         }
                         return GeckoResult.fromValue(AllowOrDeny.ALLOW);
                     }
                 });
             }
-        }, failure -> toast("Extensies konden niet worden gekoppeld."));
+        }, failure -> toast(getString(R.string.ui_extensions_could_not_be_connected_e6821)));
     }
 
     private void showSelected() {
@@ -513,6 +567,7 @@ public final class BrowserActivity extends Activity {
             engine.runtime.getWebExtensionController().setTabActive(tab.web.session, false);
         }
         Tab tab = current();
+        updatePrivacyProtection();
         tab.used = ++clock;
         if (tab.home) {
             if (tab.web != null) { tab.web.onPause(); engine.runtime.getWebExtensionController().setTabActive(tab.web.session, false); }
@@ -520,7 +575,7 @@ public final class BrowserActivity extends Activity {
         }
         if (!tab.home) {
             if (!tab.url.startsWith("moz-extension://") && !UrlPolicy.allowed(tab.url, httpsOnly)) {
-                tab.error = HTTPS_ERROR;
+                tab.error = httpsError();
                 renderPage(); updateChrome(); persistTabs(); return;
             }
             boolean fresh = tab.web == null && tab.savedWebState == null;
@@ -545,14 +600,14 @@ public final class BrowserActivity extends Activity {
             LinearLayout message = column();
             message.setGravity(Gravity.CENTER);
             message.setPadding(dp(32), dp(24), dp(32), dp(24));
-            boolean policyBlocked = HTTPS_ERROR.equals(tab.error);
-            TextView title = text(policyBlocked ? "Deze pagina gebruikt HTTP." : "Even geen verbinding.", 28, TEXT);
+            boolean policyBlocked = httpsError().equals(tab.error);
+            TextView title = text(policyBlocked ? getString(R.string.ui_this_page_uses_http_037f4) : getString(R.string.ui_unable_to_connect_6733b), 28, TEXT);
             title.setGravity(Gravity.CENTER);
             message.addView(title);
             TextView body = text(tab.error, 15, MUTED);
             body.setGravity(Gravity.CENTER);
             addSpaced(message, body, 16);
-            TextView retry = action(policyBlocked ? "Probeer met HTTPS" : "Opnieuw proberen", v -> {
+            TextView retry = action(policyBlocked ? getString(R.string.ui_try_https_b3d5f) : getString(R.string.ui_try_again_57643), v -> {
                 navigate(policyBlocked ? UrlPolicy.withScheme(tab.url, true) : tab.url);
             });
             addSpaced(message, retry, 24);
@@ -570,9 +625,12 @@ public final class BrowserActivity extends Activity {
     }
 
     private void updateChrome() {
+        updatePrivacyProtection();
+        boolean recording=tabs.stream().anyMatch(t -> t.recording);
+        recordingNotice.setVisibility(recording?View.VISIBLE:View.GONE);recordingNotice.setText(R.string.recording_active);
         Tab tab = current();
         if (!address.hasFocus()) address.setText(tab.home ? "" : tab.url);
-        connection.setText(tab.home ? "V" : (tab.error != null ? "!" : (tab.url.startsWith("https://") ? "●" : "HTTP")));
+        connection.setText(tab.privateMode ? "P" : tab.home ? "V" : (tab.error != null ? "!" : (tab.url.startsWith("https://") ? "●" : "HTTP")));
         connection.setTextColor(tab.home || tab.url.startsWith("https://") ? ACCENT : 0xFFFFC17A);
         tabCount.setText(String.valueOf(tabs.size()));
         tabCount.getParent().requestLayout();
@@ -588,15 +646,18 @@ public final class BrowserActivity extends Activity {
     private void updateBlockedSummary() {
         if (blockedSummary == null || tabs.isEmpty()) return;
         int total = engine == null ? 0 : engine.blockedCount();
-        blockedSummary.setText(blocking ? total + (total == 1 ? " verzoek geblokkeerd in deze sessie" : " verzoeken geblokkeerd in deze sessie")
-                : "Via het menu kun je blokkering aanzetten");
+        blockedSummary.setText(blocking ? total + (total == 1 ? getString(R.string.protection_request) : getString(R.string.protection_requests))
+                : getString(R.string.ui_you_can_enable_blocking_from_the_menu_ec645));
     }
 
-    private void newTab() {
-        if (tabs.size() >= MAX_TABS) { toast("Maximaal 12 tabbladen. Sluit eerst een tabblad."); return; }
+    private void newTab() { newTab(false); }
+    private void newTab(boolean privateMode) {
+        if (fullscreen && !tabs.isEmpty() && current().web != null) current().web.session.exitFullScreen();
+        setFullscreen(false);
+        if (tabs.size() >= MAX_TABS) { toast(getString(R.string.ui_maximum_of_12_tabs_close_a_tab_first_0c165)); return; }
         cancelFilePicker();
         hideKeyboard();
-        tabs.add(new Tab());
+        Tab added = new Tab(); added.privateMode = privateMode; if(privateMode)engine.privateTabOpened(); tabs.add(added);
         selected = tabs.size() - 1;
         showSelected();
     }
@@ -604,7 +665,7 @@ public final class BrowserActivity extends Activity {
     private void showTabs() {
         hideKeyboard();
         List<BrowserSheets.TabItem> items = new ArrayList<>();
-        for (Tab tab : tabs) items.add(new BrowserSheets.TabItem(tab.title, tab.url, tab.home));
+        for (Tab tab : tabs) items.add(new BrowserSheets.TabItem(tab.title, tab.url, tab.home, tab.privateMode));
         BrowserSheets.tabs(this, items, selected, MAX_TABS, position -> {
             cancelFilePicker(); selected = position; showSelected();
         }, position -> { closeTab(position); showTabs(); }, this::newTab).show();
@@ -613,17 +674,17 @@ public final class BrowserActivity extends Activity {
     private void closeTab(int position) {
         cancelFilePicker();
         Tab tab = tabs.remove(position);
-        dispose(tab, false);
+        dispose(tab, false);if(tab.privateMode)engine.privateTabClosed();
         if (tabs.isEmpty()) tabs.add(new Tab());
         if (position < selected) selected--;
         selected = Math.min(selected, tabs.size() - 1);
-        showSelected();
+        consumeImportedTabs();showSelected();
     }
 
     private void showMenu() {
         hideKeyboard(); Tab tab = current();
         boolean pageOpen = !tab.home && tab.error == null && UrlPolicy.normalizeWebUrl(tab.url) != null;
-        BrowserSheets.menu(this, pageOpen, new SavedSitesStore(preferences).isBookmarked(tab.url), host(tab.url), which -> {
+        BrowserSheets.Sheet menu = BrowserSheets.menu(this, pageOpen, new SavedSitesStore(preferences).isBookmarked(tab.url), host(tab.url), which -> {
             switch (which) {
                 case 0: newTab(); break;
                 case 1: addBookmark(); break;
@@ -635,30 +696,41 @@ public final class BrowserActivity extends Activity {
                 case 7: showSettings(); break;
                 case 8: showCredentials(); break;
                 case 9: startActivity(new Intent(this, ExtensionsActivity.class)); break;
+                case 10: newTab(true); break;
+                case 11: startActivity(new Intent(this, HistoryActivity.class)); break;
+                case 12: startActivity(new Intent(this, DownloadsActivity.class)); break;
+                case 13: startActivityForResult(new Intent(this, SiteSettingsActivity.class).putExtra("url",tab.url), SETTINGS_PAGE); break;
+                case 14: showDefaultBrowser(); break;
+                case 15: startActivity(new Intent(this, DataSettingsActivity.class)); break;
                 default: break;
             }
-        }).show();
+        });
+        BrowserSheets.action(menu,R.drawable.ic_private,R.string.private_new,true,()->newTab(true));
+        BrowserSheets.action(menu,R.drawable.ic_history,R.string.history_title,true,()->startActivity(new Intent(this,HistoryActivity.class)));
+        BrowserSheets.action(menu,R.drawable.ic_download,R.string.downloads_title,true,()->startActivity(new Intent(this,DownloadsActivity.class)));
+        BrowserSheets.action(menu,R.drawable.ic_tune,R.string.site_settings,pageOpen && !tab.privateMode,()->startActivityForResult(new Intent(this,SiteSettingsActivity.class).putExtra("url",tab.url),SETTINGS_PAGE));
+        menu.show();
     }
 
     private void showBlockingInfo() {
         Tab tab = current();
         String site = tab.pageHost.toLowerCase(java.util.Locale.ROOT);
-        AlertDialog.Builder builder = dialogBuilder().setTitle("Meer rust op het web")
-                .setMessage("De adblocker staat " + (blocking ? "aan" : "uit") + ".\n\n"
-                        + TrackerBlocker.size() + " lokale domeinregels en het verbergen van bekende advertentievakken. "
-                        + "De hoofdpagina zelf wordt niet geblokkeerd. Dit blokkeert niet elke advertentie, zoals veel videoadvertenties.\n\n"
-                        + (tab.home ? "Open een website om een uitzondering toe te voegen."
-                        : site + "\n" + engine.blockedCount() + " verzoeken geblokkeerd in deze sessie.\n"
-                        + (adExceptions.contains(site) ? "Blokkering staat uit voor deze website." : "Blokkering volgt je algemene instelling.")))
-                .setNegativeButton("Sluiten", null)
-                .setNeutralButton("Instellingen", (d, which) -> showSettings());
+        AlertDialog.Builder builder = dialogBuilder().setTitle(getString(R.string.ui_a_calmer_web_f96df))
+                .setMessage(getString(R.string.ui_the_ad_blocker_is_333d7) + (blocking ? getString(R.string.protection_on) : getString(R.string.protection_off)) + ".\n\n"
+                        + TrackerBlocker.size() + getString(R.string.protection_rules)
+                        + getString(R.string.ui_the_main_page_itself_is_not_blocked_this_does_not_bloc_8116e)
+                        + (tab.home ? getString(R.string.ui_open_a_website_to_add_an_exception_d3ae5)
+                        : site + "\n" + engine.blockedCount() + getString(R.string.protection_requests_detail)
+                        + (engine.exception(site,tab.privateMode) ? getString(R.string.ui_blocking_is_off_for_this_website_7e3b1) : getString(R.string.ui_blocking_follows_your_general_preference_da263))))
+                .setNegativeButton(getString(R.string.ui_close_5a468), null)
+                .setNeutralButton(getString(R.string.ui_settings_27018), (d, which) -> showSettings());
         if (!tab.home && !site.isEmpty()) {
-            builder.setPositiveButton(adExceptions.contains(site) ? "Uitzondering wissen" : "Hier uitzetten", (d, which) -> {
+            builder.setPositiveButton(engine.exception(site,tab.privateMode) ? getString(R.string.ui_remove_exception_231e4) : getString(R.string.ui_turn_off_here_39996), (d, which) -> {
                 Set<String> exceptions = new HashSet<>(adExceptions);
                 if (!exceptions.remove(site)) exceptions.add(site);
-                preferences.edit().putStringSet("ad_exceptions", exceptions).apply();
-                readSettings(); engine.updatePreferences();
-                if (!blocking && !exceptions.contains(site)) toast("De algemene adblocker staat nog uit.");
+                if(tab.privateMode) engine.togglePrivateException(site);
+                else { preferences.edit().putStringSet("ad_exceptions", exceptions).apply(); readSettings(); engine.updatePreferences(); }
+                if (!blocking && !exceptions.contains(site)) toast(getString(R.string.ui_the_general_ad_blocker_is_still_off_a1a9c));
                 if (tab.web != null) { tab.error = null; tab.web.reload(); }
             });
         }
@@ -668,29 +740,29 @@ public final class BrowserActivity extends Activity {
     private void showConnection() {
         Tab tab = current();
         if (tab.home) { showHttpsChoice(); return; }
-        String message = tab.error != null ? "Deze pagina kon niet worden geladen.\n\n"
-                : tab.url.startsWith("https://") ? "HTTPS versleutelt deze verbinding. Dat garandeert niet dat de website betrouwbaar is.\n\n"
-                : "HTTP is niet versleuteld.\n\n";
+        String message = tab.error != null ? getString(R.string.ui_this_page_could_not_be_loaded_893d2)
+                : tab.url.startsWith("https://") ? getString(R.string.ui_https_encrypts_this_connection_it_does_not_guarantee_t_61f57)
+                : getString(R.string.ui_http_is_not_encrypted_d2a0f);
         AlertDialog.Builder builder = dialogBuilder().setTitle(host(tab.url)).setMessage(message
-                + (httpsOnly ? "Alleen HTTPS staat aan. Er is geen automatische terugval naar HTTP."
-                : "HTTPS heeft de voorkeur. Je kunt HTTP zelf kiezen als een website dat nodig heeft."))
-                .setNegativeButton("Sluiten", null)
-                .setNeutralButton("Voorkeur", (d, which) -> showHttpsChoice());
-        if (!tab.url.startsWith("https://")) builder.setPositiveButton("Probeer HTTPS", (d, which) -> navigate(UrlPolicy.withScheme(tab.url, true)));
-        else if (!httpsOnly) builder.setPositiveButton("Kies HTTP", (d, which) ->
-                dialogBuilder().setTitle("Openen zonder versleuteling?")
-                        .setMessage("De verbinding wordt HTTP. Gebruik dit alleen als deze website dat nodig heeft.")
-                        .setPositiveButton("Open met HTTP", (again, action) -> navigate(UrlPolicy.withScheme(tab.url, false)))
-                        .setNegativeButton("Annuleren", null).show());
+                + (httpsOnly ? getString(R.string.ui_https_only_is_enabled_there_is_no_automatic_fallback_t_b6ef3)
+                : getString(R.string.ui_https_is_preferred_you_can_choose_http_yourself_when_a_cf412)))
+                .setNegativeButton(getString(R.string.ui_close_5a468), null)
+                .setNeutralButton(getString(R.string.connection_preference), (d, which) -> showHttpsChoice());
+        if (!tab.url.startsWith("https://")) builder.setPositiveButton(getString(R.string.ui_try_https_b3496), (d, which) -> navigate(UrlPolicy.withScheme(tab.url, true)));
+        else if (!httpsOnly) builder.setPositiveButton(getString(R.string.ui_choose_http_0bc1d), (d, which) ->
+                dialogBuilder().setTitle(getString(R.string.ui_open_without_encryption_6d547))
+                        .setMessage(getString(R.string.ui_the_connection_will_use_http_use_this_only_when_this_w_a5b5c))
+                        .setPositiveButton(getString(R.string.ui_open_with_http_012bc), (again, action) -> navigate(UrlPolicy.withScheme(tab.url, false)))
+                        .setNegativeButton(getString(R.string.ui_cancel_c6a8d), null).show());
         builder.show();
     }
 
     private void showHttpsChoice() {
         dialogBuilder().setTitle("HTTPS-voorkeur")
-                .setSingleChoiceItems(new String[] { "Voorkeur HTTPS · expliciete HTTP-links toegestaan", "Alleen HTTPS · HTTP blokkeren" }, httpsOnly ? 1 : 0, (dialog, which) -> {
+                .setSingleChoiceItems(new String[] { getString(R.string.ui_prefer_https_explicit_http_links_are_allowed_8e11d), getString(R.string.ui_https_only_block_http_d8886) }, httpsOnly ? 1 : 0, (dialog, which) -> {
                     preferences.edit().putBoolean("https_only", which == 1).apply();
                     dialog.dismiss(); settingsChanged();
-                }).setNegativeButton("Sluiten", null).show();
+                }).setNegativeButton(getString(R.string.ui_close_5a468), null).show();
     }
 
     private void showSettings() { showSettings(SettingsSection.OVERVIEW); }
@@ -717,25 +789,26 @@ public final class BrowserActivity extends Activity {
 
     private void showCredentials() {
         LinearLayout list = column(); list.setPadding(dp(20), dp(4), dp(20), dp(12));
-        TextView info = text("Gebruik de wachtwoordmanager die je in Android hebt ingesteld, bijvoorbeeld Google Password Manager, Bitwarden of 1Password. "
-                + "Veyra bewaart zelf geen wachtwoorden of passkeys.", 14, MUTED);
+        TextView info = text(getString(R.string.ui_use_the_password_manager_configured_in_android_such_as_3d431)
+                + getString(R.string.ui_veyra_does_not_store_passwords_or_passkeys_itself_37b82), 14, MUTED);
         info.setLineSpacing(dp(4), 1); list.addView(info);
-        AlertDialog dialog = dialogBuilder().setTitle("Wachtwoorden en passkeys").setView(wrapScroll(list))
-                .setNegativeButton("Sluiten", null).create();
-        setting(list, "Wachtwoord invullen", "Selecteer eerst een inlogveld op de website", v -> {
+        AlertDialog dialog = dialogBuilder().setTitle(getString(R.string.ui_passwords_and_passkeys_17e09)).setView(wrapScroll(list))
+                .setNegativeButton(getString(R.string.ui_close_5a468), null).create();
+        setting(list, getString(R.string.ui_fill_password_69897), getString(R.string.ui_select_a_login_field_on_the_website_first_64f80), v -> {
             dialog.dismiss(); Tab tab = current();
-            if (tab.home || tab.web == null || tab.error != null) { toast("Open eerst een inlogpagina en selecteer een inlogveld."); return; }
+            if(tab.privateMode){toast(getString(R.string.private_autofill_disabled));return;}
+            if (tab.home || tab.web == null || tab.error != null) { toast(getString(R.string.ui_open_a_login_page_and_select_a_login_field_first_5299e)); return; }
             AutofillManager manager = getSystemService(AutofillManager.class);
             if (manager == null || !manager.isEnabled()) {
-                dialogBuilder().setTitle("Kies je wachtwoordmanager")
-                        .setMessage("Kies je wachtwoordmanager als dienst voor automatisch invullen in Android.")
-                        .setPositiveButton("Autofill-instellingen", (d, w) -> openPasswordSettings()).setNegativeButton("Sluiten", null).show();
+                dialogBuilder().setTitle(getString(R.string.ui_choose_your_password_manager_9a528))
+                        .setMessage(getString(R.string.ui_choose_your_password_manager_as_the_autofill_service_i_65497))
+                        .setPositiveButton(getString(R.string.ui_autofill_settings_966d6), (d, w) -> openPasswordSettings()).setNegativeButton(getString(R.string.ui_close_5a468), null).show();
             } else { tab.web.requestFocus(); manager.requestAutofill(tab.web); }
         });
-        setting(list, "Je wachtwoordmanager instellen", "Kies je dienst voor automatisch invullen", v -> { dialog.dismiss(); openPasswordSettings(); });
-        setting(list, "Inloggen met een externe passkey", "Open deze website in een ondersteunde browser", v -> { dialog.dismiss(); externalPasskeyLogin(); });
-        TextView note = text("Voor passkeys op willekeurige websites is extra browsergoedkeuring nodig. Deze versie gebruikt daarvoor een externe browser. "
-                + "De login blijft in die browser; de sessie wordt niet naar Veyra overgezet. Automatisch invullen hangt af van je manager en de website.", 12, MUTED);
+        setting(list, getString(R.string.ui_set_up_your_password_manager_e6a54), getString(R.string.ui_choose_your_autofill_service_4bc39), v -> { dialog.dismiss(); openPasswordSettings(); });
+        setting(list, getString(R.string.ui_sign_in_with_an_external_passkey_f9cea), getString(R.string.ui_open_this_website_in_a_supported_browser_d5787), v -> { dialog.dismiss(); externalPasskeyLogin(); });
+        TextView note = text(getString(R.string.ui_passkeys_for_arbitrary_websites_require_additional_bro_a88fe)
+                + getString(R.string.ui_the_login_stays_in_that_browser_its_session_is_not_tra_de285), 12, MUTED);
         addSpaced(list, note, 18);
         dialog.show();
     }
@@ -746,7 +819,7 @@ public final class BrowserActivity extends Activity {
 
     private void externalPasskeyLogin() {
         Tab tab = current();
-        if (tab.home || tab.error != null || !tab.url.startsWith("https://")) { toast("Open eerst een HTTPS-inlogpagina."); return; }
+        if (tab.home || tab.error != null || !tab.url.startsWith("https://")) { toast(getString(R.string.ui_open_an_https_login_page_first_44f56)); return; }
         String url = UrlPolicy.normalizeWebUrl(tab.url);
         if (url == null) return;
         Intent probe = new Intent(Intent.ACTION_VIEW, Uri.parse("https://example.com/")).addCategory(Intent.CATEGORY_BROWSABLE);
@@ -755,26 +828,26 @@ public final class BrowserActivity extends Activity {
             if (match.activityInfo != null && match.activityInfo.exported
                     && !getPackageName().equals(match.activityInfo.packageName)) browsers.add(match);
         }
-        if (browsers.isEmpty()) { toast("Geen andere browser gevonden. Installeer een browser met passkey-ondersteuning."); return; }
+        if (browsers.isEmpty()) { toast(getString(R.string.ui_no_other_browser_found_install_a_browser_with_passkey_b5182)); return; }
         String[] labels = new String[browsers.size()];
         for (int i = 0; i < labels.length; i++) labels[i] = browsers.get(i).loadLabel(getPackageManager()).toString();
-        dialogBuilder().setTitle("Login openen in andere browser").setItems(labels, (dialog, which) -> {
+        dialogBuilder().setTitle(getString(R.string.ui_open_login_in_another_browser_01ef8)).setItems(labels, (dialog, which) -> {
             ResolveInfo browser = browsers.get(which);
             Intent open = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addCategory(Intent.CATEGORY_BROWSABLE)
                     .setClassName(browser.activityInfo.packageName, browser.activityInfo.name);
-            try { startActivity(open); } catch (ActivityNotFoundException | SecurityException unavailable) { toast("Deze browser is niet beschikbaar."); }
-        }).setNegativeButton("Annuleren", null).show();
+            try { startActivity(open); } catch (ActivityNotFoundException | SecurityException unavailable) { toast(getString(R.string.ui_this_browser_is_not_available_a7408)); }
+        }).setNegativeButton(getString(R.string.ui_cancel_c6a8d), null).show();
     }
 
     private void addBookmark() {
         Tab tab = current();
-        if (tab.home || UrlPolicy.normalizeWebUrl(tab.url) == null) { toast("Open eerst een website."); return; }
+        if (tab.home || UrlPolicy.normalizeWebUrl(tab.url) == null) { toast(getString(R.string.ui_open_a_website_first_9bb0d)); return; }
         SavedSitesStore sites = new SavedSitesStore(preferences);
-        if (sites.isBookmarked(tab.url)) { toast("Deze bladwijzer bestaat al."); return; }
+        if (sites.isBookmarked(tab.url)) { toast(getString(R.string.ui_this_bookmark_already_exists_ff1af)); return; }
         String title = tab.title == null || tab.title.trim().isEmpty() ? host(tab.url) : tab.title.trim();
         if (title.length() > 40) title = title.substring(0, Character.isHighSurrogate(title.charAt(39)) ? 39 : 40);
-        try { sites.saveBookmark(-1, title, tab.url); toast("Bladwijzer opgeslagen"); home = null; }
-        catch (IllegalArgumentException failure) { toast("Opslaan is niet gelukt."); }
+        try { sites.saveBookmark(-1, title, tab.url); toast(getString(R.string.ui_bookmark_saved_56b50)); home = null; }
+        catch (IllegalArgumentException failure) { toast(getString(R.string.ui_could_not_save_36578)); }
     }
 
     private void showBookmarks() { showLibrary(false); }
@@ -784,28 +857,28 @@ public final class BrowserActivity extends Activity {
     }
 
     private void sharePage() {
-        if (current().home) { toast("Open eerst een website."); return; }
+        if (current().home) { toast(getString(R.string.ui_open_a_website_first_9bb0d)); return; }
         Intent share = new Intent(Intent.ACTION_SEND).setType("text/plain");
         share.putExtra(Intent.EXTRA_TEXT, current().url);
-        startActivity(Intent.createChooser(share, "Pagina delen"));
+        startActivity(Intent.createChooser(share, getString(R.string.ui_share_page_9c8bc)));
     }
 
     private void findOnPage() {
         Tab tab = current();
-        if (tab.home || tab.web == null) { toast("Open eerst een website."); return; }
+        if (tab.home || tab.web == null) { toast(getString(R.string.ui_open_a_website_first_9bb0d)); return; }
         EditText query = new EditText(this);
         query.setSingleLine(true);
-        query.setHint("Welk woord zoek je?");
-        dialogBuilder().setTitle("Zoeken op pagina").setView(query)
-                .setPositiveButton("Zoeken", (dialog, which) -> {
+        query.setHint(getString(R.string.ui_which_word_are_you_looking_for_5c1f2));
+        dialogBuilder().setTitle(getString(R.string.ui_find_in_page_91025)).setView(query)
+                .setPositiveButton(getString(R.string.ui_search_5d33a), (dialog, which) -> {
                     String term = query.getText().toString();
                     if (term.isEmpty() || tab.web == null) return;
                     tab.web.session.getFinder().find(term, GeckoSession.FINDER_FIND_FORWARD).accept(found -> {
                         if (destroyed || tab != current() || tab.web == null) return;
-                        if (!found.found) { toast("Geen resultaten"); return; }
-                        AlertDialog results = dialogBuilder().setTitle(found.total < 0 ? "Zoeken op pagina" : found.total + " resultaten")
+                        if (!found.found) { toast(getString(R.string.ui_no_results_addf4)); return; }
+                        AlertDialog results = dialogBuilder().setTitle(found.total < 0 ? getString(R.string.ui_find_in_page_91025) : found.total + getString(R.string.ui_results_cc7a6))
                                 .setPositiveButton("Volgende", null).setNeutralButton("Vorige", null)
-                                .setNegativeButton("Gereed", null).create();
+                                .setNegativeButton(getString(R.string.ui_done_6fb77), null).create();
                         results.setOnShowListener(d -> {
                             results.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                                 if (tab.web != null) tab.web.session.getFinder().find(null, GeckoSession.FINDER_FIND_FORWARD);
@@ -816,33 +889,34 @@ public final class BrowserActivity extends Activity {
                         });
                         results.setOnDismissListener(d -> { if (tab.web != null) tab.web.session.getFinder().clear(); });
                         results.show();
-                    }, failure -> toast("Zoeken is niet gelukt."));
-                }).setNegativeButton("Annuleren", null).show();
+                    }, failure -> toast(getString(R.string.ui_search_failed_f82b1)));
+                }).setNegativeButton(getString(R.string.ui_cancel_c6a8d), null).show();
     }
 
     private void openExternal(Uri uri) {
         String scheme = uri.getScheme();
         if (!"mailto".equalsIgnoreCase(scheme) && !"tel".equalsIgnoreCase(scheme) && !"geo".equalsIgnoreCase(scheme)) {
-            toast("Dit type link wordt nog niet ondersteund."); return;
+            toast(getString(R.string.ui_this_type_of_link_is_not_supported_yet_1ab45)); return;
         }
-        dialogBuilder().setTitle("Andere app openen?").setMessage(uri.toString())
-                .setPositiveButton("Openen", (dialog, which) -> {
+        dialogBuilder().setTitle(getString(R.string.ui_open_another_app_42d5c)).setMessage(uri.toString())
+                .setPositiveButton(getString(R.string.ui_open_5b1e5), (dialog, which) -> {
                     try { startActivity(new Intent(Intent.ACTION_VIEW, uri).addCategory(Intent.CATEGORY_BROWSABLE)); }
-                    catch (ActivityNotFoundException unavailable) { toast("Geen geschikte app gevonden."); }
-                }).setNegativeButton("Annuleren", null).show();
+                    catch (ActivityNotFoundException unavailable) { toast(getString(R.string.ui_no_suitable_app_found_cc97e)); }
+                }).setNegativeButton(getString(R.string.ui_cancel_c6a8d), null).show();
     }
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        openIntent(intent);
+        if (intent.getBooleanExtra("safe_mode",false)) recoverExtensions(); else openIntent(intent);
     }
 
     private boolean openIntent(Intent intent) {
         if (!Intent.ACTION_VIEW.equals(intent.getAction()) || intent.getData() == null) return false;
         String url = UrlPolicy.normalizeWebUrl(intent.getData().toString());
         if (url == null) return false;
-        if (tabs.size() < MAX_TABS) newTab();
+        if(current().privateMode && tabs.size()>=MAX_TABS){toast(getString(R.string.ui_you_can_open_up_to_twelve_tabs_70529));return false;}
+        if (!(tabs.size() == 1 && current().home && !current().privateMode) && tabs.size() < MAX_TABS) newTab();
         navigate(url);
         return true;
     }
@@ -857,6 +931,18 @@ public final class BrowserActivity extends Activity {
         }
         if (request == SETTINGS_PAGE) {
             settingsChanged();
+        }
+        if (request == DOWNLOAD_DESTINATION) {
+            org.mozilla.geckoview.WebResponse response = pendingDownload; pendingDownload = null;
+            if (response != null) {
+                if (result == RESULT_OK && data != null && data.getData() != null) {
+                    Uri uri = data.getData();
+                    try { getContentResolver().takePersistableUriPermission(uri,Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION); }
+                    catch (SecurityException unavailable) { /* The selected URI can still have a temporary grant. */ }
+                    if (DownloadService.enqueue(this,response,uri,pendingDownloadPrivate)) toast(getString(R.string.ui_download_started_see_menu_downloads_b2233));
+                    else toast(getString(R.string.ui_the_download_could_not_start_check_the_destination_fil_00ed7));
+                } else DownloadService.close(response.body);
+            }
         }
         if (request == FILE_PICKER && fileCallback != null) {
             ValueCallback<Uri[]> callback = fileCallback;
@@ -879,6 +965,7 @@ public final class BrowserActivity extends Activity {
     }
 
     private void goBack() {
+        if (fullscreen) { if(current().web != null)current().web.session.exitFullScreen();setFullscreen(false);return; }
         if (address.hasFocus()) { hideKeyboard(); updateChrome(); return; }
         Tab tab = current();
         if (!tab.home && tab.web != null && tab.web.canGoBack()) {
@@ -894,6 +981,7 @@ public final class BrowserActivity extends Activity {
     @Override public void onBackPressed() { goBack(); }
 
     @Override protected void onPause() {
+        resumed=false;if(sitePermissions!=null)sitePermissions.suspend();
         super.onPause();
         if (!tabs.isEmpty() && current().web != null) current().web.onPause();
         persistTabs();
@@ -902,11 +990,12 @@ public final class BrowserActivity extends Activity {
     }
 
     @Override protected void onResume() {
-        super.onResume();
+        super.onResume();resumed=true;
         if (engine != null) {
             engine.setPromptActivity(this); extensionUi.attach();
             for (Tab tab : tabs) if (tab.web != null) attachExtensions(tab.web);
         }
+        if (engine != null && consumeImportedTabs()) showSelected();
         if (!tabs.isEmpty() && current().web != null && !current().home) current().web.onResume();
     }
 
@@ -914,15 +1003,18 @@ public final class BrowserActivity extends Activity {
         super.onTrimMemory(level);
         if (level >= TRIM_MEMORY_RUNNING_LOW) {
             for (Tab tab : tabs) if (tab != current() && tab.web != null) dispose(tab, true);
+            updateChrome();
         }
     }
 
     @Override protected void onDestroy() {
         destroyed = true;
+        if (sitePermissions != null) sitePermissions.cancel();
+        if (pendingDownload != null) { DownloadService.close(pendingDownload.body); pendingDownload = null; }
         cancelFilePicker();
         if (engine != null) engine.removeBlockedListener(blockedListener);
         if (extensionUi != null) extensionUi.destroy();
-        for (Tab tab : tabs) dispose(tab, false);
+        for (Tab tab : tabs) { dispose(tab, false);if(tab.privateMode)engine.privateTabClosed(); }
         super.onDestroy();
     }
 
@@ -934,12 +1026,14 @@ public final class BrowserActivity extends Activity {
                 resident++;
                 if (tab != current() && (oldest == null || tab.used < oldest.used)) oldest = tab;
             }
-            if (resident <= MAX_RESIDENT || oldest == null) return;
+            int limit=Math.max(2,Math.min(4,preferences.getInt("resident_limit",MAX_RESIDENT)));
+            if (resident <= limit || oldest == null) return;
             dispose(oldest, true);
         }
     }
 
     private void dispose(Tab tab, boolean saveState) {
+        tab.recording=false;
         if (tab.web == null) return;
         if (saveState) {
             tab.savedWebState = new Bundle();
@@ -952,37 +1046,96 @@ public final class BrowserActivity extends Activity {
     }
 
     private void restoreTabs() {
-        try {
-            JSONArray saved = new JSONArray(preferences.getString("tabs", "[]"));
-            for (int i = 0; i < Math.min(saved.length(), MAX_TABS); i++) {
-                JSONObject item = saved.optJSONObject(i);
-                if (item == null) continue;
-                Tab tab = new Tab();
-                String valid = UrlPolicy.normalizeWebUrl(item.optString("url"));
-                tab.url = valid == null ? "" : valid;
-                tab.pageHost = host(tab.url);
-                tab.home = item.optBoolean("home", true) || valid == null;
-                tab.title = item.optString("title", "Tabblad");
-                tabs.add(tab);
-            }
-        } catch (Exception invalid) { tabs.clear(); }
+        for (TabStateStore.Entry entry : TabStateStore.read(preferences.getString("tabs","[]"))) {
+            Tab tab = new Tab(); tab.url = entry.url; tab.pageHost = host(entry.url); tab.home = entry.home; tab.title = entry.title; tabs.add(tab);
+        }
         if (tabs.isEmpty()) tabs.add(new Tab());
-        selected = Math.max(0, Math.min(preferences.getInt("selected", 0), tabs.size() - 1));
+        selected = Math.max(0,Math.min(preferences.getInt("selected",0),tabs.size()-1));
     }
-
+    private boolean consumeImportedTabs() {
+        if(!preferences.contains("tabs_import"))return false;
+        List<TabStateStore.Entry> remaining=new ArrayList<>();boolean changed=false;
+        for(TabStateStore.Entry entry:TabStateStore.read(preferences.getString("tabs_import","[]"))) {
+            boolean exists=false;for(Tab tab:tabs)if(!tab.privateMode && tab.home==entry.home && (entry.home || tab.url.equals(entry.url)))exists=true;
+            if(exists)continue;
+            if(tabs.size()==1 && !entry.home && tabs.get(0).home && !tabs.get(0).privateMode && tabs.get(0).url.isEmpty() && tabs.get(0).web==null)tabs.clear();
+            if(tabs.size()>=MAX_TABS){remaining.add(entry);continue;}
+            Tab tab=new Tab();tab.url=entry.url;tab.pageHost=host(entry.url);tab.title=entry.title;tab.home=entry.home;tabs.add(tab);changed=true;
+        }
+        if(remaining.isEmpty())preferences.edit().remove("tabs_import").apply();
+        else preferences.edit().putString("tabs_import",TabStateStore.encode(remaining)).apply();
+        if(changed)persistTabs();return changed;
+    }
     private void persistTabs() {
         if (destroyed) return;
-        try {
-            JSONArray saved = new JSONArray();
-            for (Tab tab : tabs) {
-                JSONObject item = new JSONObject();
-                item.put("url", tab.url); item.put("title", tab.title); item.put("home", tab.home);
-                saved.put(item);
-            }
-            preferences.edit().putString("tabs", saved.toString()).putInt("selected", selected).apply();
-        } catch (Exception ignored) { /* A page must remain usable if a session cannot be saved. */ }
+        List<TabStateStore.Entry> entries = new ArrayList<>();
+        for (Tab tab : tabs) entries.add(new TabStateStore.Entry(tab.url,tab.title,tab.home,tab.privateMode));
+        preferences.edit().putString("tabs",TabStateStore.encode(entries)).putInt("selected",TabStateStore.selected(entries,selected)).apply();
+    }
+    private void updatePrivacyProtection() {
+        boolean privateOpen = tabs.stream().anyMatch(tab -> tab.privateMode);
+        if (privateOpen) getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+        else getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+        connection.setContentDescription(current().privateMode ? getString(R.string.ui_private_tab_no_history_or_tab_restoration_2a1cb) : getString(R.string.ui_connection_information_d437e));
+    }
+    private void beginDownload(org.mozilla.geckoview.WebResponse response,boolean privateMode) {
+        if (pendingDownload != null || response.body == null || response.statusCode >= 400) { DownloadService.close(response.body); toast(getString(R.string.ui_download_unavailable_or_a_file_picker_is_already_open_88af7)); return; }
+        String source = response.uri.startsWith("blob:") ? response.uri.substring(5) : response.uri;
+        if (!UrlPolicy.allowed(source,httpsOnly)) { DownloadService.close(response.body); toast(getString(R.string.ui_this_download_address_is_not_allowed_c75b9)); return; }
+        Runnable choose = () -> {
+            pendingDownload = response; pendingDownloadPrivate = privateMode;
+            String type = response.headers.get("Content-Type"); if(type == null) type = "application/octet-stream"; type = type.split(";",2)[0];
+            Intent save = new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(type)
+                    .putExtra(Intent.EXTRA_TITLE,DownloadStore.filename(response.headers.get("Content-Disposition"),response.uri));
+            try { startActivityForResult(save,DOWNLOAD_DESTINATION); }
+            catch(ActivityNotFoundException unavailable) { pendingDownload = null; DownloadService.close(response.body); toast(getString(R.string.ui_no_file_picker_is_available_7a3e5)); }
+        };
+        if (privateMode) new MaterialAlertDialogBuilder(this).setTitle(getString(R.string.ui_save_a_private_file_85734))
+                .setMessage(getString(R.string.ui_the_selected_file_will_remain_on_your_device_after_pri_1346d))
+                .setPositiveButton(getString(R.string.ui_choose_file_235cc),(d,w)->choose.run()).setNegativeButton(getString(R.string.ui_cancel_c6a8d),(d,w)->DownloadService.close(response.body))
+                .setOnCancelListener(d->DownloadService.close(response.body)).show();
+        else choose.run();
+    }
+    private void showLinkMenu(String link,boolean privateMode) {
+        String url = UrlPolicy.normalizeWebUrl(link); if(url == null)return;
+        new MaterialAlertDialogBuilder(this).setTitle(SettingsViews.host(url)).setItems(new String[]{getString(R.string.ui_open_in_new_tab_02b11),getString(R.string.ui_open_in_private_tab_619b3),getString(R.string.ui_copy_link_97baa)},(d,which)->{
+            if(which < 2) { if(tabs.size() >= MAX_TABS) { toast(getString(R.string.ui_you_can_open_up_to_twelve_tabs_70529)); return; } newTab(which == 1 || privateMode); navigate(url); }
+            else { ((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(android.content.ClipData.newPlainText("Webadres",url)); toast(getString(R.string.ui_link_copied_9c8bb)); }
+        }).show();
+    }
+    private void setFullscreen(boolean enabled) {
+        fullscreen=enabled;if(browserControls!=null)browserControls.setVisibility(enabled?View.GONE:View.VISIBLE);
+        progress.setVisibility(enabled?View.GONE:View.INVISIBLE);
+        int flags=light?View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR:0;
+        if(enabled)flags|=View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        getWindow().getDecorView().setSystemUiVisibility(flags);
+    }
+    private void recoverExtensions() {
+        for (Tab tab : tabs) dispose(tab,false);
+        engine.disableUserExtensions().accept(done -> { toast(getString(R.string.ui_extra_extensions_disabled_built_in_protection_remains_58090)); showSelected(); },
+                failure -> { toast(getString(R.string.ui_not_all_extensions_could_be_disabled_try_again_from_ex_5c159)); showSelected(); });
+    }
+    private void showDefaultBrowser() { DefaultBrowser.open(this); }
+    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants) {
+        super.onRequestPermissionsResult(request,permissions,grants);if(sitePermissions != null)sitePermissions.result(request,grants);
     }
 
+    void closePagesForDataChange() {
+        if (sitePermissions != null) sitePermissions.cancel();
+        extensionUi.closePanels();
+        for (Tab tab : tabs) { dispose(tab,false); if (!tab.home) tab.error = getString(R.string.ui_website_data_or_permissions_changed_open_the_page_agai_99d9d); }
+        renderPage(); updateChrome();
+    }
+    @Override public boolean onKeyDown(int key,KeyEvent event) {
+        if(event.isCtrlPressed() && !event.isAltPressed()) {
+            if(key==KeyEvent.KEYCODE_L) { focusAddress(); return true; }
+            if(key==KeyEvent.KEYCODE_T) { newTab(); return true; }
+            if(key==KeyEvent.KEYCODE_P && event.isShiftPressed()) { newTab(true); return true; }
+            if(key==KeyEvent.KEYCODE_W) { closeTab(selected); return true; }
+            if(key==KeyEvent.KEYCODE_TAB) { selected=(selected+tabs.size()+(event.isShiftPressed()?-1:1))%tabs.size(); showSelected(); return true; }
+        }
+        return super.onKeyDown(key,event);
+    }
     private Tab current() { return tabs.get(selected); }
     private String host(String url) {
         String value = Uri.parse(url).getHost();
@@ -1022,7 +1175,7 @@ public final class BrowserActivity extends Activity {
     private TextView action(String label, View.OnClickListener listener) {
         TextView button = text(label, 15, ACCENT_INK); button.setGravity(Gravity.CENTER);
         button.setPadding(dp(20), dp(16), dp(20), dp(16));
-        button.setBackground(shape(ACCENT, 28, Color.TRANSPARENT)); button.setOnClickListener(listener); return button;
+        button.setBackground(shape(ACCENT, 28, Color.TRANSPARENT)); button.setMinHeight(dp(48));button.setFocusable(true);SettingsViews.buttonRole(button);button.setOnClickListener(listener); return button;
     }
     private void toast(String message) { Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
     private IconButton icon(String kind, String description, View.OnClickListener listener) {

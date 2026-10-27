@@ -28,19 +28,33 @@ final class BrowserView extends GeckoView {
         void failed(String message);
         GeckoSession newSession(String uri);
         void chooseFile(String[] mimeTypes, boolean multiple, ValueCallback<Uri[]> callback);
+        default void download(WebResponse response) { DownloadService.close(response.body); }
+        default void androidPermissions(String[] permissions, GeckoSession.PermissionDelegate.Callback callback) { callback.reject(); }
+        default GeckoResult<Integer> contentPermission(GeckoSession.PermissionDelegate.ContentPermission permission) {
+            return GeckoResult.fromValue(GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY);
+        }
+        default void mediaPermission(String uri, GeckoSession.PermissionDelegate.MediaSource[] video,
+                GeckoSession.PermissionDelegate.MediaSource[] audio, GeckoSession.PermissionDelegate.MediaCallback callback) { callback.reject(); }
+        default void contextMenu(String link) { }
+        default void fullscreen(boolean enabled) { }
+        default void recording(boolean camera,boolean microphone) { }
+
     }
-    final GeckoSession session = new GeckoSession();
+    final GeckoSession session;
     private boolean backwards, forwards, closed;
     private GeckoSession.SessionState savedState;
     private Listener listener;
 
     BrowserView(Activity activity, Listener events) { this(activity, events, false); }
 
-    BrowserView(Activity activity, Listener events, boolean openedByEngine) {
+    BrowserView(Activity activity, Listener events, boolean openedByEngine) { this(activity, events, openedByEngine, false); }
+    BrowserView(Activity activity, Listener events, boolean openedByEngine, boolean privateMode) {
         super(activity);
+        session = new GeckoSession(new org.mozilla.geckoview.GeckoSessionSettings.Builder().usePrivateMode(privateMode)
+                .contextId(privateMode ? VeyraRuntime.get(activity).privateContextId : null).build());
         listener = events;
-        setAutofillEnabled(true);
-        setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_YES);
+        setAutofillEnabled(!privateMode);
+        setImportantForAutofill(privateMode ? View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS : View.IMPORTANT_FOR_AUTOFILL_YES);
         session.getSettings().setSuspendMediaWhenInactive(true);
         session.setNavigationDelegate(new GeckoSession.NavigationDelegate() {
             @Override public GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession s, LoadRequest request) {
@@ -57,7 +71,7 @@ final class BrowserView extends GeckoView {
                 return GeckoResult.fromValue(listener.newSession(uri));
             }
             @Override public GeckoResult<String> onLoadError(GeckoSession s, String uri, WebRequestError issue) {
-                if (!closed) listener.failed("Controleer je verbinding of probeer het webadres opnieuw. Certificaatfouten worden niet omzeild.");
+                if (!closed) listener.failed(activity.getString(R.string.ui_check_your_connection_or_try_the_address_again_certifi_dce35));
                 return null;
             }
         });
@@ -65,26 +79,42 @@ final class BrowserView extends GeckoView {
             @Override public void onPageStart(GeckoSession s, String url) { if (!closed) listener.progressChanged(0); }
             @Override public void onProgressChange(GeckoSession s, int value) { if (!closed) listener.progressChanged(value); }
             @Override public void onPageStop(GeckoSession s, boolean success) {
-                if (!closed) { listener.progressChanged(100); listener.finished(); }
+                if (!closed) { listener.progressChanged(100); if(success) listener.finished(); }
             }
             @Override public void onSessionStateChange(GeckoSession s, GeckoSession.SessionState state) { savedState = state; }
         });
         session.setContentDelegate(new GeckoSession.ContentDelegate() {
             @Override public void onTitleChange(GeckoSession s, String title) { if (!closed && title != null) listener.titleChanged(title); }
+            @Override public void onFullScreen(GeckoSession s,boolean enabled) { if(!closed)listener.fullscreen(enabled); }
+            @Override public void onContextMenu(GeckoSession s,int x,int y,ContextElement element) {
+                if (!closed && element.linkUri != null) listener.contextMenu(element.linkUri);
+            }
+            @Override public void onKill(GeckoSession s) {
+                if (!closed) { destroy(); listener.failed(activity.getString(R.string.ui_this_page_was_removed_from_memory_tap_try_again_f7257)); }
+            }
             @Override public void onCrash(GeckoSession s) {
-                if (!closed) { destroy(); listener.failed("De pagina is gesloten. Tik op opnieuw proberen."); }
+                if (!closed) { destroy(); listener.failed(activity.getString(R.string.ui_the_page_has_closed_tap_try_again_73e47)); }
             }
             @Override public void onExternalResponse(GeckoSession s, WebResponse response) {
-                android.widget.Toast.makeText(activity, "Bestanden downloaden komt in een volgende versie.", android.widget.Toast.LENGTH_SHORT).show();
+                if (!closed) listener.download(response); else DownloadService.close(response.body);
+            }
+        });
+        session.setMediaDelegate(new GeckoSession.MediaDelegate() {
+            @Override public void onRecordingStatusChanged(GeckoSession s,RecordingDevice[] devices) {
+                if(closed)return;boolean camera=false,microphone=false;
+                for(RecordingDevice device:devices)if(device.status==RecordingDevice.Status.RECORDING) {
+                    camera|=device.type==RecordingDevice.Type.CAMERA;microphone|=device.type==RecordingDevice.Type.MICROPHONE;
+                }
+                listener.recording(camera,microphone);
             }
         });
         session.setPermissionDelegate(new GeckoSession.PermissionDelegate() {
-            @Override public void onAndroidPermissionsRequest(GeckoSession s, String[] permissions, Callback callback) { callback.reject(); }
+            @Override public void onAndroidPermissionsRequest(GeckoSession s, String[] permissions, Callback callback) { listener.androidPermissions(permissions,callback); }
             @Override public GeckoResult<Integer> onContentPermissionRequest(GeckoSession s, ContentPermission permission) {
-                return GeckoResult.fromValue(ContentPermission.VALUE_DENY);
+                return listener.contentPermission(permission);
             }
             @Override public void onMediaPermissionRequest(GeckoSession s, String uri,
-                    MediaSource[] video, MediaSource[] audio, MediaCallback callback) { callback.reject(); }
+                    MediaSource[] video, MediaSource[] audio, MediaCallback callback) { listener.mediaPermission(uri,video,audio,callback); }
         });
         session.setPromptDelegate(new GeckoSession.PromptDelegate() {
             @Override public GeckoResult<PromptResponse> onFilePrompt(GeckoSession s, FilePrompt prompt) {
@@ -104,7 +134,7 @@ final class BrowserView extends GeckoView {
                 GeckoResult<PromptResponse> result = new GeckoResult<>(); boolean[] answered = {false};
                 new MaterialAlertDialogBuilder(activity).setTitle(prompt.title).setMessage(prompt.message)
                         .setPositiveButton("OK", (d, w) -> { answered[0] = true; result.complete(prompt.confirm(ButtonPrompt.Type.POSITIVE)); })
-                        .setNegativeButton("Annuleren", (d, w) -> { answered[0] = true; result.complete(prompt.confirm(ButtonPrompt.Type.NEGATIVE)); })
+                        .setNegativeButton(activity.getString(R.string.ui_cancel_c6a8d), (d, w) -> { answered[0] = true; result.complete(prompt.confirm(ButtonPrompt.Type.NEGATIVE)); })
                         .setOnDismissListener(d -> { if (!answered[0]) result.complete(prompt.dismiss()); }).show();
                 return result;
             }
@@ -113,15 +143,15 @@ final class BrowserView extends GeckoView {
                 EditText field = new EditText(activity); field.setText(prompt.defaultValue);
                 new MaterialAlertDialogBuilder(activity).setTitle(prompt.title).setMessage(prompt.message).setView(field)
                         .setPositiveButton("OK", (d, w) -> { answered[0] = true; result.complete(prompt.confirm(field.getText().toString())); })
-                        .setNegativeButton("Annuleren", null)
+                        .setNegativeButton(activity.getString(R.string.ui_cancel_c6a8d), null)
                         .setOnDismissListener(d -> { if (!answered[0]) result.complete(prompt.dismiss()); }).show();
                 return result;
             }
             @Override public GeckoResult<PromptResponse> onBeforeUnloadPrompt(GeckoSession s, BeforeUnloadPrompt prompt) {
                 GeckoResult<PromptResponse> result = new GeckoResult<>(); boolean[] answered = {false};
-                new MaterialAlertDialogBuilder(activity).setTitle("Pagina verlaten?")
-                        .setMessage("Niet-opgeslagen wijzigingen kunnen verloren gaan.")
-                        .setPositiveButton("Verlaten", (d, w) -> { answered[0] = true; result.complete(prompt.confirm(AllowOrDeny.ALLOW)); })
+                new MaterialAlertDialogBuilder(activity).setTitle(activity.getString(R.string.ui_leave_this_page_83769))
+                        .setMessage(activity.getString(R.string.ui_unsaved_changes_may_be_lost_08c51))
+                        .setPositiveButton(activity.getString(R.string.ui_leave_65275), (d, w) -> { answered[0] = true; result.complete(prompt.confirm(AllowOrDeny.ALLOW)); })
                         .setNegativeButton("Blijven", null)
                         .setOnDismissListener(d -> { if (!answered[0]) result.complete(prompt.confirm(AllowOrDeny.DENY)); }).show();
                 return result;
@@ -131,7 +161,7 @@ final class BrowserView extends GeckoView {
         setSession(session);
         if (!openedByEngine) engine.ready.accept(unused -> {
             if (!closed) session.open(engine.runtime);
-        }, error -> { if (!closed) listener.failed("De browserbescherming kon niet starten. Herstart Veyra."); });
+        }, error -> { if (!closed) listener.failed(activity.getString(R.string.ui_browser_protection_could_not_start_restart_veyra_b843a)); });
     }
 
     boolean isClosed() { return closed; }

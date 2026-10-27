@@ -19,6 +19,7 @@ final class AddonRepository {
     static final int ENGINE_MAJOR = 158;
     static final class Addon {
         final String id, name, summary, version, downloadUrl;
+        String permissions = "De engine toont de vereiste rechten vóór installatie.";
         Addon(String id, String name, String summary, String version, String url) {
             this.id = id; this.name = name; this.summary = summary; this.version = version; downloadUrl = url;
         }
@@ -58,7 +59,14 @@ final class AddonRepository {
             if (!isMozillaDownload(download)) continue;
             String id = addon.optString("guid");
             if (id.isEmpty()) continue;
-            results.add(new Addon(id, localized(addon.opt("name")), localized(addon.opt("summary")), version.optString("version"), download));
+            Addon result=new Addon(id, localized(addon.opt("name")), localized(addon.opt("summary")), version.optString("version"), download);
+            JSONArray permissions=file.optJSONArray("permissions");
+            if(permissions!=null && permissions.length()>0) {
+                StringBuilder detail=new StringBuilder("Rechten volgens de catalogus:");
+                for(int right=0;right<Math.min(permissions.length(),100);right++)detail.append("\n• ").append(permissions.optString(right));
+                result.permissions=detail.toString();
+            }
+            results.add(result);
         }
         return results;
     }

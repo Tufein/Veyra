@@ -17,6 +17,10 @@ jobs:
     name: Build and verify release APKs
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      VEYRA_SIGNING_STORE_PASSWORD: ${{ secrets.VEYRA_SIGNING_STORE_PASSWORD }}
+      VEYRA_SIGNING_KEY_PASSWORD: ${{ secrets.VEYRA_SIGNING_KEY_PASSWORD }}
+      VEYRA_SIGNING_KEY_ALIAS: ${{ secrets.VEYRA_SIGNING_KEY_ALIAS }}
     steps:
       - name: Check out tagged source
         uses: actions/checkout@v4
@@ -26,6 +30,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+
+      - name: Load and verify fixed signing key
+        env:
+          VEYRA_KEYSTORE_BASE64: ${{ secrets.VEYRA_KEYSTORE_BASE64 }}
+        run: python3 .github/scripts/prepare_signing.py
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -45,6 +54,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Test migration and signing tools
+        run: python3 -m unittest discover -s tools -p 'test_*.py'
+
       - name: Build, unit tests and Lint
         run: ./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 
@@ -59,6 +71,7 @@ jobs:
           --tag "$RELEASE_TAG"
           --output release-assets
           --apksigner "$ANDROID_HOME/build-tools/37.0.0/apksigner"
+          --expected-certificate docs/signing-certificate-sha256.txt
 
       - name: Upload verified release assets
         uses: actions/upload-artifact@v4
@@ -67,6 +80,10 @@ jobs:
           path: release-assets/*
           if-no-files-found: error
           retention-days: 14
+
+      - name: Remove temporary signing material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/veyra-signing"
 
       - name: Upload validation reports
         if: always()

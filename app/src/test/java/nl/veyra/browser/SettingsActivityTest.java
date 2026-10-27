@@ -28,7 +28,7 @@ import org.robolectric.annotation.GraphicsMode;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 35, qualifiers = "w412dp-h892dp-mdpi")
+@Config(sdk = 35, qualifiers = "nl-rNL-w412dp-h892dp-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public final class SettingsActivityTest {
     private SharedPreferences preferences;
@@ -160,7 +160,7 @@ public final class SettingsActivityTest {
         activity().navigateUp(); idle(); assertEquals("Startpagina", title());
     }
     @Test public void largeFontAndSmallPhoneKeepSettingsScrollable() throws Exception {
-        RuntimeEnvironment.setQualifiers("w320dp-h640dp-mdpi");
+        RuntimeEnvironment.setQualifiers("nl-rNL-w320dp-h640dp-mdpi");
         android.content.res.Configuration config = new android.content.res.Configuration(activityConfiguration());
         config.fontScale = 1.5f;
         RuntimeEnvironment.getApplication().getResources().updateConfiguration(config,
@@ -170,7 +170,7 @@ public final class SettingsActivityTest {
         assertNotNull(group); assertEquals(android.widget.LinearLayout.VERTICAL, group.getOrientation());
         assertFalse(activity().isFinishing());
     }
-    @Test @Config(sdk = 28, qualifiers = "w360dp-h740dp-mdpi")
+    @Test @Config(sdk = 28, qualifiers = "nl-rNL-w360dp-h740dp-mdpi")
     public void androidNineKeepsManualThemesAndDisablesWallpaperColors() {
         launch(SettingsSection.APPEARANCE);
         MaterialSwitch wallpaper = activity().findViewById(R.id.settings_dynamic_switch);
