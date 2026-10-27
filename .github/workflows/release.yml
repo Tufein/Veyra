@@ -47,7 +47,7 @@ jobs:
         run: sdkmanager 'platforms;android-37.2' 'build-tools;37.0.0'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Set up Node
         uses: actions/setup-node@v4
