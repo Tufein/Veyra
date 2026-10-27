@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.2 — 2026-10-27 (alpha)
 
 - Open Android’s Autofill provider picker directly from password settings and browser credential actions, with a general-settings fallback when unavailable.
 

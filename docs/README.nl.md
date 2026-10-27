@@ -25,7 +25,7 @@ In de 0.4.0-alpha open je **Menu → Instellingen** voor je voorkeuren. De knop 
 
 ## Wachtwoorden en passkeys
 
-Veyra is geen eigen wachtwoordkluis en leest geen opgeslagen wachtwoorden of passkeys uit andere apps uit. Inlogvelden worden aan Android Autofill aangeboden; je geselecteerde provider beslist welke gegevens bij de website horen en vraagt eventueel ontgrendeling. Ondersteuning verschilt per provider, WebView-versie en website. Je stelt de manager in via Androids menu voor wachtwoorden, passkeys en automatisch invullen; de Veyra-knop opent direct de Android-keuze voor de Autofill-dienst. Alleen als je telefoon die route niet ondersteunt, opent Veyra de algemene Android-instellingen. Deze wijziging op main volgt op de 0.4.1-release.
+Veyra is geen eigen wachtwoordkluis en leest geen opgeslagen wachtwoorden of passkeys uit andere apps uit. Inlogvelden worden aan Android Autofill aangeboden; je geselecteerde provider beslist welke gegevens bij de website horen en vraagt eventueel ontgrendeling. Ondersteuning verschilt per provider, WebView-versie en website. Je stelt de manager in via Androids menu voor wachtwoorden, passkeys en automatisch invullen; de Veyra-knop opent direct de Android-keuze voor de Autofill-dienst. Alleen als je telefoon die route niet ondersteunt, opent Veyra de algemene Android-instellingen. Deze directe knop is beschikbaar vanaf 0.4.2.
 
 Passkeys voor willekeurige websites in een eigen WebView-browser vereisen goedkeuring van de credential-provider voor die browser. Deze debugversie heeft die goedkeuring niet en implementeert geen JavaScript-bridge om dat te omzeilen. **Passkey-login gebeurt daarom in een andere geïnstalleerde browser met passkey-ondersteuning. De login blijft daar; de sessie wordt niet terug naar Veyra gekopieerd.** De gebruiker kiest expliciet de externe browser. Er worden geen wachtwoorden geïmporteerd, geëxporteerd of naar het klembord gekopieerd.
 
@@ -91,7 +91,7 @@ Snelkoppelingen voeg, wijzig en verwijder je binnen de instellingen. Ongeldige a
 
 Achtergrondkleuren zijn beschikbaar vanaf Android 12. De vier eigen accenten werken ook op Android 9. Op kleine schermen met groot lettertype staan de themakeuzes onder elkaar zodat geen labels worden afgekapt.
 
-De volledige ontwikkelvolgorde met oplevercriteria staat in [de productroadmap](../ROADMAP.md). Download de [0.4.1-alpha op GitHub](https://github.com/Tufein/Veyra/releases/tag/v0.4.1); kies voor de meeste moderne telefoons de ARM64-APK. De APK’s zijn debug-ondertekend en nog niet op een fysiek toestel gevalideerd. Een update over een bestaande installatie kan door een andere handtekening worden geweigerd. Verwijderen wist lokale appgegevens; verwijder de app dus niet om dit op te lossen als je die gegevens wilt behouden. Zie de [release-informatie](releases/v0.4.1.md).
+De volledige ontwikkelvolgorde met oplevercriteria staat in [de productroadmap](../ROADMAP.md). Download de [0.4.2-alpha op GitHub](https://github.com/Tufein/Veyra/releases/tag/v0.4.2); kies voor de meeste moderne telefoons de ARM64-APK. De APK’s zijn debug-ondertekend en nog niet op een fysiek toestel gevalideerd. Een update over een bestaande installatie kan door een andere handtekening worden geweigerd. Verwijderen wist lokale appgegevens; verwijder de app dus niet om dit op te lossen als je die gegevens wilt behouden. Zie de [release-informatie](releases/v0.4.2.md).
 
 
 ## Nieuw in 0.4.1: bibliotheek en browserpanelen

@@ -1,6 +1,6 @@
 # Veyra — productroadmap
 
-Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De 0.4.1-alpha is een testrelease met openstaande apparaat- en updatecontroles; zie de [releasebeperkingen](docs/releases/v0.4.1.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
+Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De 0.4.2-alpha is een testrelease met openstaande apparaat- en updatecontroles; zie de [releasebeperkingen](docs/releases/v0.4.2.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
 
 Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handhelds. De prioriteit is betrouwbare dagelijkse navigatie met een verzorgde Material You-interface, bruikbare Firefox-extensies en duidelijke privacykeuzes. Meer functies mogen de browser niet onoverzichtelijk of onnodig zwaar maken.
 

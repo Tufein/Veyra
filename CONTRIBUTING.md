@@ -53,3 +53,8 @@ Veyra's original code does not yet have a selected license. Do not add a root li
 The settings hub is a separate activity with internal detail navigation. Keep edits inside this activity, retain the existing preference keys, and preserve current section, back stack, and unsaved form input during recreation. Home and shortcut management share `ShortcutStore`.
 
 `SettingsActivityTest` renders real Material widgets with Robolectric native graphics. Generated images live in `app/build/reports/settings-ui/` and may be used for UI review when labeled as test renderings. Do not describe them as screenshots captured on a phone. Keep the connected-device test scenarios aligned with the hub and detail pages.
+
+
+## APK delivery
+
+The repository owner requests a downloadable APK for every completed app change. Build and validate the APKs, publish a new versioned GitHub alpha release with accurate notes and checksums, and verify the public download links before handing off. Include the direct ARM64 download link. Do not finish with source changes alone or overwrite an existing release. Preserve signing/update limitations until stable signing is configured.

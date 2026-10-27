@@ -4,11 +4,13 @@
 
 A customizable Android browser with a calm start page, bottom navigation, local ad blocking, and practical HTTPS controls. Built with Java, Material 3 components, and Mozilla GeckoView.
 
-**Version:** 0.4.1 · **Stage:** early alpha · **Android:** 9+ (API 28)
+**Version:** 0.4.2 · **Stage:** early alpha · **Android:** 9+ (API 28)
 
-[Download 0.4.1 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.1) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
+[Download 0.4.2 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.4.2) · [Product roadmap (Nederlands)](ROADMAP.md) · [Settings design](docs/settings-design.md)
 
-**New in 0.4.1:** a shared bookmark/start-page library and redesigned browser panels. [Preview and behavior](docs/library-design.md).
+**New in 0.4.2:** direct access to Android Autofill settings.
+
+**Included from 0.4.1:** a shared bookmark/start-page library and redesigned browser panels. [Preview and behavior](docs/library-design.md).
 
 [Nederlandse handleiding](docs/README.nl.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Verification notes](docs/verification-0.4.md)
 
@@ -71,11 +73,11 @@ Compatibility depends on the extension and the WebExtensions APIs supported by G
 
 ## Try Veyra
 
-Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. [Download the ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.1/Veyra-0.4.1-arm64-v8a-debug.apk) for most modern phones, or choose another architecture on the [0.4.1 release page](https://github.com/Tufein/Veyra/releases/tag/v0.4.1). These are debug-signed testing builds; live-device validation remains outstanding.
+Use a phone running Android 9 or later. The GeckoView engine ships with Veyra and is updated with the app. [Download the ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.4.2/Veyra-0.4.2-arm64-v8a-debug.apk) for most modern phones, or choose another architecture on the [0.4.2 release page](https://github.com/Tufein/Veyra/releases/tag/v0.4.2). These are debug-signed testing builds; live-device validation remains outstanding.
 
 The previously shared 0.2.0 test APK uses the same signing certificate as the previously shared 0.1.0 APK, allowing an update that preserves local app data. An APK built on another machine or a CI runner normally has a different debug signing key. Keeping the same application ID, a compatible version code, and the same signing key is necessary to update an existing installation.
 
-In-place update compatibility between the published alpha builds has not been established. Uninstalling the app deletes its local data; do not uninstall to resolve a signature conflict if you need to keep that data. See the [release notes](docs/releases/v0.4.1.md).
+In-place update compatibility between the published alpha builds has not been established. Uninstalling the app deletes its local data; do not uninstall to resolve a signature conflict if you need to keep that data. See the [release notes](docs/releases/v0.4.2.md).
 
 In the app:
 
