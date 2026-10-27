@@ -86,8 +86,8 @@
     <string name="settings_passwords_description">Je wachtwoordmanager vult in via Android Autofill. Veyra heeft geen eigen wachtwoordkluis.</string>
     <string name="settings_passwords_status_on">Automatisch invullen is beschikbaar</string>
     <string name="settings_passwords_status_off">Stel je wachtwoordmanager in</string>
-    <string name="settings_passwords_instructions">Zoek in Android naar ‘wachtwoorden’, ‘passkeys’ of ‘automatisch invullen’. De naam verschilt per telefoon.</string>
-    <string name="settings_passwords_open">Android-instellingen openen</string>
+    <string name="settings_passwords_instructions">Kies de wachtwoordmanager die je wilt gebruiken voor automatisch invullen.</string>
+    <string name="settings_passwords_open">Autofill-instellingen openen</string>
     <string name="settings_passwords_unavailable">Open Android-instellingen en zoek naar automatisch invullen.</string>
     <string name="settings_passkeys_title">Inloggen met een passkey</string>
     <string name="settings_passkeys_body">Open een HTTPS-inlogpagina en kies ‘Wachtwoorden en passkeys’ in het browsermenu. De externe login blijft in die browser; de sessie wordt niet naar Veyra overgezet.</string>

@@ -2,7 +2,6 @@ package nl.veyra.browser;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,7 +9,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -420,8 +418,7 @@ public final class SettingsActivity extends Activity {
                 : R.string.settings_passwords_status_off, 20, ui.accentInk));
         ui.add(card, ui.text(R.string.settings_passwords_instructions, 14, ui.accentInk), 10);
         ui.add(content, ui.button(R.string.settings_passwords_open, R.drawable.ic_key, v -> {
-            try { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
-            catch (ActivityNotFoundException unavailable) { announce(R.string.settings_passwords_unavailable); }
+            if (!AutofillSettings.open(this)) announce(R.string.settings_passwords_unavailable);
         }), 20);
         ui.section(content, R.string.settings_passkeys_title); ui.add(content, ui.text(R.string.settings_passkeys_body, 14, ui.muted), 10);
     }

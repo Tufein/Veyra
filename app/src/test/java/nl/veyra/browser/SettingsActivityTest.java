@@ -91,7 +91,8 @@ public final class SettingsActivityTest {
         assertNotNull(findText(root(), activity().getString(R.string.settings_passwords_status_off)));
         open(R.string.settings_passwords_open);
         android.content.Intent intent = Shadows.shadowOf(activity()).getNextStartedActivity();
-        assertEquals(android.provider.Settings.ACTION_SETTINGS, intent.getAction());
+        assertEquals(android.provider.Settings.ACTION_REQUEST_SET_AUTOFILL_SERVICE, intent.getAction());
+        assertEquals("package:" + activity().getPackageName(), intent.getDataString());
         controller.pause(); Shadows.shadowOf(manager).setEnabled(true); controller.resume(); idle();
         assertEquals("Wachtwoorden en passkeys", title()); assertFalse(activity().isFinishing());
         assertNotNull(findText(root(), activity().getString(R.string.settings_passwords_status_on)));

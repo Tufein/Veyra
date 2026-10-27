@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.autofill.AutofillManager;
-import android.provider.Settings;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.ValueCallback;
@@ -729,11 +728,11 @@ public final class BrowserActivity extends Activity {
             AutofillManager manager = getSystemService(AutofillManager.class);
             if (manager == null || !manager.isEnabled()) {
                 dialogBuilder().setTitle("Kies je wachtwoordmanager")
-                        .setMessage("Ga in Android naar ‘Wachtwoorden, passkeys en automatisch invullen’ en kies je manager. De naam van dit menu verschilt per telefoon.")
-                        .setPositiveButton("Android-instellingen", (d, w) -> openPasswordSettings()).setNegativeButton("Sluiten", null).show();
+                        .setMessage("Kies je wachtwoordmanager als dienst voor automatisch invullen in Android.")
+                        .setPositiveButton("Autofill-instellingen", (d, w) -> openPasswordSettings()).setNegativeButton("Sluiten", null).show();
             } else { tab.web.requestFocus(); manager.requestAutofill(tab.web); }
         });
-        setting(list, "Je wachtwoordmanager instellen", "Open de Android-instellingen", v -> { dialog.dismiss(); openPasswordSettings(); });
+        setting(list, "Je wachtwoordmanager instellen", "Kies je dienst voor automatisch invullen", v -> { dialog.dismiss(); openPasswordSettings(); });
         setting(list, "Inloggen met een externe passkey", "Open deze website in een ondersteunde browser", v -> { dialog.dismiss(); externalPasskeyLogin(); });
         TextView note = text("Voor passkeys op willekeurige websites is extra browsergoedkeuring nodig. Deze versie gebruikt daarvoor een externe browser. "
                 + "De login blijft in die browser; de sessie wordt niet naar Veyra overgezet. Automatisch invullen hangt af van je manager en de website.", 12, MUTED);
@@ -742,8 +741,7 @@ public final class BrowserActivity extends Activity {
     }
 
     private void openPasswordSettings() {
-        try { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
-        catch (ActivityNotFoundException unavailable) { toast("Open Android-instellingen en zoek ‘automatisch invullen’."); }
+        if (!AutofillSettings.open(this)) toast(getString(R.string.settings_passwords_unavailable));
     }
 
     private void externalPasskeyLogin() {
