@@ -1,6 +1,6 @@
 # Privacy en gegevens in Veyra
 
-Van toepassing op de 0.5.0-kandidaat. Veyra heeft geen toegevoegde analytics en geen eigen gehoste accountdienst. GeckoView levert de webengine; websites, Mozilla-diensten, je zoekaanbieder en externe apps verwerken hun eigen netwerkverzoeken. Gecko kan onder meer Safe Browsing-verkeer uitvoeren. Veyra is geen anonimiteitsdienst.
+Van toepassing op 1.0.0-rc.2. Veyra heeft geen toegevoegde analytics en geen eigen gehoste accountdienst. GeckoView levert de webengine; websites, Mozilla-diensten, je zoekaanbieder en externe apps verwerken hun eigen netwerkverzoeken. Gecko kan onder meer Safe Browsing-verkeer uitvoeren. Veyra is geen anonimiteitsdienst.
 
 ## Normaal browsen
 
@@ -11,6 +11,10 @@ Voorkeuren, bladwijzers, maximaal acht snelkoppelingen, normale tabadressen en m
 Privétabs gebruiken Gecko-private sessies met afzonderlijke contexten. Hun adressen en titels worden niet in normale tabbackups of geschiedenis geschreven. De eigen blokkeeruitzonderingen voor privétabs blijven in geheugen; geïnstalleerde gebruikersuitbreidingen en Android Autofill worden in privétabs niet ingeschakeld. De eigen ingebouwde beschermingsmodule is daar wel actief. Een inactieve private anchorsessie houdt private websitecookies tijdens geheugenopruiming binnen dezelfde open privésessie bruikbaar; na de laatste privétab sluit die context.
 
 Zolang privétabs bestaan zet Veyra de Android secure-window-vlag om screenshots/recentsbeelden te beperken. Dit schermt netwerkverkeer niet af voor websites, netwerkbeheer, providers of een gecompromitteerd toestel. Zelf bewaarde bladwijzers, gekopieerde tekst en bewust opgeslagen bestanden kunnen blijven bestaan. Een private download bewaart geen bronadres, maar het gekozen bestand en de bestandsnaam zijn expliciet blijvende uitvoer. Volledige isolatie bij crashes/procesbeëindiging moet op hardware worden gecontroleerd.
+
+InPrivate is herkenbaar aan de blijvende balk **InPrivate actief**, een aparte startpagina, een anders gekleurde adresbalk en het masker in het taboverzicht. De balk blijft staan wanneer browserknoppen bij fullscreen media verdwijnen. De verbindingsindicator blijft afzonderlijk HTTP/HTTPS tonen: privé betekent geen versleutelde verbinding.
+
+**Alle InPrivate-tabbladen sluiten** vraagt bevestiging, sluit uitsluitend privétabs en beëindigt de open privésessie. Dupliceren behoudt het oorspronkelijke type tabblad. **Normaal tabblad heropenen** bewaart maximaal vijf normale webadressen tijdelijk in het geheugen; privétabs en startpagina’s worden niet bijgehouden. Deze lijst verdwijnt bij het sluiten/hermaken van de browseractiviteit en wordt ongeldig bij geschiedenisverwijdering of de actie voor websitegegevens wissen. Ze wordt niet geëxporteerd of gesynchroniseerd. Privé gekopieerde links krijgen vanaf Android 13 de gevoeligheidsmarkering voor het klembord; de kopie zelf kan blijven bestaan.
 
 ## Downloads en toestemmingen
 

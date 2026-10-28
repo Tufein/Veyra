@@ -2,7 +2,6 @@ package nl.veyra.browser;
 
 import android.app.Activity;
 import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -67,6 +66,7 @@ public final class BrowserActivity extends Activity {
     private SitePermissionController sitePermissions;
 
     private final List<Tab> tabs = new ArrayList<>();
+    private final RecentlyClosedTabs recentlyClosed = new RecentlyClosedTabs();
     private int selected;
     private long clock;
     private SharedPreferences preferences;
@@ -78,7 +78,10 @@ public final class BrowserActivity extends Activity {
     private IconButton back;
     private IconButton forward;
     private ProgressBar progress;
-    private View home, browserControls;
+    private View home, privateHome, browserControls;
+    private LinearLayout omnibox;
+    private BrowserPrivacyUi.Banner privacyBanner;
+    private Boolean appliedPrivate;
     private boolean fullscreen;
     private View error;
     private TextView blockedSummary, recordingNotice;
@@ -135,7 +138,7 @@ public final class BrowserActivity extends Activity {
 
     private void buildChrome() {
         if (page != null) page.removeAllViews();
-        home = null;
+        home = null; privateHome = null; appliedPrivate = null;
         blockedSummary = null;
         LinearLayout root = column();
         root.setBackgroundColor(BG);
@@ -159,6 +162,8 @@ public final class BrowserActivity extends Activity {
         recordingNotice.setMinHeight(dp(48));recordingNotice.setFocusable(true);recordingNotice.setVisibility(View.GONE);
         recordingNotice.setOnClickListener(v->{for(Tab tab:tabs)if(tab.recording){dispose(tab,false);tab.error=getString(R.string.recording_stopped);}renderPage();updateChrome();});
         root.addView(recordingNotice,new LinearLayout.LayoutParams(-1,-2));
+        privacyBanner = new BrowserPrivacyUi.Banner(this, this::showPrivateInfo, this::confirmClosePrivateTabs);
+        root.addView(privacyBanner.view, new LinearLayout.LayoutParams(-1, -2));
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progress.setProgressTintList(android.content.res.ColorStateList.valueOf(ACCENT));
         progress.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(BG));
@@ -166,7 +171,7 @@ public final class BrowserActivity extends Activity {
 
         LinearLayout bottom = column(); browserControls = bottom;
         bottom.setPadding(dp(12), dp(9), dp(12), dp(4));
-        LinearLayout omnibox = row();
+        omnibox = row();
         omnibox.setBackground(shape(SURFACE, 24, BORDER));
         omnibox.setElevation(dp(2));
         connection = text("V", 14, ACCENT);
@@ -269,7 +274,7 @@ public final class BrowserActivity extends Activity {
     }
 
     private AlertDialog.Builder dialogBuilder() {
-        return new MaterialAlertDialogBuilder(this);
+        return BrowserPrivacyUi.dialog(this);
     }
 
     private void settingsChanged() {
@@ -593,9 +598,14 @@ public final class BrowserActivity extends Activity {
         Tab tab = current();
         View desired;
         if (tab.home) {
-            if (home == null) home = buildHome();
-            desired = home;
-            updateBlockedSummary();
+            if (tab.privateMode) {
+                if (privateHome == null) privateHome = BrowserPrivacyUi.home(this, this::focusAddress, this::newTab, this::confirmClosePrivateTabs);
+                desired = privateHome;
+            } else {
+                if (home == null) home = buildHome();
+                desired = home;
+                updateBlockedSummary();
+            }
         } else if (tab.error != null) {
             LinearLayout message = column();
             message.setGravity(Gravity.CENTER);
@@ -630,9 +640,10 @@ public final class BrowserActivity extends Activity {
         recordingNotice.setVisibility(recording?View.VISIBLE:View.GONE);recordingNotice.setText(R.string.recording_active);
         Tab tab = current();
         if (!address.hasFocus()) address.setText(tab.home ? "" : tab.url);
-        connection.setText(tab.privateMode ? "P" : tab.home ? "V" : (tab.error != null ? "!" : (tab.url.startsWith("https://") ? "●" : "HTTP")));
-        connection.setTextColor(tab.home || tab.url.startsWith("https://") ? ACCENT : 0xFFFFC17A);
+        connection.setText(tab.home ? "V" : (tab.error != null ? "!" : (tab.url.startsWith("https://") ? "●" : "HTTP")));
+        connection.setTextColor(tab.home || tab.url.startsWith("https://") ? (tab.privateMode ? BrowserPrivacyUi.ink(this) : ACCENT) : ThemeSupport.color(this, com.google.android.material.R.attr.colorError));
         tabCount.setText(String.valueOf(tabs.size()));
+        ((View)tabCount.getParent()).setContentDescription(getString(R.string.ui_tabs_c36a5)+", "+tabs.size()+(tab.privateMode?", "+getString(R.string.private_badge):""));
         tabCount.getParent().requestLayout();
         boolean canBack = !tab.home;
         back.setEnabled(canBack);
@@ -664,16 +675,24 @@ public final class BrowserActivity extends Activity {
 
     private void showTabs() {
         hideKeyboard();
+        List<Tab> snapshot = new ArrayList<>(tabs);
         List<BrowserSheets.TabItem> items = new ArrayList<>();
-        for (Tab tab : tabs) items.add(new BrowserSheets.TabItem(tab.title, tab.url, tab.home, tab.privateMode));
+        for (Tab tab : snapshot) items.add(new BrowserSheets.TabItem(tab.title, tab.url, tab.home, tab.privateMode));
         BrowserSheets.tabs(this, items, selected, MAX_TABS, position -> {
-            cancelFilePicker(); selected = position; showSelected();
-        }, position -> { closeTab(position); showTabs(); }, this::newTab).show();
+            int actual = tabs.indexOf(snapshot.get(position));
+            if(actual < 0){showTabs();return;}
+            cancelFilePicker(); selected = actual; showSelected();
+        }, position -> {
+            int actual = tabs.indexOf(snapshot.get(position));
+            if(actual >= 0)closeTab(actual);showTabs();
+        }, this::newTab, ()->newTab(true), this::confirmClosePrivateTabs,
+                !current().privateMode && !recentlyClosed.isEmpty() ? this::reopenClosedTab : null).show();
     }
 
     private void closeTab(int position) {
         cancelFilePicker();
         Tab tab = tabs.remove(position);
+        recentlyClosed.remember(tab.url,tab.title,tab.home,tab.privateMode);
         dispose(tab, false);if(tab.privateMode)engine.privateTabClosed();
         if (tabs.isEmpty()) tabs.add(new Tab());
         if (position < selected) selected--;
@@ -684,7 +703,7 @@ public final class BrowserActivity extends Activity {
     private void showMenu() {
         hideKeyboard(); Tab tab = current();
         boolean pageOpen = !tab.home && tab.error == null && UrlPolicy.normalizeWebUrl(tab.url) != null;
-        BrowserSheets.Sheet menu = BrowserSheets.menu(this, pageOpen, new SavedSitesStore(preferences).isBookmarked(tab.url), host(tab.url), which -> {
+        BrowserSheets.Sheet menu = BrowserSheets.menu(this, pageOpen, new SavedSitesStore(preferences).isBookmarked(tab.url), host(tab.url), tab.privateMode, which -> {
             switch (which) {
                 case 0: newTab(); break;
                 case 1: addBookmark(); break;
@@ -709,7 +728,52 @@ public final class BrowserActivity extends Activity {
         BrowserSheets.action(menu,R.drawable.ic_history,R.string.history_title,true,()->startActivity(new Intent(this,HistoryActivity.class)));
         BrowserSheets.action(menu,R.drawable.ic_download,R.string.downloads_title,true,()->startActivity(new Intent(this,DownloadsActivity.class)));
         BrowserSheets.action(menu,R.drawable.ic_tune,R.string.site_settings,pageOpen && !tab.privateMode,()->startActivityForResult(new Intent(this,SiteSettingsActivity.class).putExtra("url",tab.url),SETTINGS_PAGE));
+        BrowserSheets.action(menu,R.drawable.ic_add,R.string.duplicate_tab,tab.home || UrlPolicy.normalizeWebUrl(tab.url)!=null,()->duplicateTab(tab));
+        BrowserSheets.action(menu,R.drawable.ic_link,R.string.copy_page_address,pageOpen,()->{if(tabs.contains(tab))copyLink(tab.url,tab.privateMode);});
+        BrowserSheets.action(menu,R.drawable.ic_history,R.string.normal_reopen,!tab.privateMode && !recentlyClosed.isEmpty(),this::reopenClosedTab);
+        if(privateCount()>0)BrowserSheets.action(menu,R.drawable.ic_close,R.string.private_close_all,true,this::confirmClosePrivateTabs);
         menu.show();
+    }
+
+    private int privateCount() { int count=0;for(Tab tab:tabs)if(tab.privateMode)count++;return count; }
+    private void showPrivateInfo() {
+        AlertDialog dialog=dialogBuilder().setTitle(R.string.private_info_title)
+                .setMessage(getString(R.string.private_home_body)+"\n\n"+getString(R.string.private_saved_actions))
+                .setPositiveButton(R.string.ui_done_6fb77,null).create();BrowserPrivacyUi.secure(dialog);dialog.show();
+    }
+    private void confirmClosePrivateTabs() {
+        if(privateCount()==0)return;
+        AlertDialog dialog=dialogBuilder().setTitle(R.string.private_close_title).setMessage(R.string.private_close_body)
+                .setNegativeButton(R.string.ui_cancel_c6a8d,null).setPositiveButton(R.string.ui_close_5a468,(d,w)->closePrivateTabs()).create();
+        BrowserPrivacyUi.secure(dialog);dialog.show();
+    }
+    private void closePrivateTabs() {
+        cancelFilePicker();if(sitePermissions!=null)sitePermissions.cancel();
+        Tab active=current();int oldSelected=selected;
+        if(fullscreen && active.web!=null)active.web.session.exitFullScreen();setFullscreen(false);
+        for(int i=tabs.size()-1;i>=0;i--)if(tabs.get(i).privateMode){Tab tab=tabs.remove(i);dispose(tab,false);engine.privateTabClosed();}
+        if(tabs.isEmpty())tabs.add(new Tab());
+        selected=tabs.indexOf(active);if(selected<0)selected=Math.min(oldSelected,tabs.size()-1);
+        privateHome=null;consumeImportedTabs();showSelected();
+    }
+    private void duplicateTab(Tab source) {
+        if(!tabs.contains(source))return;
+        if(tabs.size()>=MAX_TABS){toast(getString(R.string.ui_maximum_of_12_tabs_close_a_tab_first_0c165));return;}
+        String url=source.url,title=source.title;boolean home=source.home,privateMode=source.privateMode;
+        newTab(privateMode);current().title=title;
+        if(!home && UrlPolicy.normalizeWebUrl(url)!=null)navigate(url);
+    }
+    private void reopenClosedTab() {
+        if(current().privateMode){toast(getString(R.string.private_no_reopen));return;}
+        if(tabs.size()>=MAX_TABS){toast(getString(R.string.ui_maximum_of_12_tabs_close_a_tab_first_0c165));return;}
+        TabStateStore.Entry entry=recentlyClosed.take();
+        if(entry==null){toast(getString(R.string.normal_reopen_empty));return;}
+        newTab();current().title=entry.title;navigate(entry.url);
+    }
+    private void copyLink(String url,boolean privateMode) {
+        android.content.ClipData clip=android.content.ClipData.newPlainText(getString(R.string.clipboard_address),url);
+        if(privateMode && Build.VERSION.SDK_INT>=33){android.os.PersistableBundle extras=new android.os.PersistableBundle();extras.putBoolean(android.content.ClipDescription.EXTRA_IS_SENSITIVE,true);clip.getDescription().setExtras(extras);}
+        ((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(clip);toast(getString(R.string.ui_link_copied_9c8bb));
     }
 
     private void showBlockingInfo() {
@@ -1076,7 +1140,17 @@ public final class BrowserActivity extends Activity {
         boolean privateOpen = tabs.stream().anyMatch(tab -> tab.privateMode);
         if (privateOpen) getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
         else getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
-        connection.setContentDescription(current().privateMode ? getString(R.string.ui_private_tab_no_history_or_tab_restoration_2a1cb) : getString(R.string.ui_connection_information_d437e));
+        boolean active=current().privateMode;
+        privacyBanner.bind(active,privateCount());
+        if(appliedPrivate==null || appliedPrivate!=active){
+            int ink=active?BrowserPrivacyUi.ink(this):TEXT;
+            omnibox.setBackground(shape(active?BrowserPrivacyUi.surface(this):SURFACE,24,active?ink:BORDER));
+            address.setTextColor(ink);address.setHintTextColor(active?ink:MUTED);
+            address.setHint(active?R.string.private_address_hint:R.string.ui_search_or_enter_a_web_address_6c60f);
+            tabCount.setTextColor(active?ink:TEXT);tabCount.setBackground(shape(Color.TRANSPARENT,7,active?ink:MUTED));
+            appliedPrivate=active;
+        }
+        connection.setContentDescription(getString(R.string.ui_connection_information_d437e)+(active?", "+getString(R.string.private_active):""));
     }
     private void beginDownload(org.mozilla.geckoview.WebResponse response,boolean privateMode) {
         if (pendingDownload != null || response.body == null || response.statusCode >= 400) { DownloadService.close(response.body); toast(getString(R.string.ui_download_unavailable_or_a_file_picker_is_already_open_88af7)); return; }
@@ -1090,7 +1164,7 @@ public final class BrowserActivity extends Activity {
             try { startActivityForResult(save,DOWNLOAD_DESTINATION); }
             catch(ActivityNotFoundException unavailable) { pendingDownload = null; DownloadService.close(response.body); toast(getString(R.string.ui_no_file_picker_is_available_7a3e5)); }
         };
-        if (privateMode) new MaterialAlertDialogBuilder(this).setTitle(getString(R.string.ui_save_a_private_file_85734))
+        if (privateMode) dialogBuilder().setTitle(getString(R.string.ui_save_a_private_file_85734))
                 .setMessage(getString(R.string.ui_the_selected_file_will_remain_on_your_device_after_pri_1346d))
                 .setPositiveButton(getString(R.string.ui_choose_file_235cc),(d,w)->choose.run()).setNegativeButton(getString(R.string.ui_cancel_c6a8d),(d,w)->DownloadService.close(response.body))
                 .setOnCancelListener(d->DownloadService.close(response.body)).show();
@@ -1098,9 +1172,9 @@ public final class BrowserActivity extends Activity {
     }
     private void showLinkMenu(String link,boolean privateMode) {
         String url = UrlPolicy.normalizeWebUrl(link); if(url == null)return;
-        new MaterialAlertDialogBuilder(this).setTitle(SettingsViews.host(url)).setItems(new String[]{getString(R.string.ui_open_in_new_tab_02b11),getString(R.string.ui_open_in_private_tab_619b3),getString(R.string.ui_copy_link_97baa)},(d,which)->{
+        dialogBuilder().setTitle(SettingsViews.host(url)).setItems(new String[]{getString(R.string.ui_open_in_new_tab_02b11),getString(R.string.ui_open_in_private_tab_619b3),getString(R.string.ui_copy_link_97baa)},(d,which)->{
             if(which < 2) { if(tabs.size() >= MAX_TABS) { toast(getString(R.string.ui_you_can_open_up_to_twelve_tabs_70529)); return; } newTab(which == 1 || privateMode); navigate(url); }
-            else { ((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(android.content.ClipData.newPlainText("Webadres",url)); toast(getString(R.string.ui_link_copied_9c8bb)); }
+            else copyLink(url,privateMode);
         }).show();
     }
     private void setFullscreen(boolean enabled) {
@@ -1121,6 +1195,7 @@ public final class BrowserActivity extends Activity {
     }
 
     void closePagesForDataChange() {
+        recentlyClosed.clear();
         if (sitePermissions != null) sitePermissions.cancel();
         extensionUi.closePanels();
         for (Tab tab : tabs) { dispose(tab,false); if (!tab.home) tab.error = getString(R.string.ui_website_data_or_permissions_changed_open_the_page_agai_99d9d); }
@@ -1129,7 +1204,8 @@ public final class BrowserActivity extends Activity {
     @Override public boolean onKeyDown(int key,KeyEvent event) {
         if(event.isCtrlPressed() && !event.isAltPressed()) {
             if(key==KeyEvent.KEYCODE_L) { focusAddress(); return true; }
-            if(key==KeyEvent.KEYCODE_T) { newTab(); return true; }
+            if(key==KeyEvent.KEYCODE_T && event.isShiftPressed()) { reopenClosedTab(); return true; }
+            if(key==KeyEvent.KEYCODE_T) { newTab(current().privateMode); return true; }
             if(key==KeyEvent.KEYCODE_P && event.isShiftPressed()) { newTab(true); return true; }
             if(key==KeyEvent.KEYCODE_W) { closeTab(selected); return true; }
             if(key==KeyEvent.KEYCODE_TAB) { selected=(selected+tabs.size()+(event.isShiftPressed()?-1:1))%tabs.size(); showSelected(); return true; }

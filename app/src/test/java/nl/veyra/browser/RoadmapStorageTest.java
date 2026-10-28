@@ -27,7 +27,9 @@ public final class RoadmapStorageTest {
     @Test public void historySearchDeleteAndRecencyAreLocalAndBounded(){
         HistoryStore history=new HistoryStore(preferences);history.record("https://example.org/","Example",10,false);history.record("https://other.example/","Other",20,false);
         history.record("https://EXAMPLE.org","Updated",30,false);assertEquals(2,history.read("").size());assertEquals("Updated",history.read("").get(0).title);
-        assertEquals(1,history.read("other").size());history.remove("https://example.org/");assertEquals(1,history.read("").size());history.clear();assertTrue(history.read("").isEmpty());
+        RecentlyClosedTabs closed=new RecentlyClosedTabs();closed.remember("https://example.org/","Example",false,false);
+        assertEquals(1,history.read("other").size());history.remove("https://example.org/");assertEquals(1,history.read("").size());assertTrue(closed.isEmpty());
+        closed.remember("https://other.example/","Other",false,false);history.clear();assertTrue(history.read("").isEmpty());assertNull(closed.take());
     }
     @Test public void damagedHistoryIsNotRewrittenOnRead(){preferences.edit().putString("history","damaged").commit();assertTrue(new HistoryStore(preferences).read("").isEmpty());assertEquals("damaged",preferences.getString("history",""));}
     @Test public void backupRoundTripPreservesLegacyTitlesAndOnlyWhitelistedSettings(){

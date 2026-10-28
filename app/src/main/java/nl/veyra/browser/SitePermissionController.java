@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -69,7 +68,7 @@ final class SitePermissionController {
         if(!privateMode && java.util.Arrays.asList(types).contains(SitePermissions.LOCATION)){remember.setChecked(true);remember.setEnabled(false);}
         StringBuilder body=new StringBuilder(origin).append(activity.getString(R.string.ui_requests_access_to_d7e16));for(String type:types)body.append("\n• ").append(SitePermissions.label(activity,type));
         boolean[] completed={false};
-        androidx.appcompat.app.AlertDialog dialog=new MaterialAlertDialogBuilder(activity).setTitle(activity.getString(R.string.ui_website_permission_e9fd6))
+        androidx.appcompat.app.AlertDialog dialog=BrowserPrivacyUi.dialog(activity).setTitle(activity.getString(R.string.ui_website_permission_e9fd6))
                 .setMessage(body.toString()).setView(remember).setPositiveButton(activity.getString(R.string.ui_allow_aefe3),(d,w)->{
                     completed[0]=true;boolean allow=valid.getAsBoolean();if(allow&&remember.isChecked())for(String type:types)store.set(uri,type,SitePermissions.ALLOW,privateMode);answer.accept(allow);
                 }).setNegativeButton(activity.getString(R.string.ui_deny_cd769),(d,w)->{

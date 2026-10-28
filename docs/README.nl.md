@@ -12,6 +12,12 @@ De huidige testkandidaat is **1.0.0-rc.1**, voor Android 9 of nieuwer. [Download
 - **Lezen en zoeken** regelt tekstgrootte en zoekaanbieder. Een eigen zoekadres gebruikt HTTPS en precies één `%s` in het querydeel, bijvoorbeeld `https://example.org/search?q=%s`.
 - **Browser en gegevens** opent geschiedenis, downloads, websitevoorkeuren, wissen, backups, standaardbrowser, geheugengebruik en synchronisatie.
 
+## Tabbladen en InPrivate
+
+Het taboverzicht biedt **Nieuw normaal tabblad** en **Nieuw InPrivate-tabblad**. InPrivate heeft een eigen startpagina, herkenbare adresbalk, blijvende statusbalk en maskers in het overzicht. Via **Alle InPrivate-tabbladen sluiten** beëindig je na bevestiging alleen de privésessie.
+
+Via het browsermenu kun je een tabblad dupliceren (met hetzelfde type) en het webadres kopiëren. **Normaal tabblad heropenen** herstelt maximaal vijf gesloten normale pagina’s uit deze sessie. Privétabs worden nooit bijgehouden; geschiedenis verwijderen wist de heropenmogelijkheid. Met een toetsenbord: Ctrl+T opent hetzelfde type als de huidige tab, Ctrl+Shift+P opent InPrivate, Ctrl+Shift+T heropent een normale pagina vanuit normaal browsen.
+
 ## Gegevens en privétabs
 
 Geschiedenis blijft lokaal en is doorzoekbaar/verwijderbaar. Privétabs gebruiken aparte Gecko-private sessies en komen niet in de normale geschiedenis/tabbackup. Zelf bewaarde bestanden, bladwijzers en gekopieerde tekst kunnen blijven bestaan. Android Autofill en gebruikersuitbreidingen zijn in privétabs uitgeschakeld. Dit maakt je netwerkverkeer niet anoniem. De [privacyhandleiding](privacy.md) beschrijft opslag en grenzen.

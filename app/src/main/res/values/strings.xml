@@ -166,7 +166,7 @@
   <string name="settings_shortcuts_tip">Snelkoppelingen zijn je vaste plekken op de startpagina. Bladwijzers beheer je in de bibliotheek.</string>
   <string name="home_shortcuts">Op je startpagina</string>
   <string name="library_also_bookmarked">Ook als bladwijzer bewaard</string>
-  <string name="private_new">Nieuw privétabblad</string>
+  <string name="private_new">Nieuw InPrivate-tabblad</string>
   <string name="history_title">Geschiedenis</string>
   <string name="history_remove">Uit geschiedenis verwijderen</string>
   <string name="downloads_title">Downloads</string>
@@ -208,4 +208,25 @@
   <string name="sync_final_count">Lokaal te verwijderen: %1$d. Bladwijzers na synchronisatie: %2$d. Snelkoppelingen: %3$d.\n\nDe gekozen versie wordt versleuteld opgeslagen op de server en op dit apparaat toegepast.</string>
     <string name="show_more">Meer tonen</string>
     <string name="sync_not_confirmed">De server heeft opslaan nog niet bevestigd. Synchroniseer opnieuw.</string>
+    <string name="private_badge">InPrivate</string>
+    <string name="private_active">InPrivate actief</string>
+    <string name="private_home_title">Je browst InPrivate</string>
+    <string name="private_home_body">Deze tabbladen komen niet in je geschiedenis of tabherstel. Websites en je netwerkprovider kunnen je activiteit nog steeds zien.</string>
+    <string name="private_saved_actions">Wat je bewust bewaart, deelt of kopieert kan blijven bestaan. Autofill en gebruikersuitbreidingen staan hier uit.</string>
+    <string name="private_search">Privé zoeken of een adres openen</string>
+    <string name="private_address_hint">Zoek of voer een adres in — InPrivate</string>
+    <string name="private_close_all">Alle InPrivate-tabbladen sluiten</string>
+    <string name="private_close_title">InPrivate beëindigen?</string>
+    <string name="private_close_body">Alle privétabbladen sluiten en de privésessie beëindigen. Niet-opgeslagen invoer gaat verloren. Gesloten privétabbladen kunnen niet worden heropend.</string>
+    <string name="private_info_title">Over InPrivate</string>
+    <string name="private_no_reopen">Gesloten InPrivate-tabbladen worden niet bewaard.</string>
+    <string name="normal_new">Nieuw normaal tabblad</string>
+    <string name="private_menu">Menu · InPrivate</string>
+    <string name="tab_modes_count">%1$d normaal · %2$d InPrivate</string>
+    <string name="private_selected">InPrivate · huidig tabblad</string>
+    <string name="normal_reopen">Normaal tabblad heropenen</string>
+    <string name="normal_reopen_empty">Er zijn geen gesloten normale tabbladen in deze sessie.</string>
+    <string name="duplicate_tab">Tabblad dupliceren</string>
+    <string name="copy_page_address">Webadres kopiëren</string>
+    <string name="clipboard_address">Webadres</string>
 </resources>

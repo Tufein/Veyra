@@ -78,6 +78,42 @@ public final class BrowserSheetsTest {
         sheet=BrowserSheets.menu(host(),true,false,"example.org",i->{}); sheet.show();
         LibraryActivityTest.capture(sheet.dialog.getWindow().getDecorView(),"menu-light");
     }
+    @Test public void privateTabsAreClearlyMarkedAndSecureEvenFromNormalTab() throws Exception {
+        Host host=host(); AtomicInteger action=new AtomicInteger();
+        sheet=BrowserSheets.tabs(host,Arrays.asList(new BrowserSheets.TabItem("Normal","https://example.org/",false),
+                new BrowserSheets.TabItem("Private page","https://secret.example/",false,true)),1,12,i->{},i->{},()->{},()->{},action::incrementAndGet,null);
+        sheet.show(); assertNotNull(LibraryActivityTest.find(sheet.root,host.getString(R.string.private_selected)));
+        assertNotNull(LibraryActivityTest.find(sheet.root,host.getString(R.string.panel_tab_count,2,12)+" · "+host.getString(R.string.tab_modes_count,1,1)));
+        assertTrue((sheet.dialog.getWindow().getAttributes().flags & android.view.WindowManager.LayoutParams.FLAG_SECURE)!=0);
+        View reopen=LibraryActivityTest.find(sheet.root,host.getString(R.string.normal_reopen));
+        assertFalse(((View)reopen.getParent()).isEnabled());
+        LibraryActivityTest.capture(sheet.dialog.getWindow().getDecorView(),"tabs-private-dark");
+        View closeAll=LibraryActivityTest.find(sheet.root,host.getString(R.string.private_close_all));
+        ((View)closeAll.getParent()).performClick(); assertEquals(1,action.get());
+    }
+    @Test public void normalAndPrivateCreationHaveSeparateExplicitActions() {
+        Host host=host(); AtomicInteger normal=new AtomicInteger(),privateMode=new AtomicInteger();
+        List<BrowserSheets.TabItem> tabs=Arrays.asList(new BrowserSheets.TabItem("Home","",true));
+        sheet=BrowserSheets.tabs(host,tabs,0,12,i->{},i->{},normal::incrementAndGet,privateMode::incrementAndGet,()->{},null);
+        sheet.show(); LibraryActivityTest.find(sheet.root,host.getString(R.string.private_new)).performClick();
+        assertEquals(1,privateMode.get()); assertEquals(0,normal.get());
+        sheet=BrowserSheets.tabs(host,tabs,0,12,i->{},i->{},normal::incrementAndGet,privateMode::incrementAndGet,()->{},null);
+        sheet.show(); LibraryActivityTest.find(sheet.root,host.getString(R.string.normal_new)).performClick();
+        assertEquals(1,normal.get()); assertEquals(1,privateMode.get());
+    }
+    @Test public void fullTabListDisablesBothCreationModes() {
+        Host host=host(); List<BrowserSheets.TabItem> tabs=new ArrayList<>();
+        for(int i=0;i<12;i++)tabs.add(new BrowserSheets.TabItem("Tab "+i,"https://example.org/"+i,false,i==0));
+        sheet=BrowserSheets.tabs(host,tabs,0,12,i->{},i->{},()->fail("limit"),()->fail("limit"),()->{},null);sheet.show();
+        assertFalse(LibraryActivityTest.find(sheet.root,host.getString(R.string.private_new)).isEnabled());
+        assertFalse(LibraryActivityTest.find(sheet.root,host.getString(R.string.normal_new)).isEnabled());
+    }
+    @Test public void privateMenuIsLabelledAndSecure() {
+        Host host=host();sheet=BrowserSheets.menu(host,true,false,"example.org",true,i->{});sheet.show();
+        assertNotNull(LibraryActivityTest.find(sheet.root,host.getString(R.string.private_menu)));
+        assertNotNull(LibraryActivityTest.find(sheet.root,host.getString(R.string.normal_new)));
+        assertTrue((sheet.dialog.getWindow().getAttributes().flags & android.view.WindowManager.LayoutParams.FLAG_SECURE)!=0);
+    }
     private static boolean hasScroll(View v) {
         if(v instanceof android.widget.ScrollView)return true;
         if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)if(hasScroll(((ViewGroup)v).getChildAt(i)))return true;

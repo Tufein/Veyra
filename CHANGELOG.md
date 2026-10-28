@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0-rc.2 — InPrivate and everyday tab actions
+
+- Show a persistent InPrivate banner, private tab count, distinct address-bar colors, private start page and mask-marked tab cards; retain the real HTTP/HTTPS indicator.
+- Offer separate normal/private creation and confirmed close-all-private actions. Keep private mode visible during fullscreen media.
+- Duplicate tabs in their original privacy mode, copy page addresses, and reopen up to five recently closed normal pages in this session only. Private tabs never enter undo; history deletion invalidates all undo stacks.
+- Preserve the current privacy mode with Ctrl+T; Ctrl+Shift+T reopens only normal tabs from normal mode.
+- Secure browser dialogs and sheets when private content is present, and mark explicitly copied private links sensitive on Android 13+.
+
+
 ## 1.0.0-rc.1 — release candidate
 
 - Prepare optimized, resource-shrunk, non-debuggable APKs using the same fixed key as 0.5.0; stable 1.0 gates remain open.

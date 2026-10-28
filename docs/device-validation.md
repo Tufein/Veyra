@@ -48,3 +48,13 @@ Schrijf per resultaat toestel, Android/ABI, appversie/certificaat, Gecko-versie,
 De debug-instrumentatiesuite en de geoptimaliseerde release-APK hebben verschillende doelen. Voer de bestaande debug-app/test-APK-combinatie op een geïsoleerd toestel uit. Controleer daarnaast de daadwerkelijk gepubliceerde niet-debuggable release-APK handmatig: starten, browsen, webformulieren, media, permissies, private cookies en een echte update vanaf 0.5.0. Hosttests voor de releaseconfiguratie vervangen die proef niet.
 
 De runner meldt `installation_mode` en `update_verification`. Een schone installatie is `not_applicable` voor updatebewijs. Als Android na een update `run-as` weigert wegens de niet-debuggable doelbuild, blijft het voorkeurenbewijs `unverified_target_not_debuggable`; dit is geen bewijs van verlies of behoud. Controleer gegevens daarna in de app en voeg echte resultaten toe aan het vrijgaveverslag.
+
+## Extra acceptatie voor 1.0.0-rc.2 (nog uit te voeren)
+
+- Open een normaal en een InPrivate-tabblad. Controleer banner, adresbalk, masker/huidige-tablabel en privéaantallen bij wisselen, websites laden, terug naar start en fullscreen video. HTTP blijft als HTTP herkenbaar.
+- Dupliceren van een privétab blijft privé; Ctrl+T houdt het huidige type. Normale/private nieuwe tabs hebben aparte knoppen.
+- Sluit een normale pagina en heropen via menu/taboverzicht of Ctrl+Shift+T. Sluit een privétab: die mag nooit in heropenen verschijnen. Heropenen vanuit InPrivate blijft uitgeschakeld.
+- Verwijder geschiedenis, of wis via privacyinstellingen: eerder gesloten normale adressen mogen niet via heropenen terugkeren. Controleer de limiet van vijf en procesherstart.
+- Annuleer vervolgens bevestig **Alle InPrivate-tabbladen sluiten**: normale tabs blijven bestaan, private invoer verdwijnt, bij alleen privétabs ontstaat een normale startpagina.
+- Probeer screenshots/recents van privébrowser, taboverzicht, JavaScript- en linkdialogen; controleer de Android 13+-klembordpreview na bewust kopiëren van een privélink.
+- Test 320dp/brede schermen, licht/donker/wallpaperkleuren en 200% tekst; alle acties blijven met scrollen en TalkBack bereikbaar.

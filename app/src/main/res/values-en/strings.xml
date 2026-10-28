@@ -166,7 +166,7 @@
   <string name="settings_shortcuts_tip">Shortcuts are your regular places on the start page. Manage bookmarks in the library.</string>
   <string name="home_shortcuts">On your start page</string>
   <string name="library_also_bookmarked">Also saved as bookmark</string>
-  <string name="private_new">New private tab</string>
+  <string name="private_new">New InPrivate tab</string>
   <string name="history_title">History</string>
   <string name="history_remove">Remove from history</string>
   <string name="downloads_title">Downloads</string>
@@ -208,4 +208,25 @@
   <string name="sync_final_count">To remove locally: %1$d. Bookmarks after sync: %2$d. Shortcuts: %3$d.\n\nThe selected version will be encrypted on the server and applied on this device.</string>
     <string name="show_more">Show more</string>
     <string name="sync_not_confirmed">The server has not confirmed saving yet. Sync again.</string>
+    <string name="private_badge">InPrivate</string>
+    <string name="private_active">InPrivate is on</string>
+    <string name="private_home_title">You’re browsing InPrivate</string>
+    <string name="private_home_body">These tabs stay out of history and tab restoration. Websites and your network provider can still see your activity.</string>
+    <string name="private_saved_actions">Anything you choose to save, share or copy can remain. Autofill and user extensions are off here.</string>
+    <string name="private_search">Search or open an address privately</string>
+    <string name="private_address_hint">Search or enter an address — InPrivate</string>
+    <string name="private_close_all">Close all InPrivate tabs</string>
+    <string name="private_close_title">End InPrivate?</string>
+    <string name="private_close_body">Close every private tab and end this private session. Unsaved input will be lost. Closed private tabs cannot be reopened.</string>
+    <string name="private_info_title">About InPrivate</string>
+    <string name="private_no_reopen">Closed InPrivate tabs are not saved.</string>
+    <string name="normal_new">New normal tab</string>
+    <string name="private_menu">Menu · InPrivate</string>
+    <string name="tab_modes_count">%1$d normal · %2$d InPrivate</string>
+    <string name="private_selected">InPrivate · current tab</string>
+    <string name="normal_reopen">Reopen a normal tab</string>
+    <string name="normal_reopen_empty">There are no closed normal tabs in this session.</string>
+    <string name="duplicate_tab">Duplicate tab</string>
+    <string name="copy_page_address">Copy page address</string>
+    <string name="clipboard_address">Web address</string>
 </resources>

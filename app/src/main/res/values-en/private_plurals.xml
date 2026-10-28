@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="private_tab_count">
+        <item quantity="one">1 private tab</item>
+        <item quantity="other">%d private tabs</item>
+    </plurals>
+</resources>

@@ -26,4 +26,6 @@
     <item name="library_url" type="id" />
     <item name="library_save" type="id" />
     <item name="browser_custom_template" type="id" />
+    <item name="private_banner" type="id" />
+    <item name="private_close_all" type="id" />
 </resources>

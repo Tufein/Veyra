@@ -36,8 +36,8 @@ final class HistoryStore {
         entries.add(0,new Visit(url,label.substring(0,Math.min(label.length(),512)),time));
         if(entries.size()>LIMIT)entries=entries.subList(0,LIMIT); write(entries);
     }
-    void remove(String url) { List<Visit> entries=read(""); entries.removeIf(v->v.url.equals(url)); write(entries); }
-    void clear() { preferences.edit().remove("history").apply(); }
+    void remove(String url) { RecentlyClosedTabs.historyDeleted(); List<Visit> entries=read(""); entries.removeIf(v->v.url.equals(url)); write(entries); }
+    void clear() { RecentlyClosedTabs.historyDeleted(); preferences.edit().remove("history").apply(); }
     private void write(List<Visit> entries) {
         JSONArray array=new JSONArray();
         try { for(Visit v:entries)array.put(new JSONObject().put("url",v.url).put("title",v.title).put("time",v.time)); }

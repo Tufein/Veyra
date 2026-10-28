@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.widget.EditText;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.List;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
@@ -126,13 +125,13 @@ final class BrowserView extends GeckoView {
             }
             @Override public GeckoResult<PromptResponse> onAlertPrompt(GeckoSession s, AlertPrompt prompt) {
                 GeckoResult<PromptResponse> result = new GeckoResult<>();
-                new MaterialAlertDialogBuilder(activity).setTitle(prompt.title).setMessage(prompt.message)
+                BrowserPrivacyUi.dialog(activity).setTitle(prompt.title).setMessage(prompt.message)
                         .setPositiveButton("OK", null).setOnDismissListener(d -> result.complete(prompt.dismiss())).show();
                 return result;
             }
             @Override public GeckoResult<PromptResponse> onButtonPrompt(GeckoSession s, ButtonPrompt prompt) {
                 GeckoResult<PromptResponse> result = new GeckoResult<>(); boolean[] answered = {false};
-                new MaterialAlertDialogBuilder(activity).setTitle(prompt.title).setMessage(prompt.message)
+                BrowserPrivacyUi.dialog(activity).setTitle(prompt.title).setMessage(prompt.message)
                         .setPositiveButton("OK", (d, w) -> { answered[0] = true; result.complete(prompt.confirm(ButtonPrompt.Type.POSITIVE)); })
                         .setNegativeButton(activity.getString(R.string.ui_cancel_c6a8d), (d, w) -> { answered[0] = true; result.complete(prompt.confirm(ButtonPrompt.Type.NEGATIVE)); })
                         .setOnDismissListener(d -> { if (!answered[0]) result.complete(prompt.dismiss()); }).show();
@@ -141,7 +140,7 @@ final class BrowserView extends GeckoView {
             @Override public GeckoResult<PromptResponse> onTextPrompt(GeckoSession s, TextPrompt prompt) {
                 GeckoResult<PromptResponse> result = new GeckoResult<>(); boolean[] answered = {false};
                 EditText field = new EditText(activity); field.setText(prompt.defaultValue);
-                new MaterialAlertDialogBuilder(activity).setTitle(prompt.title).setMessage(prompt.message).setView(field)
+                BrowserPrivacyUi.dialog(activity).setTitle(prompt.title).setMessage(prompt.message).setView(field)
                         .setPositiveButton("OK", (d, w) -> { answered[0] = true; result.complete(prompt.confirm(field.getText().toString())); })
                         .setNegativeButton(activity.getString(R.string.ui_cancel_c6a8d), null)
                         .setOnDismissListener(d -> { if (!answered[0]) result.complete(prompt.dismiss()); }).show();
@@ -149,7 +148,7 @@ final class BrowserView extends GeckoView {
             }
             @Override public GeckoResult<PromptResponse> onBeforeUnloadPrompt(GeckoSession s, BeforeUnloadPrompt prompt) {
                 GeckoResult<PromptResponse> result = new GeckoResult<>(); boolean[] answered = {false};
-                new MaterialAlertDialogBuilder(activity).setTitle(activity.getString(R.string.ui_leave_this_page_83769))
+                BrowserPrivacyUi.dialog(activity).setTitle(activity.getString(R.string.ui_leave_this_page_83769))
                         .setMessage(activity.getString(R.string.ui_unsaved_changes_may_be_lost_08c51))
                         .setPositiveButton(activity.getString(R.string.ui_leave_65275), (d, w) -> { answered[0] = true; result.complete(prompt.confirm(AllowOrDeny.ALLOW)); })
                         .setNegativeButton("Blijven", null)

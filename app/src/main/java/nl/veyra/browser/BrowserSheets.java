@@ -53,6 +53,7 @@ final class BrowserSheets {
             };
             bounded.setClipToPadding(false); bounded.addView(content); root.addView(bounded);
             dialog.setContentView(root);
+            if ((activity.getWindow().getAttributes().flags & android.view.WindowManager.LayoutParams.FLAG_SECURE) != 0) BrowserPrivacyUi.secure(dialog);
             dialog.setOnShowListener(d -> {
                 FrameLayout panel = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
                 if (panel != null) {
@@ -97,9 +98,13 @@ final class BrowserSheets {
         return button;
     }
     static Sheet menu(Activity activity, boolean page, boolean bookmarked, String host, IntConsumer action) {
-        Sheet sheet = new Sheet(activity, activity.getString(R.string.panel_menu), page ? host : activity.getString(R.string.panel_menu_body));
+        return menu(activity, page, bookmarked, host, false, action);
+    }
+    static Sheet menu(Activity activity, boolean page, boolean bookmarked, String host, boolean privateMode, IntConsumer action) {
+        Sheet sheet = new Sheet(activity, activity.getString(privateMode ? R.string.private_menu : R.string.panel_menu), page ? host : activity.getString(R.string.panel_menu_body));
+        if (privateMode) BrowserPrivacyUi.secure(sheet.dialog);
         SettingsViews ui = sheet.ui;
-        int[] labels = {R.string.panel_new_tab, bookmarked ? R.string.panel_saved : R.string.panel_bookmark, R.string.library_title, R.string.settings_title};
+        int[] labels = {privateMode ? R.string.normal_new : R.string.panel_new_tab, bookmarked ? R.string.panel_saved : R.string.panel_bookmark, R.string.library_title, R.string.settings_title};
         int[] icons = {R.drawable.ic_add, bookmarked ? R.drawable.ic_check : R.drawable.ic_bookmark, R.drawable.ic_library, R.drawable.ic_tune};
         int[] routes = {0, 1, 2, 7};
         int columns = activity.getResources().getConfiguration().fontScale >= 1.3f
@@ -137,20 +142,32 @@ final class BrowserSheets {
         TabItem(String title, String url, boolean home,boolean privateMode) { this.title = title; this.url = url; this.home = home; this.privateMode = privateMode; }
     }
     static Sheet tabs(Activity activity, List<TabItem> tabs, int selected, int limit, IntConsumer select, IntConsumer close, Runnable add) {
-        Sheet sheet = new Sheet(activity, activity.getString(R.string.panel_tabs), activity.getString(R.string.panel_tab_count, tabs.size(), limit));
+        return tabs(activity, tabs, selected, limit, select, close, add, null, null, null);
+    }
+    static Sheet tabs(Activity activity, List<TabItem> tabs, int selected, int limit, IntConsumer select, IntConsumer close,
+                      Runnable add, Runnable addPrivate, Runnable closePrivate, Runnable reopen) {
+        int privateCount = 0;
+        for (TabItem tab : tabs) if (tab.privateMode) privateCount++;
+        String summary = activity.getString(R.string.panel_tab_count, tabs.size(), limit);
+        if (privateCount > 0) summary += " · " + activity.getString(R.string.tab_modes_count, tabs.size()-privateCount, privateCount);
+        Sheet sheet = new Sheet(activity, activity.getString(R.string.panel_tabs), summary);
+        if (privateCount > 0) BrowserPrivacyUi.secure(sheet.dialog);
         SettingsViews ui = sheet.ui;
         for (int i = 0; i < tabs.size(); i++) {
             final int index = i; TabItem tab = tabs.get(i); boolean current = i == selected;
             MaterialCardView card = new MaterialCardView(activity); card.setRadius(ui.dp(18)); card.setCardElevation(0);
-            card.setCardBackgroundColor(current ? ui.accentSurface : ui.low); card.setStrokeWidth(current ? ui.dp(1) : 0); card.setStrokeColor(ui.primary);
+            int privateInk = BrowserPrivacyUi.ink(activity);
+            card.setCardBackgroundColor(tab.privateMode ? BrowserPrivacyUi.surface(activity) : current ? ui.accentSurface : ui.low);
+            card.setStrokeWidth(current ? ui.dp(2) : 0); card.setStrokeColor(tab.privateMode ? privateInk : ui.primary);
             LinearLayout row = ui.row(); row.setPadding(ui.dp(12), ui.dp(8), ui.dp(6), ui.dp(8));
             LinearLayout target = ui.row(); target.setMinimumHeight(ui.dp(60));
-            target.addView(ui.monogram(tab.home ? "Veyra" : tab.title, tab.url), new LinearLayout.LayoutParams(ui.dp(40), ui.dp(40)));
+            View identity = tab.privateMode ? ui.image(R.drawable.ic_private, privateInk) : ui.monogram(tab.home ? "Veyra" : tab.title, tab.url);
+            target.addView(identity, new LinearLayout.LayoutParams(ui.dp(40), ui.dp(40)));
             LinearLayout copy = ui.column(); copy.setPadding(ui.dp(12), 0, ui.dp(4), 0);
-            TextView title = ui.text(tab.home ? activity.getString(R.string.panel_new_tab) : tab.title, 15, current ? ui.accentInk : ui.ink);
+            TextView title = ui.text(tab.home ? activity.getString(tab.privateMode ? R.string.private_home_title : R.string.panel_new_tab) : tab.title, 15, tab.privateMode ? privateInk : current ? ui.accentInk : ui.ink);
             title.setMaxLines(2); title.setEllipsize(android.text.TextUtils.TruncateAt.END); copy.addView(title);
-            TextView subtitle = ui.text(tab.privateMode ? activity.getString(R.string.ui_private_tab_not_saved_45d1d) : current ? activity.getString(R.string.panel_current_tab)
-                    : tab.home ? "Veyra" : SettingsViews.host(tab.url), 12, current ? ui.accentInk : ui.muted);
+            TextView subtitle = ui.text(tab.privateMode ? activity.getString(current ? R.string.private_selected : R.string.private_badge) : current ? activity.getString(R.string.panel_current_tab)
+                    : tab.home ? "Veyra" : SettingsViews.host(tab.url), 12, tab.privateMode ? privateInk : current ? ui.accentInk : ui.muted);
             subtitle.setMaxLines(1); subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END); ui.add(copy, subtitle, 4);
             target.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
             target.setOnClickListener(v -> sheet.run(() -> select.accept(index))); target.setFocusable(true); target.setSelected(current); SettingsViews.buttonRole(target);
@@ -159,11 +176,20 @@ final class BrowserSheets {
             copy.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
             row.addView(target, new LinearLayout.LayoutParams(0, -2, 1));
             MaterialButton remove = icon(ui, R.drawable.ic_close, activity.getString(R.string.panel_close_tab, title.getText()));
+            if (tab.privateMode) remove.setIconTint(ColorStateList.valueOf(privateInk));
             remove.setOnClickListener(v -> sheet.run(() -> close.accept(index))); row.addView(remove, new LinearLayout.LayoutParams(ui.dp(48), ui.dp(48)));
             card.addView(row); ui.add(sheet.content, card, 6);
         }
-        MaterialButton newTab = ui.button(R.string.panel_new_tab, R.drawable.ic_add, v -> sheet.run(add));
+        MaterialButton newTab = ui.button(addPrivate == null ? R.string.panel_new_tab : R.string.normal_new, R.drawable.ic_add, v -> sheet.run(add));
         newTab.setEnabled(tabs.size() < limit); ui.add(sheet.content, newTab, 14);
+        if (addPrivate != null) {
+            MaterialButton privateTab = ui.button(R.string.private_new, R.drawable.ic_private, v -> sheet.run(addPrivate));
+            privateTab.setBackgroundTintList(ColorStateList.valueOf(BrowserPrivacyUi.surface(activity)));
+            privateTab.setTextColor(BrowserPrivacyUi.ink(activity)); privateTab.setIconTint(ColorStateList.valueOf(BrowserPrivacyUi.ink(activity)));
+            privateTab.setEnabled(tabs.size() < limit); ui.add(sheet.content, privateTab, 6);
+            action(sheet, R.drawable.ic_history, R.string.normal_reopen, reopen != null, () -> { if (reopen != null) reopen.run(); });
+        }
+        if (privateCount > 0 && closePrivate != null) action(sheet, R.drawable.ic_close, R.string.private_close_all, true, closePrivate);
         return sheet;
     }
 }
