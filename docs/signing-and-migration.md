@@ -10,6 +10,8 @@ Publieke SHA-256-certificaatvingerafdruk:
 
 Dit is de certificaatvingerafdruk, geen APK-bestandschecksum. De machineleesbare waarde staat in [signing-certificate-sha256.txt](signing-certificate-sha256.txt).
 
+Installaties vanaf **0.5.0** gebruiken deze vaste sleutel. **1.0.0-rc.1** behoudt die sleutel en verhoogt de versiecode naar 8: test deze als normale update zonder 0.5.0 vooraf te verwijderen. Gegevensbehoud op een echte telefoon moet nog worden bevestigd. De onderstaande export/verwijdermigratie is bedoeld voor oudere alpha’s met een andere sleutel.
+
 ## Eerst gegevens veiligstellen
 
 **Verwijder een bestaande installatie niet voordat je een bruikbare backup hebt gecontroleerd.** Android staat geen update met een andere ondertekeningssleutel toe. De pakketnaam blijft `nl.veyra.browser`; een andere pakketnaam zou de oude gegevens ook niet vanzelf overnemen.

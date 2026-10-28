@@ -40,7 +40,12 @@ De nieuwe afbeeldingen zijn [privacy](images/rc1-privacy-english-dark.png) en [s
 
 ## Publicatie en open criteria
 
-De kandidaat wordt gepubliceerd via `publish-prebuilt.yml` met de bestaande vaste-key-APK’s. De tijdelijke branch bevat uitsluitend gecomprimeerde publieke APK’s, metadata, checksums en controlegereedschap. De workflow verifieert ondertekening, pakket/versie/ABI, niet-debuggable status en oorspronkelijke checksums vóór upload; bestaande afwijkende assets worden nooit overschreven. De privésleutel wordt niet overgedragen.
+De [Android CI](https://github.com/Tufein/Veyra/actions/runs/40714683208) voor de appcode is geslaagd. De [publicatiecontrole](https://github.com/Tufein/Veyra/actions/runs/40714955025) is ook geslaagd. Alle vier publieke downloadlinks geven HTTP200 en GitHubs SHA-256-digests komen overeen met de lokaal gecontroleerde bestanden. De tijdelijke uploadbranch is verwijderd.
+
+De APK’s zijn gebouwd met appcode uit `5b42b61`. De tag wijst naar `0142995`, met uitsluitend een verbetering aan conceptrelease-opzoeking, een bijbehorende Python-test en documentatie; app- en buildinputs zijn ongewijzigd vergeleken. Die correctie heeft 23 lokale Python-tests en de werkelijke Actions-publicatie doorlopen. Er is geen nieuwe sleutel gebruikt.
+
+
+De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.1) via `publish-prebuilt.yml` met de bestaande vaste-key-APK’s. De tijdelijke branch bevat uitsluitend gecomprimeerde publieke APK’s, metadata, checksums en controlegereedschap. De workflow verifieert ondertekening, pakket/versie/ABI, niet-debuggable status en oorspronkelijke checksums vóór upload; bestaande afwijkende assets worden nooit overschreven. De privésleutel wordt niet overgedragen.
 
 `tools/release_readiness.py` laat een eerlijk gelabelde kandidaat toe en blokkeert een stabiele 1.x-publicatie zolang verplichte criteria onbewezen zijn. Het controleert de aanwezigheid/structuur van beoordeelde bewijskoppelingen; een mens moet de inhoud en geldigheid van dat bewijs beoordelen.
 

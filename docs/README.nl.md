@@ -1,8 +1,8 @@
 # Veyra gebruiken
 
-De huidige testalpha is **0.5.0**, voor Android 9 of nieuwer. [Download de ARM64-APK](https://github.com/Tufein/Veyra/releases/download/v0.5.0/Veyra-0.5.0-arm64-v8a-debug.apk), of kies een andere architectuur op de [releasepagina](https://github.com/Tufein/Veyra/releases/tag/v0.5.0). Er is nog geen stabiele 1.0 of Play Store-release.
+De huidige testkandidaat is **1.0.0-rc.1**, voor Android 9 of nieuwer. [Download de ARM64-APK](https://github.com/Tufein/Veyra/releases/download/v1.0.0-rc.1/Veyra-1.0.0-rc.1-arm64-v8a.apk), of kies een andere architectuur op de [releasepagina](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.1). Er is nog geen stabiele 1.0 of Play Store-release.
 
-**Oude app geïnstalleerd? Exporteer eerst je gegevens.** De nieuwe vaste sleutel verschilt van eerdere CI-alpha’s. Lees [ondertekening en migratie](signing-and-migration.md) vóór verwijderen of installeren. Een nieuwe sleutel kan een oude installatie niet rechtstreeks bijwerken.
+**Vanaf 0.5.0 blijft de sleutel gelijk.** Test 1.0.0-rc.1 als update zonder 0.5.0 vooraf te verwijderen. Voor 0.4.x en eerdere CI-alpha’s met een andere sleutel: exporteer eerst je gegevens en lees [ondertekening en migratie](signing-and-migration.md) vóór verwijderen.
 
 ## Je browser inrichten
 

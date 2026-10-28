@@ -4,11 +4,11 @@
 
 A native Android browser built with Java, Material 3 and Mozilla GeckoView. A calm start page, independent settings and a shared bookmark/shortcut library keep everyday controls close at hand.
 
-**Development:** 1.0.0-rc.1 · **Latest published alpha:** 0.5.0 · **Android:** 9+ (API 28).
+**Latest prerelease:** 1.0.0-rc.1 · **Stage:** candidate for 1.0 · **Android:** 9+ (API 28).
 
 [Published releases](https://github.com/Tufein/Veyra/releases) · [Nederlandse handleiding](docs/README.nl.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [0.5 verification](docs/verification-0.5.md)
 
-This alpha is not a stable 1.0 release. Physical-device acceptance, actual signed-update validation, three-extension compatibility and live two-device sync remain open. The new fixed signing key requires [migration from old alpha installations](docs/signing-and-migration.md). **Export before uninstalling an existing app.**
+This prerelease is not a stable 1.0 release. Physical-device acceptance, actual signed-update validation, three-extension compatibility and live two-device sync remain open. The candidate retains the 0.5.0 signing key and is intended to be tested as an update without uninstalling 0.5.0. Older 0.4.x/earlier CI alphas need [migration](docs/signing-and-migration.md): **export before uninstalling those older installations.**
 
 ## Features
 
@@ -41,13 +41,13 @@ Private tabs use real Gecko private contexts and are excluded from persisted nor
 
 ## Preparing 1.0
 
-The 1.0.0-rc.1 candidate adds optimized non-debuggable builds and fixes import consent, download completion, host permission reset and sync concurrency handling. [Candidate verification](docs/verification-1.0-rc.1.md) and the [readiness report](docs/release-readiness.json) separate software checks from unrun device acceptance. A stable 1.0 launch remains gated on the latter.
+The [published 1.0.0-rc.1 candidate](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.1) adds optimized non-debuggable builds and fixes import consent, download completion, host permission reset and sync concurrency handling. [Candidate verification](docs/verification-1.0-rc.1.md) and the [readiness report](docs/release-readiness.json) separate software checks from unrun device acceptance. A stable 1.0 launch remains gated on the latter.
 
 ## APKs and signing
 
-Download [0.5.0 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.5.0), or the [ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.5.0/Veyra-0.5.0-arm64-v8a-debug.apk) for most modern phones. Public builds are debuggable alpha APKs, not Play Store production packages.
+Download [1.0.0-rc.1](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.1), or the [ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v1.0.0-rc.1/Veyra-1.0.0-rc.1-arm64-v8a.apk) for most modern phones. This candidate uses an optimized, non-debuggable release build. It remains a prerelease pending actual device acceptance; there is no Play Store publication.
 
-The 0.5 candidate introduces a new fixed certificate because the earlier CI debug private keys were not retained. [Migration instructions](docs/signing-and-migration.md) explain a read-only USB export before removing an older installation. The release workflow requires the fixed key in GitHub Secrets and verifies every APK against [the public certificate pin](docs/signing-certificate-sha256.txt); it stops when secrets are missing. The 0.5 APKs were published through [GitHub Actions](https://github.com/Tufein/Veyra/actions/runs/40655173354) using the existing signed files, with matching pinned certificates and SHA-256 checksums. The temporary artifact branch was deleted; no private key was transferred. The repository Secrets API still returns HTTP 403, so provisioning the key for automatic rebuilds remains open. An independent owner-controlled backup of the private key is also required.
+The 0.5 alpha introduced a fixed certificate, retained by 1.0.0-rc.1, because the earlier CI debug private keys were not retained. [Migration instructions](docs/signing-and-migration.md) explain a read-only USB export before removing an older installation. The release workflow requires the fixed key in GitHub Secrets and verifies every APK against [the public certificate pin](docs/signing-certificate-sha256.txt); it stops when secrets are missing. The 0.5 APKs were published through [GitHub Actions](https://github.com/Tufein/Veyra/actions/runs/40655173354) using the existing signed files, with matching pinned certificates and SHA-256 checksums. The temporary artifact branch was deleted; no private key was transferred. The repository Secrets API still returns HTTP 403, so provisioning the key for automatic rebuilds remains open. An independent owner-controlled backup of the private key is also required.
 
 Release APKs are standalone per ABI: `arm64-v8a` for most modern phones, `armeabi-v7a` for older 32-bit ARM, `x86_64` for matching emulators/devices. Check version, certificate and `SHA256SUMS.txt` before installing. Never uninstall merely to dismiss a signature-conflict message if you need the old data.
 
@@ -76,6 +76,6 @@ JVM tests render native Material widgets under Robolectric. Renderings in `app/b
 
 Veyra adds no analytics or hosted account backend. Local history, prefs, cookies and cache stay on-device unless you explicitly export or use encrypted sync. Websites, search providers, external credential apps and Gecko services make their own network requests. OS app backup/transfer is disabled. Clear selected data in the app or use Android app-storage controls; external files and sync-server files need separate deletion.
 
-[Contributing](CONTRIBUTING.md) · [Security and maintenance](SECURITY.md) · [Alpha release notes](docs/releases/v0.5.0.md)
+[Contributing](CONTRIBUTING.md) · [Security and maintenance](SECURITY.md) · [Candidate release notes](docs/releases/v1.0.0-rc.1.md)
 
 No license has been selected for Veyra's original application code. Public source availability alone does not grant reuse/redistribution rights. Third-party data and tooling retain their own licenses.

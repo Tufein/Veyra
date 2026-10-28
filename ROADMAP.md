@@ -6,7 +6,7 @@
 
 ## Voortgang naar 1.0
 
-Op verzoek wordt de huidige code voorbereid als **1.0.0-rc.1**. De kandidaat bundelt release-optimalisatie, correcties voor imports/downloads/site-rechten/sync en uitgebreidere software- en publicatiecontroles. [Verificatie](docs/verification-1.0-rc.1.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
+Op verzoek is de huidige code voorbereid als **1.0.0-rc.1**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.1) en bundelt release-optimalisatie, correcties voor imports/downloads/site-rechten/sync en uitgebreidere software- en publicatiecontroles. [Verificatie](docs/verification-1.0-rc.1.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
 
 ## Huidige stand
 

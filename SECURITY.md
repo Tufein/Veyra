@@ -4,7 +4,7 @@ Veyra is an experimental browser, not a stable security-reviewed product. Keep p
 
 Use GitHub private vulnerability reporting **if the repository owner has enabled it**. No separate confidential contact is configured in this repository. If private reporting is unavailable, open a minimal issue requesting a private contact without publishing exploit details or personal data. Availability of a private reporting channel remains an owner action.
 
-The maintained development line and latest published alpha are 0.5.0. No security-response SLA or stable support duration is promised. Bug reports should include Veyra/Android/Gecko versions, device model and a public minimal reproduction where possible.
+The maintained development line and latest published candidate are 1.0.0-rc.1. The stable 1.0 acceptance gates remain open; see docs/release-readiness.json. No security-response SLA or stable support duration is promised. Bug reports should include Veyra/Android/Gecko versions, device model and a public minimal reproduction where possible.
 
 ## Maintenance procedure
 
