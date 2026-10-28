@@ -1,6 +1,6 @@
-# Verification — 0.5.0 candidate
+# Verification — 0.5.0 alpha
 
-Recorded 27 October 2026 for version name **0.5.0**, version code **7**, application ID **nl.veyra.browser**. This record describes a local candidate; no v0.5.0 GitHub release/tag has been published yet. The last published alpha remains 0.4.2.
+Recorded 27 October 2026 for version name **0.5.0**, version code **7**, application ID **nl.veyra.browser**. The [0.5.0 alpha release](https://github.com/Tufein/Veyra/releases/tag/v0.5.0) is published with the same locally verified APKs.
 
 ## Completed checks
 
@@ -14,6 +14,8 @@ Recorded 27 October 2026 for version name **0.5.0**, version code **7**, applica
 | Python migration/signing suite | **8 passed** (5 migration, 3 certificate-output cases) |
 | Python helper syntax | Parsed successfully |
 | Public release asset preparation | Passed all three APK certificates/ABIs/package/version checks |
+| GitHub publication | [Actions run 40655173354](https://github.com/Tufein/Veyra/actions/runs/40655173354) passed; pinned certificates and original checksums reverified before publishing |
+| Public downloads | Three APKs and SHA256SUMS.txt uploaded; GitHub asset SHA-256 digests match local files; all four public URLs return HTTP 200 |
 | Test APK certificate | Verified; matches the same fixed certificate |
 | Delivery checksums | `sha256sum --check SHA256SUMS.txt`: all three APKs passed |
 | Signing-key loader | Missing secrets rejected; supplied fixed key accepted; temporary key mode 0600 |
@@ -47,7 +49,7 @@ The Android 37 signing tool emits `V2 Signer: ...`; the parser also supports the
 
 The new private key is outside the repository, and no key/password is included in release assets. **Durable owner-controlled backup and repository-secret provisioning remain open.** Public release CI requires those secrets and fails closed; normal push builds can still create development-key artifacts.
 
-GitHub authentication and source push were restored on 27 October 2026. The earlier HTTP 401 blocker is resolved. Reading the repository public key/listing Secrets still returns **HTTP 403 Resource not accessible by integration**; no signing secrets were stored. The 0.5 alpha is prepared for direct upload from the locally verified fixed-key APKs, rather than a successful automated release build. Each actual delivery APK was rechecked for package ID, version name/code, ABI, pinned certificate and SHA-256. Automated fixed-key release CI remains blocked until repository Secrets access is granted.
+GitHub authentication and source push were restored on 27 October 2026. The earlier HTTP 401 blocker is resolved. Reading the repository public key/listing Secrets still returns **HTTP 403 Resource not accessible by integration**; no signing secrets were stored. The direct cloud-to-uploads.github.com path returns HTTP 401. Publication was completed through repository Actions using the already signed APKs and the job’s normal contents-write permission. A temporary orphan branch carried compressed public APKs and verification tools; it was removed after publication. No private signing material was transferred or committed. This is successful verification/publication of existing builds, rather than an automated rebuild. Each actual delivery APK was rechecked for package ID, version name/code, ABI, pinned certificate and SHA-256. Automated fixed-key release CI remains blocked until repository Secrets access is granted.
 
 ## Not completed
 
@@ -56,6 +58,6 @@ GitHub authentication and source push were restored on 27 October 2026. The earl
 - No three-extension behavioral/update acceptance. Official packages and a compiled test runner are not compatibility evidence; see [extensions](extensions.md).
 - No real two-client synchronization against an owner-managed server and no independent cryptographic audit.
 - No TalkBack, controller/handheld acceptance, real-site/Autofill matrix or startup/page/memory/battery measurements.
-- A v0.5.0 draft exists (release ID 425807114), but all asset uploads, including the small checksum file, fail with HTTP 401 on uploads.github.com. No assets are attached and it remains unpublished. API access and source push work; the active environment reports no configured secret bindings. A working secure GH_TOKEN binding covering the upload host is still needed.
+- Repository signing-secret provisioning and an independent owner-controlled private-key backup remain open; direct uploads from this cloud environment still return HTTP 401. These do not change the published files or the completed Actions publication.
 
 Follow [device-validation.md](device-validation.md). All 1.0 release gates stay open until their actual evidence exists. Keep [migration instructions](signing-and-migration.md) with every first fixed-key APK handoff.

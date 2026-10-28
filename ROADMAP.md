@@ -1,6 +1,6 @@
 # Veyra — productroadmap
 
-Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. De ontwikkelstand is de **0.5.0-kandidaat**. De laatste daadwerkelijk gepubliceerde alpha blijft 0.4.2 zolang de nieuwe GitHub-release ontbreekt. Zie het [0.5-verificatieverslag](docs/verification-0.5.md), de [migratieprocedure](docs/signing-and-migration.md) en de open [apparaatmatrix](docs/device-validation.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
+Bijgewerkt: 27 oktober 2026. Dit is de ontwikkelvolgorde, geen kalenderbelofte. **0.5.0 is gepubliceerd als testalpha** met APK’s voor drie architecturen. Dit sluit de open hardware- en 1.0-poorten niet af. Zie het [0.5-verificatieverslag](docs/verification-0.5.md), de [migratieprocedure](docs/signing-and-migration.md) en de open [apparaatmatrix](docs/device-validation.md). **Geïmplementeerd**, **automatisch getest** en **op een apparaat geverifieerd** zijn verschillende statussen.
 
 Veyra wordt een rustige, persoonlijke Android-browser voor telefoons en handhelds. De prioriteit is betrouwbare dagelijkse navigatie met een verzorgde Material You-interface, bruikbare Firefox-extensies en duidelijke privacykeuzes. Meer functies mogen de browser niet onoverzichtelijk of onnodig zwaar maken.
 

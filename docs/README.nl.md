@@ -1,6 +1,6 @@
 # Veyra gebruiken
 
-De ontwikkelversie is **0.5.0-kandidaat**, voor Android 9 of nieuwer. De laatste gepubliceerde alpha blijft [0.4.2](https://github.com/Tufein/Veyra/releases/tag/v0.4.2) totdat de nieuwe release werkelijk beschikbaar is. Er is nog geen stabiele 1.0 of Play Store-release.
+De huidige testalpha is **0.5.0**, voor Android 9 of nieuwer. [Download de ARM64-APK](https://github.com/Tufein/Veyra/releases/download/v0.5.0/Veyra-0.5.0-arm64-v8a-debug.apk), of kies een andere architectuur op de [releasepagina](https://github.com/Tufein/Veyra/releases/tag/v0.5.0). Er is nog geen stabiele 1.0 of Play Store-release.
 
 **Oude app geïnstalleerd? Exporteer eerst je gegevens.** De nieuwe vaste sleutel verschilt van eerdere CI-alpha’s. Lees [ondertekening en migratie](signing-and-migration.md) vóór verwijderen of installeren. Een nieuwe sleutel kan een oude installatie niet rechtstreeks bijwerken.
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.0 — candidate (not yet published)
+## 0.5.0 — alpha
 
 - Add local searchable history; keep private visits out of history and saved tab state.
 - Add authenticated-response downloads with Android document destinations, foreground progress, cancellation, interrupted-transfer recovery, safe names and opening saved files. Retry reopens the source instead of replaying POST data.
@@ -12,7 +12,7 @@
 - Improve extension permission summaries, tab API handling and disable-all recovery; add official three-add-on fixture preparation and isolated-device runners. Hardware compatibility remains unverified.
 - Add complete Dutch/English interface resources, RTL improvements, tablet settings navigation, keyboard focus and native Android-widget rendering checks.
 - Introduce a new fixed signing certificate and fail-closed public release validation. Older public alpha keys are unavailable: export before changing installations; migration assistance does not preserve cookies/logins.
-- Add privacy/sync/migration documentation, a device acceptance matrix, benchmark tooling, dependency maintenance and issue templates. GitHub secret provisioning/publication and real-device release gates remain open.
+- Add privacy/sync/migration documentation, a device acceptance matrix, benchmark tooling, dependency maintenance and issue templates. The fixed-key APKs are published with certificate/checksum verification through GitHub Actions. Repository signing-secret provisioning and real-device release gates remain open.
 
 
 ## 0.4.2 — 2026-10-27 (alpha)
