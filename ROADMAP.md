@@ -6,20 +6,20 @@
 
 ## Voortgang naar 1.0
 
-Op verzoek is de huidige code voorbereid als **1.0.0-rc.1**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.1) en bundelt release-optimalisatie, correcties voor imports/downloads/site-rechten/sync en uitgebreidere software- en publicatiecontroles. [Verificatie](docs/verification-1.0-rc.1.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
+Op verzoek is de huidige code voorbereid als **1.0.0-rc.2**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.2) en bundelt release-optimalisatie, correcties voor imports/downloads/site-rechten/sync en uitgebreidere software- en publicatiecontroles. Rc.2 voegt zichtbare InPrivate-status, een privé-startpagina, privacybewust dupliceren, normaal heropenen, webadres kopiëren en bevestigd sluiten van alle privétabs toe. [Verificatie](docs/verification-1.0-rc.2.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
 
 ## Huidige stand
 
 | Onderdeel | Wat er is | Wat nog openstaat |
 | --- | --- | --- |
 | Vormgeving | Eigen Material You-instellingen, gedeelde bibliotheek, menu- en tabpanelen, tabletindeling, NL/EN | Controle en verfijning op echte schermen, TalkBack en controller |
-| Dagelijks browsen | Geschiedenis, downloads, backups, zoekvoorkeuren, browserrol, normale tabadressen herstellen | Ingelogde/onderbroken downloads, formulierbehoud en langdurig toestelgebruik |
-| Privacy | Gecko-privétabs, afzonderlijk wissen, sitepermissies en normale cookietellingen | Isolatie na crash/procesbeëindiging en gerichte verwijdering op hardware |
+| Dagelijks browsen | Geschiedenis, downloads, backups, zoekvoorkeuren, browserrol, normale tabadressen herstellen, dupliceren/kopiëren en tijdelijk normaal heropenen | Ingelogde/onderbroken downloads, formulierbehoud en langdurig toestelgebruik |
+| Privacy | Gecko-privétabs met blijvende InPrivate-aanduiding, afzonderlijk wissen, sitepermissies en normale cookietellingen | Isolatie na crash/procesbeëindiging en gerichte verwijdering op hardware |
 | Extensies | Firefox-catalogus, ondertekende installatie, rechten, updates en herstelbeheer | Werkelijk gedrag van uBlock Origin, Dark Reader en ClearURLs |
 | Synchronisatie | Handmatige versleutelde bladwijzer-/snelkoppelingensync met eigen HTTPS-server | Twee echte clients, serverconflicten, offline/herstel en onafhankelijke beveiligingsreview |
 | Releases | Drie publieke APK’s, vaste certificaatvingerafdruk en checksums; publicatie via Actions geslaagd | Onafhankelijke sleutelbackup, geautomatiseerde rebuilds en echte update met gegevensbehoud |
 
-De lokale controles tellen 104 JVM-tests, 8 beschermingstests en 8 Python-tests; Android Lint is schoon. De reguliere Android CI en de publicatiecontrole op GitHub zijn geslaagd. Dit is afzonderlijk bewijs van de nog niet uitgevoerde apparaatcontroles.
+De actuele aantallen en software-/publicatiebewijzen staan in het [verificatieverslag](docs/verification-1.0-rc.2.md). Ze staan los van de nog niet uitgevoerde apparaatcontroles.
 
 ## Nieuwe werkvolgorde
 
