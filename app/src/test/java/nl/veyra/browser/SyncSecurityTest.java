@@ -41,6 +41,17 @@ public final class SyncSecurityTest {
         Fake create=new Fake(201,"",null);new SyncClient(url->create).upload("https://example.org/sync","","",new byte[]{1},null);assertEquals("*",create.getRequestProperty("If-None-Match"));
         Fake conflict=new Fake(412,"",null);try{new SyncClient(url->conflict).upload("https://example.org/sync","","",new byte[]{1},"\"old\"");fail();}catch(IOException expected){assertTrue(expected.getMessage().contains("Conflict"));}
     }
+    @Test public void malformedEtagsCannotTurnConditionalWritesIntoWildcardOverwrites()throws Exception {
+        for(String value:new String[]{"*","unquoted","W/\"weak\"","\"one\", \"two\"","\"newline\n\""}) {
+            Fake server=new Fake(200,"data",value);
+            try{new SyncClient(url->server).fetch("https://example.org/sync","","");fail(value);}catch(IOException expected){}
+            try{new SyncClient(url->server).upload("https://example.org/sync","","",new byte[]{1},value);fail(value);}catch(IOException expected){}
+        }
+    }
+    @Test public void asynchronousAcceptanceDoesNotClaimDataWasSaved()throws Exception {
+        Fake server=new Fake(202,"",null);
+        try{new SyncClient(url->server).upload("https://example.org/sync","","",new byte[]{1},null);fail();}catch(IOException expected){assertTrue(expected.getMessage().contains("niet bevestigd"));}
+    }
     @Test public void remoteReadIsBoundedAnd404MeansCreate()throws Exception{
         Fake absent=new Fake(404,"",null);assertNull(new SyncClient(url->absent).fetch("https://example.org/sync","","").data);
         Fake oversized=new Fake(200,new byte[SyncCrypto.MAX_ENVELOPE+1],"\"one\"");try{new SyncClient(url->oversized).fetch("https://example.org/sync","","");fail();}catch(IOException expected){}

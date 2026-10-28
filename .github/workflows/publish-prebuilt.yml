@@ -1,0 +1,51 @@
+name: Publish verified existing APKs
+on:
+  push:
+    branches: ['codex/publish-*']
+permissions:
+  contents: write
+concurrency:
+  group: prebuilt-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Validate readiness and publication inputs
+        run: |
+          python3 - <<'CHECK'
+          import json,os,re,sys
+          from pathlib import Path
+          sys.path.insert(0,'tools')
+          from release_readiness import assess
+          data=json.load(open('artifacts/publication.json'))
+          result=assess(data['tag'],json.load(open('docs/release-readiness.json')))
+          assert result['publication_allowed'],'Stable release evidence is incomplete'
+          assert re.fullmatch(r'[0-9a-f]{40}',data['source_commit'])
+          candidates=list(Path(os.environ['ANDROID_HOME']).glob('build-tools/*/apksigner'))
+          tool=max(candidates,key=lambda p:tuple(map(int,re.findall(r'\d+',p.parent.name))))
+          with open(os.environ['GITHUB_ENV'],'a') as output:
+              output.write('APKSIGNER='+str(tool)+'\nRELEASE_TAG='+data['tag']+'\n')
+          print(json.dumps(result,indent=2))
+          CHECK
+      - name: Restore signed release APKs
+        run: |
+          cat artifacts/payload.part-* > payload.tar.gz
+          sha256sum --check artifacts/payload.sha256
+          mkdir -p app/build/outputs/apk/release
+          tar --no-same-owner --no-same-permissions -xzf payload.tar.gz -C app/build/outputs/apk/release
+      - name: Verify certificate, package, ABI, release flags and original checksums
+        run: |
+          python3 .github/scripts/prepare_release.py --tag "$RELEASE_TAG" --variant release --output release-assets --apksigner "$APKSIGNER" --expected-certificate docs/signing-certificate-sha256.txt
+          cmp artifacts/SHA256SUMS.txt release-assets/SHA256SUMS.txt
+      - name: Upload missing verified assets and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 tools/publish_prebuilt.py

@@ -18,18 +18,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
+      RELEASE_TAG: ${{ github.ref_name }}
       VEYRA_SIGNING_STORE_PASSWORD: ${{ secrets.VEYRA_SIGNING_STORE_PASSWORD }}
       VEYRA_SIGNING_KEY_PASSWORD: ${{ secrets.VEYRA_SIGNING_KEY_PASSWORD }}
       VEYRA_SIGNING_KEY_ALIAS: ${{ secrets.VEYRA_SIGNING_KEY_ALIAS }}
     steps:
       - name: Check out tagged source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
+
+      - name: Check stable release readiness
+        run: python3 tools/release_readiness.py --tag "$RELEASE_TAG"
 
       - name: Load and verify fixed signing key
         env:
@@ -47,10 +51,10 @@ jobs:
         run: sdkmanager 'platforms;android-37.2' 'build-tools;37.0.0'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -58,7 +62,7 @@ jobs:
         run: python3 -m unittest discover -s tools -p 'test_*.py'
 
       - name: Build, unit tests and Lint
-        run: ./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+        run: ./gradlew --no-daemon --max-workers=3 :app:assembleRelease :app:testDebugUnitTest :app:testReleaseUnitTest :app:syncHttpsIntegrationTest :app:lintRelease
 
       - name: Test browser protection
         run: node --test tools/protection_test.cjs
@@ -71,10 +75,10 @@ jobs:
           --tag "$RELEASE_TAG"
           --output release-assets
           --apksigner "$ANDROID_HOME/build-tools/37.0.0/apksigner"
-          --expected-certificate docs/signing-certificate-sha256.txt
+          --expected-certificate docs/signing-certificate-sha256.txt --variant release
 
       - name: Upload verified release assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veyra-release-assets
           path: release-assets/*
@@ -87,7 +91,7 @@ jobs:
 
       - name: Upload validation reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veyra-release-reports
           path: |
@@ -105,10 +109,10 @@ jobs:
       contents: write
     steps:
       - name: Check out release notes
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download verified APKs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: veyra-release-assets
           path: release-assets
@@ -130,7 +134,8 @@ jobs:
           if [ "$RELEASE_TAG" = 'v0.3.0' ]; then
             title="Veyra 0.3.0 — First alpha release"
           fi
+          prerelease=$(python3 -c 'import sys; sys.path.insert(0,"tools"); from release_readiness import assess; import json,os; print(str(assess(os.environ["RELEASE_TAG"],json.load(open("docs/release-readiness.json")))["prerelease"]).lower())')
           gh release create "$RELEASE_TAG" \
             release-assets/*.apk release-assets/SHA256SUMS.txt \
-            --verify-tag --draft --prerelease --title "$title" --notes-file "$notes"
-          gh release edit "$RELEASE_TAG" --draft=false --prerelease
+            --verify-tag --draft --prerelease="$prerelease" --title "$title" --notes-file "$notes"
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease="$prerelease"

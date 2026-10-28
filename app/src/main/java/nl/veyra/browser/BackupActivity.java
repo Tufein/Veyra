@@ -28,7 +28,7 @@ public final class BackupActivity extends PageActivity {
     private void launch(Intent intent,int request) {try{startActivityForResult(intent,request);}catch(android.content.ActivityNotFoundException unavailable){message(getString(R.string.ui_no_file_picker_is_available_7a3e5));}}
     @Override protected void onActivityResult(int request,int result,Intent data) {
         super.onActivityResult(request,result,data);if(result!=RESULT_OK||data==null||data.getData()==null)return;
-        Uri uri=data.getData();boolean settings=includeSettings;SharedPreferences preferences=getSharedPreferences("veyra",MODE_PRIVATE);
+        Uri uri=data.getData();boolean settings=includeSettings,restoreTabs=includeTabs;SharedPreferences preferences=getSharedPreferences("veyra",MODE_PRIVATE);
         final byte[] backup;
         try{backup=request==EXPORT?BackupCodec.export(preferences,settings,includeTabs):null;}
         catch(IllegalArgumentException tooLarge){message(tooLarge.getMessage());return;}
@@ -42,10 +42,10 @@ public final class BackupActivity extends PageActivity {
                     try(InputStream input=getContentResolver().openInputStream(uri)){if(input==null)throw new java.io.IOException();preview=BackupCodec.parse(BackupCodec.read(input));}
                     runOnUiThread(()->{if(isDestroyed()||isFinishing())return;
                         new MaterialAlertDialogBuilder(this).setTitle(getString(R.string.ui_merge_backup_29005))
-                                .setMessage((preview.tabs.isEmpty()?"":getString(R.string.backup_import_tabs,preview.tabs.size()))+preview.bookmarks.size()+getString(R.string.ui_bookmarks_and_54838)+preview.shortcuts.size()+getString(R.string.ui_shortcuts_existing_websites_are_retained_1077f)
+                                .setMessage((!restoreTabs||preview.tabs.isEmpty()?"":getString(R.string.backup_import_tabs,preview.tabs.size()))+preview.bookmarks.size()+getString(R.string.ui_bookmarks_and_54838)+preview.shortcuts.size()+getString(R.string.ui_shortcuts_existing_websites_are_retained_1077f)
                                         +(settings?getString(R.string.ui_supported_preferences_will_be_applied_25c77):getString(R.string.ui_preferences_will_not_change_45a4e)))
                                 .setNegativeButton(getString(R.string.ui_cancel_c6a8d),null).setPositiveButton(getString(R.string.ui_import_1b9b2),(d,w)->{
-                                    try{BackupCodec.merge(preferences,preview,settings);message(getString(R.string.ui_backup_imported_fc396));setResult(RESULT_OK);finish();}
+                                    try{BackupCodec.merge(preferences,preview,settings,restoreTabs);message(getString(R.string.ui_backup_imported_fc396));setResult(RESULT_OK);finish();}
                                     catch(IllegalArgumentException invalid){message(invalid.getMessage());}
                                 }).show();
                     });

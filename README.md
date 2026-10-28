@@ -4,7 +4,7 @@
 
 A native Android browser built with Java, Material 3 and Mozilla GeckoView. A calm start page, independent settings and a shared bookmark/shortcut library keep everyday controls close at hand.
 
-**Version:** 0.5.0 alpha · **Latest published alpha:** 0.5.0 · **Android:** 9+ (API 28).
+**Development:** 1.0.0-rc.1 · **Latest published alpha:** 0.5.0 · **Android:** 9+ (API 28).
 
 [Published releases](https://github.com/Tufein/Veyra/releases) · [Nederlandse handleiding](docs/README.nl.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [0.5 verification](docs/verification-0.5.md)
 
@@ -39,6 +39,10 @@ Normal tabs integrate with Android Autofill and link directly to the provider se
 
 Private tabs use real Gecko private contexts and are excluded from persisted normal tab/history data. Intentionally saved files, bookmarks and copied text can persist. Cookie isolation after crashes/process termination still needs device validation. Read the [privacy/data guide](docs/privacy.md) before relying on alpha behavior.
 
+## Preparing 1.0
+
+The 1.0.0-rc.1 candidate adds optimized non-debuggable builds and fixes import consent, download completion, host permission reset and sync concurrency handling. [Candidate verification](docs/verification-1.0-rc.1.md) and the [readiness report](docs/release-readiness.json) separate software checks from unrun device acceptance. A stable 1.0 launch remains gated on the latter.
+
 ## APKs and signing
 
 Download [0.5.0 alpha](https://github.com/Tufein/Veyra/releases/tag/v0.5.0), or the [ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v0.5.0/Veyra-0.5.0-arm64-v8a-debug.apk) for most modern phones. Public builds are debuggable alpha APKs, not Play Store production packages.
@@ -55,7 +59,7 @@ Use Android Studio, or JDK 21 and Android SDK Platform 37.2 / Build Tools 37.0.0
 git clone https://github.com/Tufein/Veyra.git
 cd Veyra
 export ANDROID_HOME=/path/to/Android/Sdk
-./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest
+./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:testDebugUnitTest :app:testReleaseUnitTest :app:syncHttpsIntegrationTest :app:assembleRelease :app:lintDebug :app:lintRelease :app:assembleDebugAndroidTest
 node --test tools/protection_test.cjs
 python3 -m unittest discover -s tools -p 'test_*.py'
 ```

@@ -1,4 +1,4 @@
-# Apparaatvalidatie voor 0.5
+# Apparaatvalidatie voor 0.5 en de 1.0-kandidaat
 
 Status op 27 oktober 2026: **niet uitgevoerd op fysieke toestellen**. De lokale software-emulator leverde geen bruikbaar testresultaat; Robolectric-renderingen zijn geen hardwarebewijs. Deze matrix blijft een vrijgavepoort voor beta/1.0.
 
@@ -42,3 +42,9 @@ python tools/smoke_test.py --serial DEVICE --confirm-isolated-test-device
 9. **Robuustheid/prestaties:** renderercrash/kill, achtergrond/hervatten en geheugendruk zonder reloadlus; gebruik de [benchmarkprocedure](benchmark.md), registreer ruwe resultaten en herhaal op dezelfde hardware.
 
 Schrijf per resultaat toestel, Android/ABI, appversie/certificaat, Gecko-versie, extensieversies, stappen en bewijs op. Rapporteer een mislukking of ontbrekend apparaat als zodanig; vul de matrix pas na echte uitvoering in.
+
+## Geoptimaliseerde 1.0-kandidaat
+
+De debug-instrumentatiesuite en de geoptimaliseerde release-APK hebben verschillende doelen. Voer de bestaande debug-app/test-APK-combinatie op een geïsoleerd toestel uit. Controleer daarnaast de daadwerkelijk gepubliceerde niet-debuggable release-APK handmatig: starten, browsen, webformulieren, media, permissies, private cookies en een echte update vanaf 0.5.0. Hosttests voor de releaseconfiguratie vervangen die proef niet.
+
+De runner meldt `installation_mode` en `update_verification`. Een schone installatie is `not_applicable` voor updatebewijs. Als Android na een update `run-as` weigert wegens de niet-debuggable doelbuild, blijft het voorkeurenbewijs `unverified_target_not_debuggable`; dit is geen bewijs van verlies of behoud. Controleer gegevens daarna in de app en voeg echte resultaten toe aan het vrijgaveverslag.

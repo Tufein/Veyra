@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "target": "1.0",
+  "review_rule": "Only mark passed after reviewing actual evidence; presence of a URL is a process check, not automatic proof of its contents.",
+  "gates": {
+    "signing_backup": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "The fixed private key remains outside Git. Independent owner-controlled encrypted backup has not been confirmed."
+    },
+    "automated_fixed_key_rebuild": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "Local fixed-key builds work; repository Secrets provisioning is denied with HTTP403."
+    },
+    "signed_update": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "Same certificate and increasing version code are checked; real-device update/data retention has not run."
+    },
+    "native_release_smoke": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "R8/release packaging checks run locally. Launching the optimized app on Android hardware is unverified."
+    },
+    "device_matrix": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "No Android device is attached in this cloud environment. Android9/12+/recent/handheld results are pending."
+    },
+    "privacy_storage": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "Automated store/private-mode checks exist; native cookie isolation and host deletion still need device evidence."
+    },
+    "extension_matrix": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "Official packages prepared; install/popup/update/recovery scenarios on hardware are pending."
+    },
+    "live_two_device_sync": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "Real local HTTPS protocol tests use independent JVM clients; two Android clients and a managed server remain pending."
+    },
+    "accessibility_handheld": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "NL/EN/RTL/large-font native-widget checks exist; TalkBack and controller hardware tests remain pending."
+    },
+    "benchmark_baseline": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "No phone startup/page/memory/battery measurements have been run."
+    },
+    "private_security_reporting": {
+      "status": "pending",
+      "evidence": null,
+      "notes": "GitHub reports this feature disabled; enabling it was denied by the current integration (HTTP403)."
+    }
+  },
+  "candidate": "1.0.0-rc.1",
+  "software_validation": {
+    "debug_host_tests": 114,
+    "release_host_tests": 114,
+    "isolated_https_integration_tests": 5,
+    "protection_tests": 8,
+    "python_tool_tests": 22,
+    "lint_debug_findings": 0,
+    "lint_release_findings": 0,
+    "native_device_tests": "not_run",
+    "release_flags": "non-debuggable; minified; resources shrunk; pinned certificate; package/version/ABI and 16KiB zip alignment checked",
+    "elf_alignment": "13 native libraries per ARM64 and x86_64 APK checked for 16KiB load alignment"
+  }
+}

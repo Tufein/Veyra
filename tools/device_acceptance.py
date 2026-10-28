@@ -29,6 +29,10 @@ adb = ['adb', '-s', args.serial]
 def run(command, **kwargs):
     return subprocess.run(command, check=True, capture_output=True, **kwargs).stdout
 
+def sha256_file(path):
+    with path.open('rb') as source:
+        return hashlib.file_digest(source, 'sha256').hexdigest()
+
 def fingerprint(apk):
     text = run([args.apksigner, 'verify', '--print-certs', str(apk)], text=True)
     return certificate_digest(text)
@@ -38,8 +42,13 @@ if fingerprint(args.apk) != expected or fingerprint(args.test_apk) != expected:
 report = {'model': run(adb + ['shell', 'getprop', 'ro.product.model'], text=True).strip(),
           'android': run(adb + ['shell', 'getprop', 'ro.build.version.release'], text=True).strip(),
           'abi': run(adb + ['shell', 'getprop', 'ro.product.cpu.abi'], text=True).strip(),
-          'certificate_sha256': expected, 'app_sha256': hashlib.file_digest(args.apk.open('rb'), 'sha256').hexdigest()}
-paths = run(adb + ['shell', 'pm', 'path', 'nl.veyra.browser'], text=True).strip()
+          'certificate_sha256': expected, 'app_sha256': sha256_file(args.apk)}
+packages = run(adb + ['shell', 'pm', 'list', 'packages', 'nl.veyra.browser'], text=True).splitlines()
+installed = 'package:nl.veyra.browser' in [line.strip() for line in packages]
+paths = run(adb + ['shell', 'pm', 'path', 'nl.veyra.browser'], text=True).strip() if installed else ''
+report['installation_mode'] = 'update' if installed else 'fresh'
+report['preferences_retained_on_install'] = None
+report['update_verification'] = 'unverified' if installed else 'not_applicable'
 before = None
 if paths:
     with tempfile.TemporaryDirectory() as temporary:
@@ -53,10 +62,14 @@ if paths:
         before = hashlib.sha256(result.stdout).hexdigest()
 run(adb + ['install', '-r', str(args.apk)])
 if before is not None:
-    after = run(adb + ['exec-out', 'run-as', 'nl.veyra.browser', 'cat', 'shared_prefs/veyra.xml'])
-    report['preferences_retained_on_install'] = hashlib.sha256(after).hexdigest() == before
-    if not report['preferences_retained_on_install']:
-        raise SystemExit('Preferences changed during update. Investigate on this test device before releasing.')
+    result = subprocess.run(adb + ['exec-out', 'run-as', 'nl.veyra.browser', 'cat', 'shared_prefs/veyra.xml'], capture_output=True)
+    if result.returncode == 0:
+        report['preferences_retained_on_install'] = hashlib.sha256(result.stdout).hexdigest() == before
+        report['update_verification'] = 'passed' if report['preferences_retained_on_install'] else 'failed'
+        if not report['preferences_retained_on_install']:
+            raise SystemExit('Preferences changed during update. Investigate on this test device before releasing.')
+    else:
+        report['update_verification'] = 'unverified_target_not_debuggable'
 run(adb + ['install', '-r', str(args.test_apk)])
 result = run(adb + ['shell', 'am', 'instrument', '-w', 'nl.veyra.browser.test/androidx.test.runner.AndroidJUnitRunner'], text=True)
 report['instrumentation_skipped'] = len(re.findall(r'INSTRUMENTATION_STATUS_CODE: -(?:3|4)\b',result))
@@ -70,7 +83,7 @@ if args.addon_dir and report['instrumentation_passed']:
         if not re.fullmatch(r'[a-z0-9-]+',slug):
             raise SystemExit('Unsafe fixture filename')
         fixture=args.addon_dir/(slug+'.xpi')
-        if hashlib.file_digest(fixture.open('rb'),'sha256').hexdigest()!=record['sha256']:
+        if sha256_file(fixture)!=record['sha256']:
             raise SystemExit('Fixture checksum mismatch')
         filename='validation-'+slug+'.xpi'
         run(adb+['exec-out','run-as','nl.veyra.browser','tee',f'cache/{filename}'],input=fixture.read_bytes())

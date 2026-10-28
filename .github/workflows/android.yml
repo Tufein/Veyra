@@ -19,10 +19,10 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -38,10 +38,10 @@ jobs:
         run: sdkmanager 'platforms;android-37.2' 'build-tools;37.0.0'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Set up Node for protection tests
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -52,10 +52,10 @@ jobs:
         run: python3 -m unittest discover -s tools -p 'test_*.py'
 
       - name: Build, test and lint
-        run: ./gradlew --no-daemon :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+        run: ./gradlew --no-daemon --max-workers=3 :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:testReleaseUnitTest :app:syncHttpsIntegrationTest :app:lintDebug :app:lintRelease :app:assembleDebugAndroidTest
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veyra-debug-${{ github.sha }}
           path: app/build/outputs/apk/debug/*.apk
@@ -64,7 +64,7 @@ jobs:
 
       - name: Upload test and Lint reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veyra-reports-${{ github.sha }}
           path: |

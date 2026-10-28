@@ -207,4 +207,5 @@
   <string name="sync_confirm_changes">Confirm sync changes</string>
   <string name="sync_final_count">To remove locally: %1$d. Bookmarks after sync: %2$d. Shortcuts: %3$d.\n\nThe selected version will be encrypted on the server and applied on this device.</string>
     <string name="show_more">Show more</string>
+    <string name="sync_not_confirmed">The server has not confirmed saving yet. Sync again.</string>
 </resources>

@@ -102,11 +102,33 @@ public final class RoadmapStorageTest {
                 new TabStateStore.Entry("https://private.example/","Private",false,true)))).commit();
         BackupCodec.Preview preview=BackupCodec.parse(BackupCodec.export(preferences,false,true));
         assertEquals(1,preview.tabs.size());assertEquals("https://normal.example/",preview.tabs.get(0).url);
-        BackupCodec.merge(preferences,preview,false);assertTrue(preferences.getString("tabs_import","").contains("normal.example"));
+        BackupCodec.merge(preferences,preview,false);assertFalse(preferences.contains("tabs_import"));
+        BackupCodec.merge(preferences,preview,false,true);assertTrue(preferences.getString("tabs_import","").contains("normal.example"));
         assertFalse(preferences.getString("tabs_import","").contains("private.example"));
         JSONObject unsafe=new JSONObject(new String(BackupCodec.export(preferences,false),StandardCharsets.UTF_8));
         unsafe.put("tabs",new JSONArray().put(new JSONObject().put("url","https://private.example/").put("private",true)));
         try{BackupCodec.parse(unsafe.toString().getBytes(StandardCharsets.UTF_8));fail();}catch(IllegalArgumentException expected){}
+    }
+    @Test public void importingTabsPreservesPendingAddressesAndRejectsOverflowAtomically() {
+        preferences.edit().putString("tabs_import",TabStateStore.encode(Arrays.asList(new TabStateStore.Entry("https://pending.example/","Pending",false,false)))).commit();
+        BackupCodec.Preview preview=BackupCodec.parse(BackupCodec.export(preferences,false));
+        for(int i=0;i<12;i++)preview.tabs.add(new TabStateStore.Entry("https://import.example/"+i,"Import",false,false));
+        java.util.Map<String,?> before=preferences.getAll();
+        try{BackupCodec.merge(preferences,preview,false,true);fail();}catch(IllegalArgumentException expected){}
+        assertEquals(before,preferences.getAll());
+        preview.tabs=preview.tabs.subList(0,1);BackupCodec.merge(preferences,preview,false,true);
+        assertEquals(2,TabStateStore.read(preferences.getString("tabs_import","[]")).size());
+    }
+    @Test public void hostDataResetRevokesEveryPortWithoutAffectingOtherSites() {
+        android.content.SharedPreferences saved=RuntimeEnvironment.getApplication().getSharedPreferences("host-reset",0);saved.edit().clear().commit();
+        SitePermissions grants=new SitePermissions(saved);
+        grants.set("https://example.org/",SitePermissions.CAMERA,SitePermissions.ALLOW,false);
+        grants.set("https://example.org:8443/",SitePermissions.LOCATION,SitePermissions.ALLOW,false);
+        grants.set("https://other.example/",SitePermissions.CAMERA,SitePermissions.ALLOW,false);
+        grants.resetHost("example.org");
+        assertEquals(SitePermissions.ASK,grants.get("https://example.org:8443/",SitePermissions.LOCATION,false));
+        assertEquals(SitePermissions.ASK,grants.get("https://example.org/",SitePermissions.CAMERA,false));
+        assertEquals(SitePermissions.ALLOW,grants.get("https://other.example/",SitePermissions.CAMERA,false));
     }
     @Test public void explicitPreferencesBackupKeepsBlockingExceptionsWithoutGrantingSitePermissions(){
         preferences.edit().putStringSet("ad_exceptions",new java.util.HashSet<>(Arrays.asList("example.org"))).putInt("resident_limit",2).commit();

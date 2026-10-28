@@ -6,6 +6,7 @@ final class ErrorText {
     static String display(android.content.Context context,String value) {
         if(value==null)return "";
         if(!context.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("en"))return value;
+        value=value.replace("De server heeft opslaan nog niet bevestigd. Synchroniseer opnieuw.",context.getString(R.string.sync_not_confirmed));
         value=value.replace("Onderbroken doordat Veyra werd afgesloten. Kies opnieuw aanvragen; controleer het gedeeltelijke bestand.",context.getString(R.string.error_23));
         value=value.replace("Conflict: het serverbestand is ondertussen gewijzigd. Synchroniseer opnieuw; er is niets overschreven.",context.getString(R.string.error_15));
         value=value.replace("De samengevoegde backup heeft te veel websites. Maak eerst ruimte op de startpagina.",context.getString(R.string.error_06));

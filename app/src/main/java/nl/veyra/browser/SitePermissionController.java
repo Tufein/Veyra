@@ -3,7 +3,7 @@ package nl.veyra.browser;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.widget.CheckBox;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +64,7 @@ final class SitePermissionController {
         if(origin==null||!valid.getAsBoolean()||activity.isFinishing()||activity.isDestroyed()){answer.accept(false);return;}
         boolean allowed=true;for(String type:types){int state=store.get(uri,type,privateMode);if(state==SitePermissions.BLOCK){answer.accept(false);return;}allowed&=state==SitePermissions.ALLOW;}
         if(allowed){answer.accept(true);return;}
-        CheckBox remember=new CheckBox(activity);remember.setText(activity.getString(R.string.ui_remember_for_this_website_826e0));remember.setMinHeight(Math.round(48*activity.getResources().getDisplayMetrics().density));remember.setEnabled(!privateMode);
+        MaterialCheckBox remember=new MaterialCheckBox(activity);remember.setText(activity.getString(R.string.ui_remember_for_this_website_826e0));remember.setMinHeight(Math.round(48*activity.getResources().getDisplayMetrics().density));remember.setEnabled(!privateMode);
         // Gecko stores geolocation decisions. Make that persistence explicit rather than offering a false one-time grant.
         if(!privateMode && java.util.Arrays.asList(types).contains(SitePermissions.LOCATION)){remember.setChecked(true);remember.setEnabled(false);}
         StringBuilder body=new StringBuilder(origin).append(activity.getString(R.string.ui_requests_access_to_d7e16));for(String type:types)body.append("\n• ").append(SitePermissions.label(activity,type));

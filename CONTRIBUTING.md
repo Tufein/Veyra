@@ -21,7 +21,7 @@ Create a branch for your change. Keep local SDK paths, build output, signing key
 ## Check your work
 
 ```sh
-./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
+./gradlew :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:testReleaseUnitTest :app:syncHttpsIntegrationTest :app:lintDebug :app:lintRelease
 node --test tools/protection_test.cjs
 python3 -m unittest discover -s tools -p 'test_*.py'
 # With a connected isolated test device:
@@ -59,3 +59,9 @@ The settings hub is a separate activity with internal detail navigation. Keep ed
 ## APK delivery
 
 The repository owner requests a downloadable APK for every completed app change. Build and validate the APKs, publish a new versioned GitHub alpha release with accurate notes and checksums, and verify the public download links before handing off. Include the direct ARM64 download link. Do not finish with source changes alone or overwrite an existing release. Preserve signing/update limitations until stable signing is configured. If an external publication step is blocked, deliver the locally verified APKs, preserve the source on GitHub and state the actual blocker; do not substitute an incompatible key or claim a release that does not exist. Follow the [device acceptance matrix](docs/device-validation.md) and [maintenance procedure](SECURITY.md).
+
+## Candidate and stable publication
+
+Use `tools/release_readiness.py --tag v1.0.0-rc.1` to inspect open gates. Stable 1.x tags require reviewed evidence for every required gate; the checker validates report structure, not the truth of external reports. Never mark a gate passed from a build, mock or unrun command. Real TLS tests run in their own JVM because Robolectric modifies global security providers.
+
+Public APKs use `assembleRelease` with minification/resource shrinking, the fixed certificate and no debug/test-only flag. `.github/scripts/prepare_release.py --variant release` verifies the actual package/version/ABI and 16KiB zip alignment. Existing-file publication can use `tools/stage_release_upload.py --tag v1.0.0-rc.1 --output /private/path/new-attempt --apksigner /path/to/apksigner --push` after validation and a clean committed source tree. Only public APK payloads/checksums/metadata/tools go on the temporary orphan branch; no private key is staged. Wait for publication, verify remote digests/public URLs, then delete that temporary branch. Existing differing release assets are never clobbered.

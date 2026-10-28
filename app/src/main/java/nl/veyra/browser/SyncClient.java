@@ -27,7 +27,7 @@ final class SyncClient {
         HttpURLConnection connection=connection(endpoint,user,password,"GET");
         try{
             int code=connection.getResponseCode();if(code==404)return new Remote(null,null);check(code);
-            String etag=connection.getHeaderField("ETag");if(etag==null||etag.startsWith("W/"))throw new java.io.IOException("De server biedt geen bruikbare versiecontrole (ETag). Er is niets overschreven.");
+            String etag=connection.getHeaderField("ETag");if(!strongEtag(etag))throw new java.io.IOException("De server biedt geen bruikbare versiecontrole (ETag). Er is niets overschreven.");
             try(InputStream input=connection.getInputStream()){
                 ByteArrayOutputStream output=new ByteArrayOutputStream();byte[] buffer=new byte[8192];int count;
                 while((count=input.read(buffer))!=-1){if(output.size()+count>SyncCrypto.MAX_ENVELOPE)throw new java.io.IOException("Synchronisatiebestand te groot.");output.write(buffer,0,count);}
@@ -36,14 +36,21 @@ final class SyncClient {
         }finally{connection.disconnect();}
     }
     void upload(String endpoint,String user,String password,byte[] bytes,String etag)throws java.io.IOException {
+        if(etag!=null&&!strongEtag(etag))throw new java.io.IOException("De server biedt geen bruikbare versiecontrole (ETag). Er is niets overschreven.");
         if(bytes.length>SyncCrypto.MAX_ENVELOPE)throw new java.io.IOException("Synchronisatiebestand te groot.");
         HttpURLConnection connection=connection(endpoint,user,password,"PUT");
         try{
             connection.setDoOutput(true);connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty(etag==null?"If-None-Match":"If-Match",etag==null?"*":etag);
             connection.setFixedLengthStreamingMode(bytes.length);try(java.io.OutputStream output=connection.getOutputStream()){output.write(bytes);}
-            check(connection.getResponseCode());
+            int code=connection.getResponseCode();check(code);
+            if(code!=200&&code!=201&&code!=204)throw new java.io.IOException("De server heeft opslaan nog niet bevestigd. Synchroniseer opnieuw.");
         }finally{connection.disconnect();}
+    }
+    private static boolean strongEtag(String value) {
+        if(value==null||value.length()<2||value.length()>4096||value.charAt(0)!='"'||value.charAt(value.length()-1)!='"')return false;
+        for(int i=1;i<value.length()-1;i++){char c=value.charAt(i);if(c!='!'&&(c<'#'||c>'~')&&(c<128||c>255))return false;}
+        return true;
     }
     private static void check(int code)throws java.io.IOException {
         if(code>=200&&code<300)return;

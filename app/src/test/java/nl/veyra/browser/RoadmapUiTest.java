@@ -59,6 +59,10 @@ public final class RoadmapUiTest {
         RuntimeEnvironment.getApplication().getResources().updateConfiguration(config,RuntimeEnvironment.getApplication().getResources().getDisplayMetrics());
         launch(HistoryActivity.class);LibraryActivityTest.capture(root(),"history-rtl-large-font");assertNotNull(LibraryActivityTest.find(root(),"History"));
     }
+    @Test public void privacyChoicesUseMaterialComponents() {
+        launch(DataSettingsActivity.class);
+        View option=LibraryActivityTest.find(root(),"Clear browsing history");assertTrue(option instanceof com.google.android.material.checkbox.MaterialCheckBox);
+    }
     @Test public void returningFromImportRefreshesTheLibrary(){
         launch(LibraryActivity.class);controller.pause();
         new SavedSitesStore(RuntimeEnvironment.getApplication().getSharedPreferences("veyra",0)).saveBookmark(-1,"Imported website","https://example.org/imported");

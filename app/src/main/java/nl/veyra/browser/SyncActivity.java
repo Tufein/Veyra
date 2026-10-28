@@ -2,7 +2,7 @@ package nl.veyra.browser;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.CheckBox;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -15,7 +15,7 @@ public final class SyncActivity extends PageActivity {
     private TextInputEditText server,user,password,phrase;
     private TextView status;
     private MaterialButton sync,forget;
-    private CheckBox remember;
+    private MaterialCheckBox remember;
     private boolean busy;
     private volatile boolean closed;
     private char[] activeRecovery;
@@ -30,7 +30,7 @@ public final class SyncActivity extends PageActivity {
         password.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         phrase.setInputType(android.text.InputType.TYPE_CLASS_TEXT|android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         for(TextInputEditText input:new TextInputEditText[]{server,user,password,phrase})input.setSaveEnabled(false);
-        remember=new CheckBox(this);remember.setText(R.string.ui_store_connection_details_encrypted_on_this_device_14832);remember.setMinHeight(ui.dp(56));ui.add(content,remember,14);
+        remember=new MaterialCheckBox(this);remember.setText(R.string.ui_store_connection_details_encrypted_on_this_device_14832);remember.setMinHeight(ui.dp(56));ui.add(content,remember,14);
         try {
             String saved=LocalSecrets.read(this);
             if(saved!=null){JSONObject values=new JSONObject(saved);server.setText(values.optString("server"));user.setText(values.optString("user"));password.setText(values.optString("password"));phrase.setText(values.optString("phrase"));remember.setChecked(true);}

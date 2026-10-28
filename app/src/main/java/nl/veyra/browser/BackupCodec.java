@@ -75,7 +75,8 @@ final class BackupCodec {
         }
         return result.toByteArray();
     }
-    static void merge(SharedPreferences preferences,Preview preview,boolean settings) {
+    static void merge(SharedPreferences preferences,Preview preview,boolean settings) { merge(preferences,preview,settings,false); }
+    static void merge(SharedPreferences preferences,Preview preview,boolean settings,boolean restoreTabs) {
         SavedSitesStore store=new SavedSitesStore(preferences);
         List<SavedSitesStore.Site> bookmarks=new ArrayList<>(store.bookmarks()),pins=new ArrayList<>(store.shortcuts());
         for(SavedSitesStore.Site site:preview.bookmarks)if(SavedSitesStore.indexOf(bookmarks,site.url)<0)bookmarks.add(site);
@@ -94,7 +95,11 @@ final class BackupCodec {
             else if(value instanceof Number)editor.putInt(key,((Number)value).intValue());
             else editor.putString(key,(String)value);
         }
-        if(!preview.tabs.isEmpty())editor.putString("tabs_import",TabStateStore.encode(preview.tabs));
+        if(restoreTabs && !preview.tabs.isEmpty()) {
+            List<TabStateStore.Entry> pending=new ArrayList<>(TabStateStore.read(preferences.getString("tabs_import","[]")));
+            if(pending.size()+preview.tabs.size()>TabStateStore.LIMIT)throw new IllegalArgumentException("Te veel tabadressen in de backup.");
+            pending.addAll(preview.tabs);editor.putString("tabs_import",TabStateStore.encode(pending));
+        }
         editor.apply();
     }
     static void replaceSites(SharedPreferences preferences,Preview preview) {

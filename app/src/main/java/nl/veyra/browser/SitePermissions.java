@@ -34,6 +34,12 @@ final class SitePermissions {
         String origin=origin(url);if(origin==null)return;SharedPreferences.Editor editor=preferences.edit();
         for(String type:new String[]{CAMERA,MICROPHONE,LOCATION})editor.remove(origin+"|"+type);editor.apply();
     }
+    void resetHost(String host) {
+        if(host==null)return;SharedPreferences.Editor editor=preferences.edit();
+        for(String value:origins())if(host.equalsIgnoreCase(URI.create(value).getHost()))
+            for(String type:new String[]{CAMERA,MICROPHONE,LOCATION})editor.remove(value+"|"+type);
+        editor.apply();
+    }
     void clear(){preferences.edit().clear().apply();}
     static String label(android.content.Context context,String type) {switch(type){case CAMERA:return context.getString(R.string.site_camera);case MICROPHONE:return context.getString(R.string.site_microphone);default:return context.getString(R.string.site_location);}}
 }

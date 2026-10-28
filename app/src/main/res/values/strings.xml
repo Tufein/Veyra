@@ -207,4 +207,5 @@
   <string name="sync_confirm_changes">Synchronisatiewijzigingen bevestigen</string>
   <string name="sync_final_count">Lokaal te verwijderen: %1$d. Bladwijzers na synchronisatie: %2$d. Snelkoppelingen: %3$d.\n\nDe gekozen versie wordt versleuteld opgeslagen op de server en op dit apparaat toegepast.</string>
     <string name="show_more">Meer tonen</string>
+    <string name="sync_not_confirmed">De server heeft opslaan nog niet bevestigd. Synchroniseer opnieuw.</string>
 </resources>

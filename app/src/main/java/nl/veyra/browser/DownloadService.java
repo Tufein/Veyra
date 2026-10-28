@@ -62,19 +62,19 @@ public final class DownloadService extends Service {
         return new Notification.Builder(this,CHANNEL).setSmallIcon(R.drawable.ic_download).setContentTitle(getString(R.string.download_notification_title))
                 .setContentText(getString(R.string.download_notification_body)).setContentIntent(open).setOngoing(true).build();
     }
-    private void copy(String id,Transfer transfer){long count=0,last=0;String status=DownloadStore.COMPLETE,error="";
+    private void copy(String id,Transfer transfer){long[] measured={0,0};String status=DownloadStore.COMPLETE,error="";
         try(InputStream input=transfer.input;OutputStream output=getContentResolver().openOutputStream(Uri.parse(transfer.entry.uri),"wt")){
-            if(output==null)throw new java.io.IOException("Doelbestand niet beschikbaar");byte[] buffer=new byte[64*1024];int read;
-            while((read=input.read(buffer))!=-1){if(transfer.cancelled.get())throw new java.io.InterruptedIOException();output.write(buffer,0,read);count+=read;
-                long now=System.currentTimeMillis();if(now-last>=500){store.save(transfer.entry.progress(DownloadStore.RUNNING,"",count));last=now;}}
-            if(transfer.cancelled.get())throw new java.io.InterruptedIOException();
-            if(transfer.entry.total>=0&&count!=transfer.entry.total)throw new java.io.IOException("Onvolledige download");output.flush();
+            if(output==null)throw new java.io.IOException("Doelbestand niet beschikbaar");
+            DownloadCopy.copy(input,output,transfer.entry.total,transfer.cancelled::get,count->{
+                measured[0]=count;long now=System.currentTimeMillis();
+                if(now-measured[1]>=500){store.save(transfer.entry.progress(DownloadStore.RUNNING,"",count));measured[1]=now;}
+            });
         }catch(Exception failure){status=transfer.cancelled.get()?DownloadStore.CANCELLED:DownloadStore.FAILED;
             error=transfer.cancelled.get()?"Geannuleerd":"Download onderbroken. Vraag het bestand opnieuw aan via de website.";
             try{if(!android.provider.DocumentsContract.deleteDocument(getContentResolver(),Uri.parse(transfer.entry.uri)))error+=" Controleer het gedeeltelijke doelbestand.";}
             catch(Exception unavailable){error+=" Controleer het gedeeltelijke doelbestand.";}
         }
-        store.save(transfer.entry.progress(status,error,count));transfers.remove(id);
+        store.save(transfer.entry.progress(status,error,measured[0]));transfers.remove(id);
         new android.os.Handler(getMainLooper()).post(()->{if(transfers.isEmpty()){stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();}});
     }
     static void close(InputStream stream){if(stream!=null)try{stream.close();}catch(java.io.IOException ignored){}}

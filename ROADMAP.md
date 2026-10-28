@@ -4,6 +4,10 @@
 
 [Download 0.5.0](https://github.com/Tufein/Veyra/releases/tag/v0.5.0) · [Verificatie](docs/verification-0.5.md) · [Apparaatmatrix](docs/device-validation.md) · [Oorspronkelijke roadmap en criteria](docs/roadmap-0.5-baseline.md)
 
+## Voortgang naar 1.0
+
+Op verzoek wordt de huidige code voorbereid als **1.0.0-rc.1**. De kandidaat bundelt release-optimalisatie, correcties voor imports/downloads/site-rechten/sync en uitgebreidere software- en publicatiecontroles. [Verificatie](docs/verification-1.0-rc.1.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
+
 ## Huidige stand
 
 | Onderdeel | Wat er is | Wat nog openstaat |

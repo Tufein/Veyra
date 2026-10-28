@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.0-rc.1 — release candidate
+
+- Prepare optimized, resource-shrunk, non-debuggable APKs using the same fixed key as 0.5.0; stable 1.0 gates remain open.
+- Require explicit consent for tab-address import, preserve pending addresses and reject queue overflow before writes.
+- Revoke all same-host port grants when clearing host data, preserve website-management navigation and paginate large site lists.
+- Use Material checkboxes consistently and localize the website-settings title.
+- Reject unsafe ETags and unconfirmed asynchronous sync writes; add isolated real HTTPS conflict/certificate/hostname tests.
+- Verify byte-exact download copies, cancellation, truncation and storage failure behavior.
+- Enable release host tests, retain real-device evidence as pending, and improve fresh-install/non-debuggable update reporting in the test runner.
+- Add reusable prebuilt publication through repository Actions, release-readiness checks and certificate/package/ABI/release-flag/alignment verification; update CI actions.
+
+
 ## 0.5.0 — alpha
 
 - Add local searchable history; keep private visits out of history and saved tab state.
