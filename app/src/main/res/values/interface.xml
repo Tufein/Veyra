@@ -109,7 +109,6 @@
   <string name="ui_no_suitable_app_found_cc97e" formatted="false">"Geen geschikte app gevonden."</string>
   <string name="ui_download_started_see_menu_downloads_b2233" formatted="false">"Download gestart. Zie Menu → Downloads."</string>
   <string name="ui_the_download_could_not_start_check_the_destination_fil_00ed7" formatted="false">"Download kon niet starten. Controleer het doelbestand."</string>
-  <string name="ui_private_tab_no_history_or_tab_restoration_2a1cb" formatted="false">"Privétab: geen geschiedenis of tabherstel"</string>
   <string name="ui_download_unavailable_or_a_file_picker_is_already_open_88af7" formatted="false">"Download niet beschikbaar of er staat al een bestandskeuze open."</string>
   <string name="ui_this_download_address_is_not_allowed_c75b9" formatted="false">"Dit downloadadres is niet toegestaan."</string>
   <string name="ui_save_a_private_file_85734" formatted="false">"Privébestand opslaan?"</string>
@@ -123,7 +122,6 @@
   <string name="ui_extra_extensions_disabled_built_in_protection_remains_58090" formatted="false">"Extra extensies uitgeschakeld. De ingebouwde bescherming blijft actief."</string>
   <string name="ui_not_all_extensions_could_be_disabled_try_again_from_ex_5c159" formatted="false">"Extensies konden niet volledig worden uitgeschakeld. Probeer opnieuw via Extensies."</string>
   <string name="ui_website_data_or_permissions_changed_open_the_page_agai_99d9d" formatted="false">"Websitegegevens of toestemmingen zijn gewijzigd. Open de pagina opnieuw."</string>
-  <string name="ui_private_tab_not_saved_45d1d" formatted="false">"Privétab · wordt niet bewaard"</string>
   <string name="ui_browser_and_data_2f71d" formatted="false">"Browser en gegevens"</string>
   <string name="ui_set_veyra_as_the_default_browser_bac8b" formatted="false">"Veyra als standaardbrowser"</string>
   <string name="ui_history_749cb" formatted="false">"Geschiedenis"</string>

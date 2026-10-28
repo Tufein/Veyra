@@ -222,7 +222,7 @@
     <string name="private_no_reopen">Gesloten InPrivate-tabbladen worden niet bewaard.</string>
     <string name="normal_new">Nieuw normaal tabblad</string>
     <string name="private_menu">Menu · InPrivate</string>
-    <string name="tab_modes_count">%1$d normaal · %2$d InPrivate</string>
+    <string name="tab_modes_count">Normaal: %1$d · InPrivate: %2$d</string>
     <string name="private_selected">InPrivate · huidig tabblad</string>
     <string name="normal_reopen">Normaal tabblad heropenen</string>
     <string name="normal_reopen_empty">Er zijn geen gesloten normale tabbladen in deze sessie.</string>

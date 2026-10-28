@@ -222,7 +222,7 @@
     <string name="private_no_reopen">Closed InPrivate tabs are not saved.</string>
     <string name="normal_new">New normal tab</string>
     <string name="private_menu">Menu · InPrivate</string>
-    <string name="tab_modes_count">%1$d normal · %2$d InPrivate</string>
+    <string name="tab_modes_count">Normal: %1$d · InPrivate: %2$d</string>
     <string name="private_selected">InPrivate · current tab</string>
     <string name="normal_reopen">Reopen a normal tab</string>
     <string name="normal_reopen_empty">There are no closed normal tabs in this session.</string>
