@@ -30,7 +30,11 @@ De volledige lokale suite draaide op de appcode van `bd7b963`. Daarna zijn uitsl
 
 [Privé-start donker](images/rc2-private-home-dark.png), [licht](images/rc2-private-home-light.png) en [taboverzicht](images/rc2-tabs-private-dark.png) zijn native Android-widgetrenderingen onder Robolectric, geen telefoonscreenshots. De aantallentekst in het taboverzicht is daarna verduidelijkt naar ‘Normaal: … · InPrivate: …’; de vormgeving blijft gelijk.
 
-Publicatie volgt na certificaat-, pakket-, versie-, ABI-, niet-debuggable-, zipalign- en checksumcontrole. De sleutel wordt niet overgedragen.
+## Gepubliceerde APK’s
+
+De [release](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.2) is publiek. [GitHub CI op de tagcode](https://github.com/Tufein/Veyra/actions/runs/40776467266) en de [publicatiecontrole](https://github.com/Tufein/Veyra/actions/runs/40777082483) zijn geslaagd. Alle drie APK’s en SHA256SUMS.txt geven HTTP200; GitHubs assetdigests komen overeen met de lokaal gecontroleerde bestanden. ARM64-SHA256: `803f7843fdc398e40c1cf67045401f3eefd2de0db9d3908a635e8a16ada60f3b`.
+
+De tag wijst naar `f8547d9`; de appcode is die van `fb1eb8f`, met daarna alleen documentatie en vernieuwde VCS-buildmetadata. Publicatie controleert certificaat, pakket, versie/code, ABI, niet-debuggable/test-only, zipalign en checksums. De sleutel is niet overgedragen. Een eerste uploadpoging stopte zonder assets; een nieuwe poging met dezelfde gecontroleerde APK’s is geslaagd. Een foutannotatie is aan het tijdelijke publicatiescript toegevoegd om volgende fouten via de check-API te kunnen lezen. De tijdelijke artifactbranch is verwijderd.
 
 ## Toesteltest
 
