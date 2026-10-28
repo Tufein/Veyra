@@ -75,6 +75,7 @@ public final class BrowserPrivacyUiTest {
         assertTrue(root.getHeight()<=host.getResources().getDisplayMetrics().heightPixels);
         View close=LibraryActivityTest.find(root,host.getString(R.string.private_close_all)); assertNotNull(close);
         android.widget.ScrollView scroll=(android.widget.ScrollView)close.getParent().getParent().getParent();
+        scroll.setSmoothScrollingEnabled(false); // Assert the final scroll position without animation timing.
         scroll.fullScroll(View.FOCUS_DOWN); org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
         android.graphics.Rect visible=new android.graphics.Rect();assertTrue(close.getGlobalVisibleRect(visible));
         assertEquals(close.getHeight(),visible.height());
