@@ -10,7 +10,7 @@
 | Release hosttests | 114 geslaagd; 0 fouten, failures of skips |
 | Aparte HTTPS-integratiesuite | 5 geslaagd, met echte lokale TLS/HTTP-verzoeken tussen onafhankelijke JVM-clients |
 | Bescherming, Node | 8 geslaagd |
-| Python hulpmiddelen | 22 geslaagd, inclusief migratie, certificaatparser, publicatiecontrole, releasecriteria en gemockte ADB-besturing |
+| Python hulpmiddelen | 23 geslaagd, inclusief migratie, certificaatparser, publicatiecontrole, releasecriteria en gemockte ADB-besturing |
 | Android Lint | 0 bevindingen voor debug én release |
 | Releasebuild | R8/minificatie en resource shrinking bouwen succesvol; publieke APK’s zijn niet debuggable/test-only |
 | Pakketcontrole | Werkelijke APK-pakketnaam, versie/code en native ABI vergeleken met metadata |

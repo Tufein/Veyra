@@ -65,7 +65,7 @@
     "release_host_tests": 114,
     "isolated_https_integration_tests": 5,
     "protection_tests": 8,
-    "python_tool_tests": 22,
+    "python_tool_tests": 23,
     "lint_debug_findings": 0,
     "lint_release_findings": 0,
     "native_device_tests": "not_run",

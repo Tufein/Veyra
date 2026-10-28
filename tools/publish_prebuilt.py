@@ -25,6 +25,24 @@ def validate_assets(assets, expected):
     return sorted(set(expected) - seen)
 
 
+def find_release(pages, tag):
+    matches = [release for page in pages for release in page if release.get('tag_name') == tag]
+    if len(matches) > 1:
+        raise ValueError('Duplicate release tags returned by GitHub')
+    return matches[0] if matches else None
+
+
+def release_pages(repo):
+    pages = []
+    page = 1
+    while True:
+        values = json.loads(gh('api', f'repos/{repo}/releases?per_page=100&page={page}'))
+        pages.append(values)
+        if len(values) < 100:
+            return pages
+        page += 1
+
+
 def gh(*arguments, optional=False):
     result = subprocess.run(['gh', *arguments], capture_output=True, text=True)
     if result.returncode:
@@ -58,20 +76,25 @@ def main():
     if set(expected) != names:
         raise ValueError('Expected exactly the three release APKs')
     expected['SHA256SUMS.txt'] = sha256_file(root / 'SHA256SUMS.txt')
-    release = gh('api', f'repos/{repo}/releases/tags/{tag}', optional=True)
-    if release is None:
+    # An unpublished draft may not have a tag ref yet; the by-tag endpoint returns 404.
+    state = find_release(release_pages(repo), tag)
+    if state is None:
         gh('release', 'create', tag, '--repo', repo, '--target', source, '--draft',
            '--prerelease=' + str(readiness['prerelease']).lower(), '--title',
            f'Veyra {tag[1:]}' + (' — Release candidate' if readiness['prerelease'] else ''),
            '--notes-file', 'artifacts/release-notes.md')
-        release = gh('api', f'repos/{repo}/releases/tags/{tag}')
-    state = json.loads(release)
+        state = find_release(release_pages(repo), tag)
+    if state is None:
+        raise ValueError('New draft release was not returned by GitHub')
+    release_id = state['id']
     if not state['draft'] or state['target_commitish'] != source:
         raise ValueError('Refusing to modify a published release or a different source commit')
     missing = validate_assets(state['assets'], expected)
     if missing:
         gh('release', 'upload', tag, '--repo', repo, *[str(root / name) for name in missing])
-    uploaded = json.loads(gh('api', f'repos/{repo}/releases/tags/{tag}'))
+    uploaded = json.loads(gh('api', f'repos/{repo}/releases/{release_id}'))
+    if not uploaded['draft'] or uploaded['target_commitish'] != source:
+        raise ValueError('Draft changed during upload; publication stopped')
     if validate_assets(uploaded['assets'], expected):
         raise ValueError('Some verified release assets are still missing')
     gh('release', 'edit', tag, '--repo', repo, '--draft=false',
