@@ -80,3 +80,7 @@ Veyra adds no analytics or hosted account backend. Local history, prefs, cookies
 [Contributing](CONTRIBUTING.md) · [Security and maintenance](SECURITY.md) · [Candidate release notes](docs/releases/v1.0.0-rc.2.md)
 
 No license has been selected for Veyra's original application code. Public source availability alone does not grant reuse/redistribution rights. Third-party data and tooling retain their own licenses.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for how to report a vulnerability and which secrets this project stores.
