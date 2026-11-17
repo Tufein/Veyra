@@ -13,9 +13,10 @@ final class SyncClient {
     private final Connections connections;
     SyncClient(){this(url->(HttpURLConnection)url.openConnection());}
     SyncClient(Connections connections){this.connections=connections;}
-    static String endpoint(String raw){String value=UrlPolicy.normalizeWebUrl(raw.trim());
+    static String endpoint(String raw){if(raw==null)throw new IllegalArgumentException("Gebruik een volledig HTTPS-adres naar een synchronisatiebestand.");String value=UrlPolicy.normalizeWebUrl(raw.trim());
         if(value==null||!value.startsWith("https://")||java.net.URI.create(value).getRawFragment()!=null||value.length()>2048)throw new IllegalArgumentException("Gebruik een volledig HTTPS-adres naar een synchronisatiebestand.");return value;}
     private HttpURLConnection connection(String endpoint,String user,String password,String method)throws java.io.IOException {
+        if(user==null||password==null)throw new IllegalArgumentException("Ongeldige servergegevens.");
         if(user.contains(":")||user.contains("\n")||password.contains("\n"))throw new IllegalArgumentException("Ongeldige servergegevens.");
         HttpURLConnection connection=connections.open(new URL(endpoint(endpoint)));connection.setInstanceFollowRedirects(false);
         connection.setConnectTimeout(15000);connection.setReadTimeout(30000);connection.setRequestMethod(method);connection.setUseCaches(false);

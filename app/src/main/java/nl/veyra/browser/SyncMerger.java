@@ -22,9 +22,11 @@ final class SyncMerger {
     }
     private SyncMerger() { }
     static Result merge(byte[] local,byte[] remote,byte[] baseline,boolean preferLocal) {
+        if(local==null)local="{\"format\":\"veyra-backup\",\"version\":1,\"bookmarks\":[],\"shortcuts\":[],\"preferences\":{}}".getBytes(java.nio.charset.StandardCharsets.UTF_8);
         BackupCodec.Preview left=BackupCodec.parse(local);
         if(remote==null)return new Result(local,0,0);
-        BackupCodec.Preview right=BackupCodec.parse(remote),base=baseline==null?null:BackupCodec.parse(baseline);
+        BackupCodec.Preview right=BackupCodec.parse(remote),base=null;
+        if(baseline!=null)try{base=BackupCodec.parse(baseline);}catch(Exception ignored){base=null;}
         Collection bookmarks=mergeCollection(left.bookmarks,right.bookmarks,base==null?null:base.bookmarks,preferLocal);
         Collection pins=mergeCollection(left.shortcuts,right.shortcuts,base==null?null:base.shortcuts,preferLocal);
         if(bookmarks.entries.size()>BackupCodec.MAX_BOOKMARKS||pins.entries.size()>SavedSitesStore.LIMIT)
