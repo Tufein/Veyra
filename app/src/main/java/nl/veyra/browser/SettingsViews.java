@@ -20,7 +20,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
-/** Shared Material typography, spacing, tonal surfaces, and accessible settings rows. */
+/** Shared Midnight Aurora typography, spacing, tonal surfaces and accessible settings rows. */
 final class SettingsViews {
     final Activity activity;
     final int primary, ink, muted, surface, low, high, outline, accentSurface, accentInk;
@@ -63,17 +63,17 @@ final class SettingsViews {
     }
     LinearLayout card(LinearLayout parent, boolean prominent) {
         MaterialCardView card = new MaterialCardView(activity);
-        card.setRadius(dp(22)); card.setStrokeWidth(0); card.setCardElevation(0);
+        card.setRadius(dp(24)); card.setStrokeWidth(0); card.setCardElevation(0);
         card.setCardBackgroundColor(prominent ? accentSurface : low);
         LinearLayout inside = column(); inside.setPadding(dp(18), dp(18), dp(18), dp(18));
         card.addView(inside); add(parent, card, 12); return inside;
     }
     void category(LinearLayout parent, int icon, String title, String summary, View.OnClickListener listener) {
-        MaterialCardView card = new MaterialCardView(activity); card.setRadius(dp(18));
+        MaterialCardView card = new MaterialCardView(activity); card.setRadius(dp(20));
         card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(new ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{accentSurface,low}));
         LinearLayout row = row(); row.setPadding(dp(14), dp(12), dp(12), dp(12)); row.setMinimumHeight(dp(76));
         ImageView badge = image(icon, primary); badge.setPadding(dp(10), dp(10), dp(10), dp(10));
-        badge.setBackground(shape(high, 14));
+        badge.setBackground(shape(high, 999));
         row.addView(badge, new LinearLayout.LayoutParams(dp(42), dp(42)));
         LinearLayout copy = column(); copy.setPaddingRelative(dp(12), 0, dp(8), 0);
         TextView label = text(title, 16, ink); label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
@@ -86,7 +86,7 @@ final class SettingsViews {
     }
     View site(LinearLayout parent, String title, String url, String detail, View.OnClickListener listener) {
         MaterialCardView card = new MaterialCardView(activity);
-        card.setRadius(dp(18)); card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(new ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{accentSurface,low}));
+        card.setRadius(dp(20)); card.setStrokeWidth(0); card.setCardElevation(0); card.setCardBackgroundColor(new ColorStateList(new int[][]{new int[]{android.R.attr.state_focused},new int[]{}},new int[]{accentSurface,low}));
         LinearLayout row = row(); row.setMinimumHeight(dp(78)); row.setPadding(dp(14), dp(12), dp(12), dp(12));
         row.addView(monogram(title, url), new LinearLayout.LayoutParams(dp(42), dp(42)));
         LinearLayout copy = column(); copy.setPaddingRelative(dp(12), 0, dp(8), 0);
@@ -105,7 +105,9 @@ final class SettingsViews {
         String value = title.trim().isEmpty() ? host(url) : title.trim();
         String letter = value.isEmpty() ? "V" : value.substring(0, value.offsetByCodePoints(0, 1)).toUpperCase(java.util.Locale.ROOT);
         TextView badge = text(letter, 18, accentInk); badge.setGravity(Gravity.CENTER);
-        badge.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL)); badge.setBackground(shape(accentSurface, 14));
+        badge.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        GradientDrawable circle = shape(accentSurface, 999); circle.setStroke(dp(1), primary);
+        badge.setBackground(circle);
         badge.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO); return badge;
     }
     static String host(String url) {
@@ -134,7 +136,7 @@ final class SettingsViews {
     }
     MaterialButton button(int label, int icon, View.OnClickListener listener) {
         MaterialButton v = new MaterialButton(activity); v.setText(label); v.setAllCaps(false);
-        v.setTextSize(14); v.setMinHeight(dp(56)); v.setCornerRadius(dp(28)); v.setSingleLine(false);
+        v.setTextSize(14); v.setMinHeight(dp(56)); v.setCornerRadius(dp(16)); v.setSingleLine(false);
         if (icon != 0) v.setIconResource(icon);
         v.setOnClickListener(listener); return v;
     }

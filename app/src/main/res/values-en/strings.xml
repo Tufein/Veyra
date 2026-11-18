@@ -47,10 +47,10 @@
   <string name="settings_wallpaper_unavailable">Wallpaper colors are available on Android 12 and newer.</string>
   <string name="settings_accents">Your accent</string>
   <string name="settings_accents_description">Selecting a custom color turns wallpaper colors off.</string>
-  <string name="settings_accent_mint">Mint</string>
-  <string name="settings_accent_violet">Lavender</string>
-  <string name="settings_accent_blue">Sky blue</string>
-  <string name="settings_accent_peach">Peach</string>
+  <string name="settings_accent_mint">Aurora</string>
+  <string name="settings_accent_violet">Neon violet</string>
+  <string name="settings_accent_blue">Ice blue</string>
+  <string name="settings_accent_peach">Sunset</string>
   <string name="settings_selected">%1$s, selected</string>
   <string name="settings_preview_label">YOUR VEYRA LOOKS LIKE THIS</string>
   <string name="settings_preview_title">The web.\nAt your pace.</string>

@@ -47,10 +47,10 @@
   <string name="settings_wallpaper_unavailable">Achtergrondkleuren zijn beschikbaar vanaf Android 12.</string>
   <string name="settings_accents">Jouw accent</string>
   <string name="settings_accents_description">Een eigen kleur kiezen schakelt achtergrondkleuren uit.</string>
-  <string name="settings_accent_mint">Mint</string>
-  <string name="settings_accent_violet">Lavendel</string>
-  <string name="settings_accent_blue">Hemelsblauw</string>
-  <string name="settings_accent_peach">Perzik</string>
+  <string name="settings_accent_mint">Aurora</string>
+  <string name="settings_accent_violet">Neonpaars</string>
+  <string name="settings_accent_blue">IJsblauw</string>
+  <string name="settings_accent_peach">Zonsondergang</string>
   <string name="settings_selected">%1$s, geselecteerd</string>
   <string name="settings_preview_label">ZO ZIET JOUW VEYRA ERUIT</string>
   <string name="settings_preview_title">Het web.\nOp jouw tempo.</string>

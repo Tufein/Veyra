@@ -170,10 +170,10 @@ public final class BrowserActivity extends Activity {
         root.addView(progress, new LinearLayout.LayoutParams(-1, dp(3)));
 
         LinearLayout bottom = column(); browserControls = bottom;
-        bottom.setPadding(dp(12), dp(9), dp(12), dp(4));
+        bottom.setPadding(dp(16), dp(10), dp(16), dp(6));
         omnibox = row();
-        omnibox.setBackground(shape(SURFACE, 24, BORDER));
-        omnibox.setElevation(dp(2));
+        omnibox.setBackground(shape(SURFACE, 28, BORDER));
+        omnibox.setElevation(dp(6));
         connection = text("V", 14, ACCENT);
         connection.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         connection.setGravity(Gravity.CENTER);
@@ -237,7 +237,7 @@ public final class BrowserActivity extends Activity {
         FrameLayout tabButton = new FrameLayout(this);
         tabButton.setContentDescription(getString(R.string.ui_tabs_c36a5));
         TextView countShape = tabCount;
-        countShape.setBackground(shape(Color.TRANSPARENT, 7, MUTED));
+        countShape.setBackground(shape(Color.TRANSPARENT, 999, MUTED));
         FrameLayout.LayoutParams countParams = new FrameLayout.LayoutParams(dp(25), dp(26), Gravity.CENTER);
         tabButton.addView(countShape, countParams);
         SettingsViews.buttonRole(tabButton);tabButton.setFocusable(true);tabButton.setOnClickListener(v -> showTabs());
@@ -299,7 +299,7 @@ public final class BrowserActivity extends Activity {
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         LinearLayout content = column();
-        content.setPadding(dp(24), dp(18), dp(24), dp(24));
+        content.setPadding(dp(22), dp(22), dp(22), dp(28));
         LinearLayout heading = row();
         TextView brand = text("veyra", 29, TEXT);
         brand.setLetterSpacing(-0.065f);
@@ -318,7 +318,8 @@ public final class BrowserActivity extends Activity {
         LinearLayout hero = column();
         hero.setPadding(dp(20), dp(18), dp(20), dp(20));
         GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
-                new int[] { ThemeSupport.color(this, com.google.android.material.R.attr.colorPrimaryContainer), SURFACE });
+                new int[] { ThemeSupport.color(this, com.google.android.material.R.attr.colorPrimaryContainer),
+                        ThemeSupport.color(this, com.google.android.material.R.attr.colorSurfaceContainerHigh), SURFACE });
         gradient.setCornerRadius(dp(28));
         gradient.setStroke(dp(1), BORDER);
         hero.setBackground(gradient);
@@ -374,7 +375,7 @@ public final class BrowserActivity extends Activity {
 
         LinearLayout protection = row();
         protection.setPadding(dp(13), dp(16), dp(16), dp(16));
-        protection.setBackground(shape(SURFACE, 22, BORDER));
+        protection.setBackground(shape(SURFACE, 20, BORDER));
         IconButton shield = icon("shield", "Advertentieblokkering", v -> showBlockingInfo());
         shield.ink = ACCENT;
         protection.addView(shield, new LinearLayout.LayoutParams(dp(40), dp(44)));
@@ -838,7 +839,7 @@ public final class BrowserActivity extends Activity {
 
     private void setting(LinearLayout parent, String label, String detail, View.OnClickListener listener) {
         LinearLayout item = row(); item.setPadding(dp(15), dp(14), dp(12), dp(14));
-        item.setBackground(shape(SURFACE, 17, BORDER));
+        item.setBackground(shape(SURFACE, 20, BORDER));
         LinearLayout copy = column();
         TextView title = text(label, 15, TEXT); title.setTypeface(Typeface.DEFAULT, Typeface.BOLD); copy.addView(title);
         TextView subtitle = text(detail, 12, MUTED); addSpaced(copy, subtitle, 5);
@@ -1144,10 +1145,10 @@ public final class BrowserActivity extends Activity {
         privacyBanner.bind(active,privateCount());
         if(appliedPrivate==null || appliedPrivate!=active){
             int ink=active?BrowserPrivacyUi.ink(this):TEXT;
-            omnibox.setBackground(shape(active?BrowserPrivacyUi.surface(this):SURFACE,24,active?ink:BORDER));
+            omnibox.setBackground(shape(active?BrowserPrivacyUi.surface(this):SURFACE,28,active?ink:BORDER));
             address.setTextColor(ink);address.setHintTextColor(active?ink:MUTED);
             address.setHint(active?R.string.private_address_hint:R.string.ui_search_or_enter_a_web_address_6c60f);
-            tabCount.setTextColor(active?ink:TEXT);tabCount.setBackground(shape(Color.TRANSPARENT,7,active?ink:MUTED));
+            tabCount.setTextColor(active?ink:TEXT);tabCount.setBackground(shape(Color.TRANSPARENT,999,active?ink:MUTED));
             appliedPrivate=active;
         }
         connection.setContentDescription(getString(R.string.ui_connection_information_d437e)+(active?", "+getString(R.string.private_active):""));
@@ -1251,7 +1252,7 @@ public final class BrowserActivity extends Activity {
     private TextView action(String label, View.OnClickListener listener) {
         TextView button = text(label, 15, ACCENT_INK); button.setGravity(Gravity.CENTER);
         button.setPadding(dp(20), dp(16), dp(20), dp(16));
-        button.setBackground(shape(ACCENT, 28, Color.TRANSPARENT)); button.setMinHeight(dp(48));button.setFocusable(true);SettingsViews.buttonRole(button);button.setOnClickListener(listener); return button;
+        button.setBackground(shape(ACCENT, 16, Color.TRANSPARENT)); button.setMinHeight(dp(48));button.setFocusable(true);SettingsViews.buttonRole(button);button.setOnClickListener(listener); return button;
     }
     private void toast(String message) { Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
     private IconButton icon(String kind, String description, View.OnClickListener listener) {
