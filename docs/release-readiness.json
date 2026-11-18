@@ -72,7 +72,7 @@
     "release_flags": "non-debuggable; minified; resources shrunk; pinned certificate; package/version/ABI and 16KiB zip alignment checked",
     "elf_alignment": "13 native libraries per ARM64 and x86_64 APK checked for 16KiB load alignment",
     "github_android_ci": "https://github.com/Tufein/Veyra/actions/runs/44284173707",
-    "app_build_commit": "91b6685b6aa5b06fe090594225bfe0c4d253849c",
+    "app_build_commit": "ad2413e3d21d7e19916d3b542c420fdc1a89aa02",
     "github_publication": "https://github.com/Tufein/Veyra/actions/runs/44284173707",
     "release_tag_commit": "0582223",
     "public_downloads": "All three APKs and SHA256SUMS.txt returned HTTP200; GitHub asset SHA256 digests match locally validated APKs."
