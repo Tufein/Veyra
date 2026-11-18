@@ -50,13 +50,20 @@ final class SettingsViews {
         v.setLineSpacing(dp(3), 1); return v;
     }
     void heading(LinearLayout parent, int title, int summary) {
+        // One UI-style large in-content title; the toolbar keeps a compact label.
+        TextView label = text(title, 26, ink);
+        label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        label.setLetterSpacing(-.02f);
+        label.setLineSpacing(dp(2), 1);
+        label.setAccessibilityHeading(true);
+        parent.addView(label);
         TextView description = text(summary, 15, muted);
         add(parent, description, 8);
     }
     void section(LinearLayout parent, int resource) {
-        TextView label = text(resource, 12, muted); label.setLetterSpacing(.09f);
+        TextView label = text(resource, 13, muted); label.setLetterSpacing(.09f);
         label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        label.setAccessibilityHeading(true); add(parent, label, 26);
+        label.setAccessibilityHeading(true); add(parent, label, 30);
     }
     void add(LinearLayout parent, View child, int top) {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(-1, -2); p.topMargin = dp(top); parent.addView(child, p);

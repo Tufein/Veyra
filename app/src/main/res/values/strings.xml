@@ -42,6 +42,10 @@
   <string name="settings_theme_light">Licht</string>
   <string name="settings_theme_dark">Donker</string>
   <string name="settings_theme_system">Systeem</string>
+  <string name="settings_address_position">Adresbalk</string>
+  <string name="settings_address_position_summary">Kies of de adresbalk boven- of onderin het scherm staat.</string>
+  <string name="settings_address_position_top">Bovenaan</string>
+  <string name="settings_address_position_bottom">Onderaan</string>
   <string name="settings_wallpaper">Kleuren van je achtergrond</string>
   <string name="settings_wallpaper_available">Material You volgt de kleuren van je telefoon.</string>
   <string name="settings_wallpaper_unavailable">Achtergrondkleuren zijn beschikbaar vanaf Android 12.</string>
@@ -159,6 +163,7 @@
   <string name="panel_find">Zoeken op pagina</string>
   <string name="panel_protection">Advertenties en trackers</string>
   <string name="panel_connection">Verbinding en HTTPS</string>
+  <string name="panel_clear_data">Gegevens wissen</string>
   <string name="panel_tabs">Tabbladen</string>
   <string name="panel_tab_count">%1$d van %2$d tabbladen in gebruik</string>
   <string name="panel_current_tab">Huidig tabblad</string>

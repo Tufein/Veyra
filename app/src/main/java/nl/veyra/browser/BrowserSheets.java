@@ -153,32 +153,46 @@ final class BrowserSheets {
         Sheet sheet = new Sheet(activity, activity.getString(R.string.panel_tabs), summary);
         if (privateCount > 0) BrowserPrivacyUi.secure(sheet.dialog);
         SettingsViews ui = sheet.ui;
-        for (int i = 0; i < tabs.size(); i++) {
-            final int index = i; TabItem tab = tabs.get(i); boolean current = i == selected;
-            MaterialCardView card = new MaterialCardView(activity); card.setRadius(ui.dp(18)); card.setCardElevation(0);
-            int privateInk = BrowserPrivacyUi.ink(activity);
-            card.setCardBackgroundColor(tab.privateMode ? BrowserPrivacyUi.surface(activity) : current ? ui.accentSurface : ui.low);
-            card.setStrokeWidth(current ? ui.dp(2) : 0); card.setStrokeColor(tab.privateMode ? privateInk : ui.primary);
-            LinearLayout row = ui.row(); row.setPadding(ui.dp(12), ui.dp(8), ui.dp(6), ui.dp(8));
-            LinearLayout target = ui.row(); target.setMinimumHeight(ui.dp(60));
-            View identity = tab.privateMode ? ui.image(R.drawable.ic_private, privateInk) : ui.monogram(tab.home ? "Veyra" : tab.title, tab.url);
-            target.addView(identity, new LinearLayout.LayoutParams(ui.dp(40), ui.dp(40)));
-            LinearLayout copy = ui.column(); copy.setPadding(ui.dp(12), 0, ui.dp(4), 0);
-            TextView title = ui.text(tab.home ? activity.getString(tab.privateMode ? R.string.private_home_title : R.string.panel_new_tab) : tab.title, 15, tab.privateMode ? privateInk : current ? ui.accentInk : ui.ink);
-            title.setMaxLines(2); title.setEllipsize(android.text.TextUtils.TruncateAt.END); copy.addView(title);
-            TextView subtitle = ui.text(tab.privateMode ? activity.getString(current ? R.string.private_selected : R.string.private_badge) : current ? activity.getString(R.string.panel_current_tab)
-                    : tab.home ? "Veyra" : SettingsViews.host(tab.url), 12, tab.privateMode ? privateInk : current ? ui.accentInk : ui.muted);
-            subtitle.setMaxLines(1); subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END); ui.add(copy, subtitle, 4);
-            target.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
-            target.setOnClickListener(v -> sheet.run(() -> select.accept(index))); target.setFocusable(true); target.setSelected(current); SettingsViews.buttonRole(target);
-            target.setContentDescription(title.getText() + ", " + subtitle.getText());
-            target.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
-            copy.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-            row.addView(target, new LinearLayout.LayoutParams(0, -2, 1));
-            MaterialButton remove = icon(ui, R.drawable.ic_close, activity.getString(R.string.panel_close_tab, title.getText()));
-            if (tab.privateMode) remove.setIconTint(ColorStateList.valueOf(privateInk));
-            remove.setOnClickListener(v -> sheet.run(() -> close.accept(index))); row.addView(remove, new LinearLayout.LayoutParams(ui.dp(48), ui.dp(48)));
-            card.addView(row); ui.add(sheet.content, card, 6);
+        // Chrome-style tab grid: two cards per row, one column with large text on small screens.
+        int columns = activity.getResources().getConfiguration().fontScale >= 1.3f
+                && activity.getResources().getDisplayMetrics().widthPixels < ui.dp(400) ? 1 : 2;
+        for (int i = 0; i < tabs.size(); i += columns) {
+            LinearLayout gridRow = ui.row();
+            for (int c = 0; c < columns; c++) {
+                final int index = i + c;
+                if (index >= tabs.size()) { gridRow.addView(new View(activity), new LinearLayout.LayoutParams(0, ui.dp(1), 1)); continue; }
+                TabItem tab = tabs.get(index); boolean currentTab = index == selected;
+                MaterialCardView card = new MaterialCardView(activity); card.setRadius(ui.dp(18)); card.setCardElevation(0);
+                int privateInk = BrowserPrivacyUi.ink(activity);
+                card.setCardBackgroundColor(tab.privateMode ? BrowserPrivacyUi.surface(activity) : currentTab ? ui.accentSurface : ui.low);
+                card.setStrokeWidth(currentTab ? ui.dp(2) : 0); card.setStrokeColor(tab.privateMode ? privateInk : ui.primary);
+                LinearLayout inner = ui.column(); inner.setPadding(ui.dp(10), ui.dp(8), ui.dp(10), ui.dp(10));
+                String titleValue = tab.home ? activity.getString(tab.privateMode ? R.string.private_home_title : R.string.panel_new_tab) : tab.title;
+                LinearLayout head = ui.row();
+                View identity = tab.privateMode ? ui.image(R.drawable.ic_private, privateInk) : ui.monogram(tab.home ? "Veyra" : tab.title, tab.url);
+                head.addView(identity, new LinearLayout.LayoutParams(ui.dp(36), ui.dp(36)));
+                MaterialButton remove = icon(ui, R.drawable.ic_close, activity.getString(R.string.panel_close_tab, titleValue));
+                if (tab.privateMode) remove.setIconTint(ColorStateList.valueOf(privateInk));
+                remove.setOnClickListener(v -> sheet.run(() -> close.accept(index)));
+                head.addView(remove, new LinearLayout.LayoutParams(ui.dp(40), ui.dp(40)));
+                inner.addView(head);
+                TextView title = ui.text(titleValue, 14, tab.privateMode ? privateInk : currentTab ? ui.accentInk : ui.ink);
+                title.setMaxLines(2); title.setEllipsize(android.text.TextUtils.TruncateAt.END); ui.add(inner, title, 8);
+                TextView subtitle = ui.text(tab.privateMode ? activity.getString(currentTab ? R.string.private_selected : R.string.private_badge) : currentTab ? activity.getString(R.string.panel_current_tab)
+                        : tab.home ? "Veyra" : SettingsViews.host(tab.url), 12, tab.privateMode ? privateInk : currentTab ? ui.accentInk : ui.muted);
+                subtitle.setMaxLines(1); subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END); ui.add(inner, subtitle, 4);
+                inner.setOnClickListener(v -> sheet.run(() -> select.accept(index)));
+                inner.setFocusable(true); inner.setSelected(currentTab); SettingsViews.buttonRole(inner);
+                inner.setContentDescription(title.getText() + ", " + subtitle.getText());
+                inner.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+                title.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+                subtitle.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+                card.addView(inner);
+                LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(0, -2, 1);
+                cardParams.setMargins(c == 0 ? 0 : ui.dp(3), 0, c == 0 ? ui.dp(3) : 0, 0);
+                gridRow.addView(card, cardParams);
+            }
+            ui.add(sheet.content, gridRow, 6);
         }
         MaterialButton newTab = ui.button(addPrivate == null ? R.string.panel_new_tab : R.string.normal_new, R.drawable.ic_add, v -> sheet.run(add));
         newTab.setEnabled(tabs.size() < limit); ui.add(sheet.content, newTab, 14);

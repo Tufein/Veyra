@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0-rc.6 — patterns borrowed from other browsers
+
+- Add a Firefox-style address bar position setting (top or bottom) under Appearance.
+- Add a Firefox 2026-style tab shortcut button directly beside the address field.
+- Render the tab overview as a Chrome-style two-column card grid, collapsing to one column with large text on small screens.
+- Add a DuckDuckGo-style prominent clear-browsing-data entry to the browser menu.
+- Use Samsung One UI-style large in-content titles on every settings page.
+
+
 ## 1.0.0-rc.5 — Midnight Aurora redesign
 
 - Replace the entire visual identity with a deep, cool dark theme (ink surfaces, cyan accent, lavender private mode) and a refreshed light variant.

@@ -6,7 +6,7 @@
 
 ## Voortgang naar 1.0
 
-Op verzoek is de huidige code voorbereid als **1.0.0-rc.5**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.3) met een **nieuwe vaste ondertekeningssleutel**, omdat de sleutel van 0.5.0/rc.1/rc.2 niet meer beschikbaar is. Daardoor is rc.3 geen update over die versies. Rc.5 vervangt het volledige ontwerp door Midnight Aurora; rc.4 voegde robuustere sync-afhandeling toe en bouwt de release-workflow nu reproduceerbaar met de sleutel uit GitHub Secrets. Rc.2 voegde zichtbare InPrivate-status, een privé-startpagina, privacybewust dupliceren, normaal heropenen, webadres kopiëren en bevestigd sluiten van alle privétabs toe. [Verificatie](docs/verification-1.0-rc.5.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
+Op verzoek is de huidige code voorbereid als **1.0.0-rc.6**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.6) met een **nieuwe vaste ondertekeningssleutel**, omdat de sleutel van 0.5.0/rc.1/rc.2 niet meer beschikbaar is. Daardoor is rc.3 geen update over die versies. Rc.6 neemt bewezen bedieningspatronen uit andere browsers over: instelbare adresbalkpositie, een tab-snelkoppeling naast de adresbalk, een taboverzicht als kaartenraster, een opvallende gegevens-wissen-knop en grote instellingenkoppen. Rc.5 verving het volledige ontwerp door Midnight Aurora; rc.4 voegde robuustere sync-afhandeling toe en bouwt de release-workflow nu reproduceerbaar met de sleutel uit GitHub Secrets. Rc.2 voegde zichtbare InPrivate-status, een privé-startpagina, privacybewust dupliceren, normaal heropenen, webadres kopiëren en bevestigd sluiten van alle privétabs toe. [Verificatie](docs/verification-1.0-rc.6.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
 
 ## Huidige stand
 
@@ -19,7 +19,7 @@ Op verzoek is de huidige code voorbereid als **1.0.0-rc.5**. De [kandidaat is ge
 | Synchronisatie | Handmatige versleutelde bladwijzer-/snelkoppelingensync met eigen HTTPS-server | Twee echte clients, serverconflicten, offline/herstel en onafhankelijke beveiligingsreview |
 | Releases | Drie publieke APK’s, vaste certificaatvingerafdruk en checksums; publicatie via Actions geslaagd | Onafhankelijke sleutelbackup, geautomatiseerde rebuilds en echte update met gegevensbehoud |
 
-De actuele aantallen en software-/publicatiebewijzen staan in het [verificatieverslag](docs/verification-1.0-rc.5.md). Ze staan los van de nog niet uitgevoerde apparaatcontroles.
+De actuele aantallen en software-/publicatiebewijzen staan in het [verificatieverslag](docs/verification-1.0-rc.6.md). Ze staan los van de nog niet uitgevoerde apparaatcontroles.
 
 ## Nieuwe werkvolgorde
 

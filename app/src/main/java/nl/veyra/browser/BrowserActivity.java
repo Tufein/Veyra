@@ -157,17 +157,13 @@ public final class BrowserActivity extends Activity {
         });
         page = new FrameLayout(this);
         page.setBackgroundColor(BG);
-        root.addView(page, new LinearLayout.LayoutParams(-1, 0, 1));
         recordingNotice = text("",13,ACCENT);recordingNotice.setGravity(Gravity.CENTER);recordingNotice.setPadding(dp(16),dp(10),dp(16),dp(10));
         recordingNotice.setMinHeight(dp(48));recordingNotice.setFocusable(true);recordingNotice.setVisibility(View.GONE);
         recordingNotice.setOnClickListener(v->{for(Tab tab:tabs)if(tab.recording){dispose(tab,false);tab.error=getString(R.string.recording_stopped);}renderPage();updateChrome();});
-        root.addView(recordingNotice,new LinearLayout.LayoutParams(-1,-2));
         privacyBanner = new BrowserPrivacyUi.Banner(this, this::showPrivateInfo, this::confirmClosePrivateTabs);
-        root.addView(privacyBanner.view, new LinearLayout.LayoutParams(-1, -2));
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progress.setProgressTintList(android.content.res.ColorStateList.valueOf(ACCENT));
         progress.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(BG));
-        root.addView(progress, new LinearLayout.LayoutParams(-1, dp(3)));
 
         LinearLayout bottom = column(); browserControls = bottom;
         bottom.setPadding(dp(16), dp(10), dp(16), dp(6));
@@ -209,6 +205,9 @@ public final class BrowserActivity extends Activity {
             else { tab.error = null; tab.web.reload(); renderPage(); }
         });
         omnibox.addView(reload, new LinearLayout.LayoutParams(dp(48), dp(52)));
+        // Firefox-style tab shortcut directly beside the address field.
+        omnibox.addView(icon("tabs", getString(R.string.ui_tabs_c36a5), v -> showTabs()),
+                new LinearLayout.LayoutParams(dp(48), dp(52)));
         bottom.addView(omnibox, new LinearLayout.LayoutParams(-1, dp(54)));
 
         LinearLayout navigation = row();
@@ -244,7 +243,22 @@ public final class BrowserActivity extends Activity {
         navigation.addView(tabButton, weightedButton());
         navigation.addView(icon("menu", getString(R.string.ui_menu_99af6), v -> showMenu()), weightedButton());
         bottom.addView(navigation, new LinearLayout.LayoutParams(-1, dp(56)));
-        root.addView(bottom, new LinearLayout.LayoutParams(-1, -2));
+        // Firefox-style address bar position; default stays at the bottom.
+        boolean addressTop = "top".equals(preferences.getString("address_position", "bottom"));
+        LinearLayout.LayoutParams fill = new LinearLayout.LayoutParams(-1, -2);
+        if (addressTop) {
+            root.addView(bottom, fill);
+            root.addView(progress, new LinearLayout.LayoutParams(-1, dp(3)));
+            root.addView(page, new LinearLayout.LayoutParams(-1, 0, 1));
+            root.addView(recordingNotice, new LinearLayout.LayoutParams(-1, -2));
+            root.addView(privacyBanner.view, new LinearLayout.LayoutParams(-1, -2));
+        } else {
+            root.addView(page, new LinearLayout.LayoutParams(-1, 0, 1));
+            root.addView(recordingNotice, new LinearLayout.LayoutParams(-1, -2));
+            root.addView(privacyBanner.view, new LinearLayout.LayoutParams(-1, -2));
+            root.addView(progress, new LinearLayout.LayoutParams(-1, dp(3)));
+            root.addView(bottom, fill);
+        }
         setContentView(root);
         int flags = light ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : 0;
         getWindow().getDecorView().setSystemUiVisibility(flags);
@@ -725,6 +739,9 @@ public final class BrowserActivity extends Activity {
                 default: break;
             }
         });
+        // DuckDuckGo-style prominent clear-data entry.
+        BrowserSheets.action(menu, R.drawable.ic_delete, R.string.panel_clear_data, true,
+                () -> startActivity(new Intent(this, DataSettingsActivity.class)));
         BrowserSheets.action(menu,R.drawable.ic_private,R.string.private_new,true,()->newTab(true));
         BrowserSheets.action(menu,R.drawable.ic_history,R.string.history_title,true,()->startActivity(new Intent(this,HistoryActivity.class)));
         BrowserSheets.action(menu,R.drawable.ic_download,R.string.downloads_title,true,()->startActivity(new Intent(this,DownloadsActivity.class)));
@@ -1290,6 +1307,9 @@ public final class BrowserActivity extends Activity {
                 case "reload":
                     canvas.drawArc(4, 4, 20, 20, 35, 290, false, paint);
                     path.moveTo(20, 3); path.lineTo(20, 9); path.lineTo(14, 9); break;
+                case "tabs":
+                    canvas.drawRoundRect(4, 4, 20, 20, 4, 4, paint);
+                    canvas.drawLine(8, 4, 8, 20, paint); break;
                 case "menu":
                     canvas.drawLine(4, 6, 20, 6, paint); canvas.drawLine(4, 12, 20, 12, paint);
                     canvas.drawLine(4, 18, 20, 18, paint); break;

@@ -42,6 +42,10 @@
   <string name="settings_theme_light">Light</string>
   <string name="settings_theme_dark">Dark</string>
   <string name="settings_theme_system">System</string>
+  <string name="settings_address_position">Address bar</string>
+  <string name="settings_address_position_summary">Choose whether the address bar sits at the top or the bottom of the screen.</string>
+  <string name="settings_address_position_top">Top</string>
+  <string name="settings_address_position_bottom">Bottom</string>
   <string name="settings_wallpaper">Wallpaper colors</string>
   <string name="settings_wallpaper_available">Material You follows your phone’s colors.</string>
   <string name="settings_wallpaper_unavailable">Wallpaper colors are available on Android 12 and newer.</string>
@@ -159,6 +163,7 @@
   <string name="panel_find">Find in page</string>
   <string name="panel_protection">Ads and trackers</string>
   <string name="panel_connection">Connection and HTTPS</string>
+  <string name="panel_clear_data">Clear browsing data</string>
   <string name="panel_tabs">Tabs</string>
   <string name="panel_tab_count">Tabs in use: %1$d / %2$d</string>
   <string name="panel_current_tab">Current tab</string>

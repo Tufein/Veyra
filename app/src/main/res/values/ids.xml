@@ -17,6 +17,9 @@
     <item name="settings_theme_light" type="id" />
     <item name="settings_theme_dark" type="id" />
     <item name="settings_theme_system" type="id" />
+  <item name="settings_address_group" type="id" />
+  <item name="settings_address_top" type="id" />
+  <item name="settings_address_bottom" type="id" />
     <item name="library_tabs" type="id" />
     <item name="library_search" type="id" />
     <item name="library_list" type="id" />

@@ -264,6 +264,31 @@ public final class SettingsActivity extends Activity {
                     preferences.edit().putBoolean("dynamic_colors", checked).apply(); refreshTheme();
                 });
         dynamic.setId(R.id.settings_dynamic_switch); dynamic.setEnabled(dynamicAvailable);
+        ui.section(content, R.string.settings_address_position);
+        ui.add(content, ui.text(R.string.settings_address_position_summary, 13, ui.muted), 8);
+        LinearLayout position = ui.card(content, false);
+        MaterialButtonToggleGroup places = new MaterialButtonToggleGroup(this); places.setId(R.id.settings_address_group);
+        places.setSingleSelection(true); places.setSelectionRequired(true);
+        boolean stackedPosition = getResources().getConfiguration().fontScale >= 1.3f
+                && getResources().getDisplayMetrics().widthPixels < ui.dp(600);
+        places.setOrientation(stackedPosition ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        int[] placeIds = {R.id.settings_address_top, R.id.settings_address_bottom};
+        String[] placeKeys = {"top", "bottom"};
+        int[] placeLabels = {R.string.settings_address_position_top, R.string.settings_address_position_bottom};
+        for (int i = 0; i < placeKeys.length; i++) {
+            MaterialButton button = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+            button.setId(placeIds[i]); button.setTag(placeKeys[i]); button.setText(placeLabels[i]); button.setTextSize(13);
+            button.setMinWidth(0); button.setMinimumWidth(0); button.setMinHeight(ui.dp(52)); button.setPadding(ui.dp(4), ui.dp(8), ui.dp(4), ui.dp(8));
+            button.setSingleLine(false); button.setEllipsize(null);
+            places.addView(button, stackedPosition ? new LinearLayout.LayoutParams(-1, -2)
+                    : new LinearLayout.LayoutParams(0, -2, 1));
+            if (placeKeys[i].equals(preferences.getString("address_position", "bottom"))) places.check(button.getId());
+        }
+        places.addOnButtonCheckedListener((g, id, checked) -> {
+            if (!checked) return;
+            preferences.edit().putString("address_position", (String) g.findViewById(id).getTag()).apply();
+        });
+        position.addView(places);
         ui.section(content, R.string.settings_accents); ui.add(content, ui.text(R.string.settings_accents_description, 13, ui.muted), 8);
         GridLayout swatches = new GridLayout(this); swatches.setColumnCount(2); swatches.setUseDefaultMargins(false);
         String[] seeds = {"mint", "violet", "blue", "peach"};

@@ -4,7 +4,7 @@
 
 A native Android browser built with Java, Material 3 and Mozilla GeckoView. A calm start page, independent settings and a shared bookmark/shortcut library keep everyday controls close at hand.
 
-**Latest prerelease:** 1.0.0-rc.5 · **Stage:** candidate for 1.0 · **Android:** 9+ (API 28).
+**Latest prerelease:** 1.0.0-rc.6 · **Stage:** candidate for 1.0 · **Android:** 9+ (API 28).
 
 [Published releases](https://github.com/Tufein/Veyra/releases) · [Nederlandse handleiding](docs/README.nl.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md) · [0.5 verification](docs/verification-0.5.md)
 
@@ -42,11 +42,11 @@ Private tabs use real Gecko private contexts and are excluded from persisted nor
 
 ## Preparing 1.0
 
-The [published 1.0.0-rc.5 candidate](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.5) replaces the visual identity with the Midnight Aurora redesign, on top of rc.4's sync robustness fixes and rc.3's new fixed signing key. [Candidate verification](docs/verification-1.0-rc.5.md) and the [readiness report](docs/release-readiness.json) separate software checks from unrun device acceptance. A stable 1.0 launch remains gated on the latter.
+The [published 1.0.0-rc.6 candidate](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.6) adds proven interaction patterns from other browsers — configurable address bar position, a tab shortcut beside the address field, a Chrome-style tab card grid, a prominent clear-data entry and One UI settings headers — on top of rc.5's Midnight Aurora redesign. [Candidate verification](docs/verification-1.0-rc.6.md) and the [readiness report](docs/release-readiness.json) separate software checks from unrun device acceptance. A stable 1.0 launch remains gated on the latter.
 
 ## APKs and signing
 
-Download [1.0.0-rc.5](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.5), or the [ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v1.0.0-rc.5/Veyra-1.0.0-rc.5-arm64-v8a.apk) for most modern phones. This candidate uses an optimized, non-debuggable release build. It remains a prerelease pending actual device acceptance; there is no Play Store publication.
+Download [1.0.0-rc.6](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.6), or the [ARM64 APK](https://github.com/Tufein/Veyra/releases/download/v1.0.0-rc.6/Veyra-1.0.0-rc.6-arm64-v8a.apk) for most modern phones. This candidate uses an optimized, non-debuggable release build. It remains a prerelease pending actual device acceptance; there is no Play Store publication.
 
 The 0.5 alpha introduced a fixed certificate that was retained through 1.0.0-rc.2; rc.3 uses a **new fixed certificate** because that earlier private key was lost. [Migration instructions](docs/signing-and-migration.md) explain a read-only USB export before removing an older installation. The release workflow now uses the new key from GitHub Secrets and verifies every APK against [the public certificate pin](docs/signing-certificate-sha256.txt); it stops when secrets are missing. The rc.4 APKs are built and published through [GitHub Actions](https://github.com/Tufein/Veyra/actions) with matching pinned certificates and SHA-256 checksums. An independent owner-controlled encrypted backup of the new private key is still required.
 
@@ -77,7 +77,7 @@ JVM tests render native Material widgets under Robolectric. Renderings in `app/b
 
 Veyra adds no analytics or hosted account backend. Local history, prefs, cookies and cache stay on-device unless you explicitly export or use encrypted sync. Websites, search providers, external credential apps and Gecko services make their own network requests. OS app backup/transfer is disabled. Clear selected data in the app or use Android app-storage controls; external files and sync-server files need separate deletion.
 
-[Contributing](CONTRIBUTING.md) · [Security and maintenance](SECURITY.md) · [Candidate release notes](docs/releases/v1.0.0-rc.5.md)
+[Contributing](CONTRIBUTING.md) · [Security and maintenance](SECURITY.md) · [Candidate release notes](docs/releases/v1.0.0-rc.6.md)
 
 No license has been selected for Veyra's original application code. Public source availability alone does not grant reuse/redistribution rights. Third-party data and tooling retain their own licenses.
 

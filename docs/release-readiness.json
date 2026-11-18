@@ -59,7 +59,7 @@
       "notes": "GitHub reports this feature disabled; enabling it was denied by the current integration (HTTP403)."
     }
   },
-  "candidate": "1.0.0-rc.5",
+  "candidate": "1.0.0-rc.6",
   "software_validation": {
     "debug_host_tests": 127,
     "release_host_tests": 127,
