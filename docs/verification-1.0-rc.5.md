@@ -12,7 +12,7 @@ Releasekandidaat voor Android 9+, pakket `nl.veyra.browser`, versiecode 12, met 
 
 | Controle | Resultaat |
 | --- | --- |
-| Release-workflow (build, unit tests, Lint, beschermingstests, vaste sleutel, pin, checksums) | Zie [GitHub Actions](https://github.com/Tufein/Veyra/actions/workflows/release.yml) |
+| Release-workflow (build, unit tests, Lint, beschermingstests, vaste sleutel, pin, checksums) | [Run 44301176116](https://github.com/Tufein/Veyra/actions/runs/44301176116) |
 | Publicatie van de release met drie APK's en `SHA256SUMS.txt` | [Releasepagina](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.5) |
 
 ## Installeren
