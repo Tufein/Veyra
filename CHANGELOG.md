@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0-rc.5 — Midnight Aurora redesign
+
+- Replace the entire visual identity with a deep, cool dark theme (ink surfaces, cyan accent, lavender private mode) and a refreshed light variant.
+- Rebuild the four accent palettes with new names; redraw the launcher icon.
+- Refine browser chrome: floating pill address bar, circular tab badge, gradient home hero, rounded cards and circular site monograms.
+- Keep functional structure, labels and accessibility intact.
+
+
 ## 1.0.0-rc.4 — sync hardening shipped
 
 - Ship the sync input-validation and merge-fallback fixes from the previous round in a signed APK.
