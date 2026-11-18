@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0-rc.4 — sync hardening shipped
+
+- Ship the sync input-validation and merge-fallback fixes from the previous round in a signed APK.
+- Missing local data, an unreadable merge baseline and empty server credentials no longer crash sync; they produce clear errors or a safe empty-baseline merge.
+
+
+## 1.0.0-rc.3 — new fixed signing key
+
+- Generate a new fixed release keystore after the previous private key became unavailable; pin the new certificate in `docs/signing-certificate-sha256.txt` and configure the release workflow secrets so builds are reproducible again.
+- Warn explicitly that rc.3 cannot install as an update over rc.1/rc.2/0.5.0 because the certificate changed; export data before replacing older installations.
+- Publish verified ARM64/ARMv7/x86_64 APKs with matching certificate pin and checksums through GitHub Actions.
+
+
 ## 1.0.0-rc.2 — InPrivate and everyday tab actions
 
 - Show a persistent InPrivate banner, private tab count, distinct address-bar colors, private start page and mask-marked tab cards; retain the real HTTP/HTTPS indicator.

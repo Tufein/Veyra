@@ -1,8 +1,8 @@
 # Veyra gebruiken
 
-De huidige testkandidaat is **1.0.0-rc.2**, voor Android 9 of nieuwer. [Download de ARM64-APK](https://github.com/Tufein/Veyra/releases/download/v1.0.0-rc.2/Veyra-1.0.0-rc.2-arm64-v8a.apk), of kies een andere architectuur op de [releasepagina](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.2). Er is nog geen stabiele 1.0 of Play Store-release.
+De huidige testkandidaat is **1.0.0-rc.4**, voor Android 9 of nieuwer. [Download de ARM64-APK](https://github.com/Tufein/Veyra/releases/download/v1.0.0-rc.4/Veyra-1.0.0-rc.4-arm64-v8a.apk), of kies een andere architectuur op de [releasepagina](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.4). Er is nog geen stabiele 1.0 of Play Store-release.
 
-**Vanaf 0.5.0 blijft de sleutel gelijk.** Test 1.0.0-rc.2 als update zonder 0.5.0 vooraf te verwijderen. Voor 0.4.x en eerdere CI-alpha’s met een andere sleutel: exporteer eerst je gegevens en lees [ondertekening en migratie](signing-and-migration.md) vóór verwijderen.
+**Let op: 1.0.0-rc.3 heeft een nieuwe vaste sleutel.** De oude sleutel is kwijt, dus rc.3 is geen update over 0.5.0 of rc.1/rc.2. Exporteer eerst je bladwijzers en voorkeuren en lees [ondertekening en migratie](signing-and-migration.md) vóór verwijderen van de oude installatie.
 
 ## Je browser inrichten
 
@@ -38,6 +38,6 @@ Websitevoorkeuren beheert camera/microfoon/locatie per HTTPS-origin. Android vra
 
 ## Wat nog moet worden gecontroleerd
 
-De kandidaat bouwt en automatische opslag-/UI-/beveiligingscontroles slagen. Dat bewijst geen dagelijkse bruikbaarheid op echte toestellen. Onder meer downloads met bestaande logins, private cookies na procesbeëindiging, echte APK-updates, twee-toestelsync, TalkBack en controllerbediening blijven open in de [apparaatmatrix](device-validation.md). Zie [roadmap](../ROADMAP.md) en [verificatie](verification-1.0-rc.2.md).
+De kandidaat bouwt en automatische opslag-/UI-/beveiligingscontroles slagen. Dat bewijst geen dagelijkse bruikbaarheid op echte toestellen. Onder meer downloads met bestaande logins, private cookies na procesbeëindiging, echte APK-updates, twee-toestelsync, TalkBack en controllerbediening blijven open in de [apparaatmatrix](device-validation.md). Zie [roadmap](../ROADMAP.md) en [verificatie](verification-1.0-rc.4.md).
 
 Rapporteer problemen via [GitHub Issues](https://github.com/Tufein/Veyra/issues), met app-/Android-/Gecko-versie, toestel en reproduceerstappen. Verwijder persoonlijke URLs, wachtwoorden, tokens en cookies uit logs of beelden.

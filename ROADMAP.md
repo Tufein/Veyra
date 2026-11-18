@@ -6,7 +6,7 @@
 
 ## Voortgang naar 1.0
 
-Op verzoek is de huidige code voorbereid als **1.0.0-rc.2**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.2) en bundelt release-optimalisatie, correcties voor imports/downloads/site-rechten/sync en uitgebreidere software- en publicatiecontroles. Rc.2 voegt zichtbare InPrivate-status, een privé-startpagina, privacybewust dupliceren, normaal heropenen, webadres kopiëren en bevestigd sluiten van alle privétabs toe. [Verificatie](docs/verification-1.0-rc.2.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
+Op verzoek is de huidige code voorbereid als **1.0.0-rc.4**. De [kandidaat is gepubliceerd](https://github.com/Tufein/Veyra/releases/tag/v1.0.0-rc.3) met een **nieuwe vaste ondertekeningssleutel**, omdat de sleutel van 0.5.0/rc.1/rc.2 niet meer beschikbaar is. Daardoor is rc.3 geen update over die versies. Verder bevat rc.4 robuustere sync-afhandeling en bouwt de release-workflow nu reproduceerbaar met de sleutel uit GitHub Secrets. Rc.2 voegde zichtbare InPrivate-status, een privé-startpagina, privacybewust dupliceren, normaal heropenen, webadres kopiëren en bevestigd sluiten van alle privétabs toe. [Verificatie](docs/verification-1.0-rc.4.md) en het [vrijgaveverslag](docs/release-readiness.json) houden de nog open toestel- en beheercriteria bij. De onderstaande werkpakketten en 1.0-voorwaarden blijven gelden; een kandidaatversie sluit ze niet automatisch af.
 
 ## Huidige stand
 
@@ -19,7 +19,7 @@ Op verzoek is de huidige code voorbereid als **1.0.0-rc.2**. De [kandidaat is ge
 | Synchronisatie | Handmatige versleutelde bladwijzer-/snelkoppelingensync met eigen HTTPS-server | Twee echte clients, serverconflicten, offline/herstel en onafhankelijke beveiligingsreview |
 | Releases | Drie publieke APK’s, vaste certificaatvingerafdruk en checksums; publicatie via Actions geslaagd | Onafhankelijke sleutelbackup, geautomatiseerde rebuilds en echte update met gegevensbehoud |
 
-De actuele aantallen en software-/publicatiebewijzen staan in het [verificatieverslag](docs/verification-1.0-rc.2.md). Ze staan los van de nog niet uitgevoerde apparaatcontroles.
+De actuele aantallen en software-/publicatiebewijzen staan in het [verificatieverslag](docs/verification-1.0-rc.4.md). Ze staan los van de nog niet uitgevoerde apparaatcontroles.
 
 ## Nieuwe werkvolgorde
 
